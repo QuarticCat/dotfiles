@@ -1,7 +1,11 @@
+source_if_exists() {
+    if [[ -r $1 ]]; then
+        source $1
+    fi
+}
+
 # Start p10k instant prompt
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+source_if_exists "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 
 # Configure misc
 setopt auto_cd
@@ -80,11 +84,10 @@ alias clp="clippaste"
 alias panel-restart="killall plasmashell; plasmashell &> /dev/null &; disown plasmashell"
 
 eval "$(zoxide init zsh)"
-source "$HOME/.cargo/env"
-source "$HOME/.opam/opam-init/init.zsh"
-source "$HOME/.p10k.zsh"
+source_if_exists "$HOME/.cargo/env"
+source_if_exists "$HOME/.opam/opam-init/init.zsh"
+source_if_exists "$HOME/.p10k.zsh"
 
-export PATH="$PATH:$HOME/.local/bin"
 export EDITOR="vim"
 
 # Directory shortcuts
@@ -92,3 +95,4 @@ hash -d Workspace=$HOME/Workspace
 hash -d Temp=$HOME/Workspace/Code/Temp
 hash -d QuarticCat=$HOME/Workspace/Code/QuarticCat
 hash -d Homework=$HOME/Workspace/Homework
+
