@@ -7,6 +7,6 @@ Managed by [chezmoi](https://github.com/twpayne/chezmoi).
 Apply all dotfiles:
 
 ```console
-$ chezmoi -v apply
+$ chezmoi apply -v
 ```
 
