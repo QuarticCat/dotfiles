@@ -1,0 +1,5 @@
+[user]
+	name = QuarticCat
+	email = QuarticCat@protonmail.com
+[credential]
+	helper = gnome-keyring
