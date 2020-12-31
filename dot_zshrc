@@ -81,7 +81,6 @@ alias l="exa -lah --group-directories-first --git --time-style=long-iso"
 alias pc="proxychains -q "
 alias clc="clipcopy"
 alias clp="clippaste"
-alias panel-restart="killall plasmashell; plasmashell &> /dev/null &; disown plasmashell"
 
 eval "$(zoxide init zsh)"
 source_if_exists "$HOME/.cargo/env"
