@@ -1,0 +1,94 @@
+# Start p10k instant prompt
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Configure misc
+setopt auto_cd
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt pushd_minus
+setopt interactive_comments
+setopt multios
+setopt ksh_option_print
+
+# Configure history
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_verify
+setopt share_history
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=10000
+
+source "$HOME/.zinit/bin/zinit.zsh"
+zinit for \
+    OMZL::completion.zsh \
+    OMZL::key-bindings.zsh \
+    OMZL::clipboard.zsh \
+    OMZP::sudo \
+    OMZP::extract \
+    https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zsh
+zinit light-mode depth"1" for \
+    romkatv/powerlevel10k \
+    Aloxaf/fzf-tab \
+    zdharma/fast-syntax-highlighting \
+    zsh-users/zsh-autosuggestions \
+    zsh-users/zsh-history-substring-search \
+    MichaelAquilina/zsh-you-should-use
+zicompinit
+zicdreplay
+
+# Configure fzf
+export FZF_DEFAULT_OPTS="--ansi --layout=reverse --bind=tab:accept"
+
+# Configure fzf-tab
+FZF_TAB_COMMAND=(
+    fzf
+    --expect='$continuous_trigger,$print_query'
+    --color='hl:$(( $#headers == 0 ? 108 : 255 ))'
+    --nth=2,3
+    --delimiter='\x00'
+    --height='${FZF_TMUX_HEIGHT:=75%}'
+    --tiebreak=begin
+    -m
+    --cycle
+    --query='$query'
+    --header-lines='$#headers'
+    --print-query
+)
+zstyle ":fzf-tab:*" command $FZF_TAB_COMMAND
+
+# Configure bat
+export BAT_THEME="OneHalfDark"
+
+# Configure man-pages
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export MANROFFOPT="-c"
+
+# Aliases
+unalias zi zini zpl zplg
+alias -g ...="../.."
+alias -g ....="../../.."
+alias -g .....="../../../.."
+alias :q="exit"
+alias l="exa -lah --group-directories-first --git --time-style=long-iso"
+alias pc="proxychains -q "
+alias clc="clipcopy"
+alias clp="clippaste"
+alias panel-restart="killall plasmashell; plasmashell &> /dev/null &; disown plasmashell"
+
+eval "$(zoxide init zsh)"
+source "$HOME/.cargo/env"
+source "$HOME/.opam/opam-init/init.zsh"
+source "$HOME/.p10k.zsh"
+
+export PATH="$PATH:$HOME/.local/bin"
+export EDITOR="vim"
+
+# Directory shortcuts
+hash -d Workspace=$HOME/Workspace
+hash -d Temp=$HOME/Workspace/Code/Temp
+hash -d QuarticCat=$HOME/Workspace/Code/QuarticCat
+hash -d Homework=$HOME/Workspace/Homework
