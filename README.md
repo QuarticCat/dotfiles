@@ -10,3 +10,7 @@ Apply all dotfiles:
 $ chezmoi apply -v
 ```
 
+## License
+
+MIT
+
