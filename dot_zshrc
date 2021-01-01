@@ -48,21 +48,8 @@ zicdreplay
 export FZF_DEFAULT_OPTS="--ansi --layout=reverse --bind=tab:accept"
 
 # Configure fzf-tab
-FZF_TAB_COMMAND=(
-    fzf
-    --expect='$continuous_trigger,$print_query'
-    --color='hl:$(( $#headers == 0 ? 108 : 255 ))'
-    --nth=2,3
-    --delimiter='\x00'
-    --height='${FZF_TMUX_HEIGHT:=75%}'
-    --tiebreak=begin
-    -m
-    --cycle
-    --query='$query'
-    --header-lines='$#headers'
-    --print-query
-)
-zstyle ":fzf-tab:*" command $FZF_TAB_COMMAND
+# zstyle ":fzf-tab:*" fzf-command ftb-tmux-popup  # wait for tmux 3.2
+zstyle ":fzf-tab:*" fzf-bindings "tab:accept"
 
 # Configure bat
 export BAT_THEME="OneHalfDark"
