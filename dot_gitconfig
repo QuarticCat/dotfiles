@@ -1,5 +1,20 @@
 [user]
-	name = QuarticCat
-	email = QuarticCat@protonmail.com
-[credential]
-	helper = gnome-keyring
+    name = QuarticCat
+    email = QuarticCat@protonmail.com
+    signingkey = 5F084C933EA64ACE
+
+[commit]
+    gpgsign = true
+
+[alias]
+    rollback = reset --hard
+    undo-commit = reset --soft HEAD@{1}
+    quick-update = ! \
+        git add -A && \
+        git commit -m \"$1\" && \
+        git push origin && \
+        :
+    quick-update-amend = ! \
+        git add -A && \
+        git commit --amend --no-edit && \
+        git push --force origin
