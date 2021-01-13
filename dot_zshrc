@@ -46,8 +46,12 @@ zicdreplay
 export FZF_DEFAULT_OPTS="--ansi --layout=reverse --bind=tab:accept"
 
 # Configure fzf-tab
-# zstyle ":fzf-tab:*" fzf-command ftb-tmux-popup  # wait for tmux 3.2
-zstyle ":fzf-tab:*" fzf-bindings "tab:accept"
+# zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup  # wait for tmux 3.2
+zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
+zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
+zstyle ':completion:*:git-checkout:*' sort false
 
 # Configure bat
 export BAT_THEME="OneHalfDark"
