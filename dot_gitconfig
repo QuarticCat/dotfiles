@@ -16,5 +16,6 @@
         :
     quick-update-amend = ! \
         git add -A && \
-        git commit --amend --no-edit && \
-        git push --force origin
+        git commit --amend ${1+\"-m\"} ${1-\"--no-edit\"} && \
+        git push --force origin && \
+        :
