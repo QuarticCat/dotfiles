@@ -30,15 +30,25 @@ zinit for \
     OMZL::key-bindings.zsh \
     OMZL::clipboard.zsh \
     OMZP::sudo \
-    OMZP::extract \
+    OMZP::systemd \
     https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zsh
+zinit svn for \
+    OMZP::extract \
+    OMZP::pip
+zinit as"completion" for \
+    OMZP::ripgrep/_ripgrep \
+    OMZP::cargo/_cargo \
+    OMZP::rust/_rust \
+    OMZP::rustup/_rustup \
+    OMZP::docker/_docker
 zinit light-mode depth"1" for \
     romkatv/powerlevel10k \
     Aloxaf/fzf-tab \
     zdharma/fast-syntax-highlighting \
     zsh-users/zsh-autosuggestions \
     zsh-users/zsh-history-substring-search \
-    MichaelAquilina/zsh-you-should-use
+    MichaelAquilina/zsh-you-should-use \
+    hlissner/zsh-autopair
 zicompinit
 zicdreplay
 
@@ -79,7 +89,7 @@ source_if_exists "$HOME/.p10k.zsh"
 export EDITOR="vim"
 
 # Directory shortcuts
-hash -d Workspace=$HOME/Workspace
-hash -d Temp=$HOME/Workspace/Code/Temp
-hash -d QuarticCat=$HOME/Workspace/Code/QuarticCat
-hash -d Homework=$HOME/Workspace/Homework
+hash -d Workspace="$HOME/Workspace"
+hash -d Temp="$HOME/Workspace/Code/Temp"
+hash -d QuarticCat="$HOME/Workspace/Code/QuarticCat"
+hash -d Homework="$HOME/Workspace/Homework"
