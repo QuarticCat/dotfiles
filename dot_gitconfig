@@ -9,6 +9,7 @@
 [alias]
     rollback = reset --hard
     undo-commit = reset --soft HEAD@{1}
+    update-submodules = submodule update --rebase --remote
     quick-update = ! \
         git add -A && \
         git commit -m \"$1\" && \
