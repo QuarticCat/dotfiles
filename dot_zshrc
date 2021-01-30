@@ -81,6 +81,13 @@ alias l="exa -lah --group-directories-first --git --time-style=long-iso"
 alias pc="proxychains -q "
 alias clc="clipcopy"
 alias clp="clippaste"
+alias sudo="sudo "
+alias with-proxy=' \
+    TMP_PROXY=127.0.0.1:1999 \
+    http_proxy=$TMP_PROXY \
+    HTTP_PROXY=$TMP_PROXY \
+    https_proxy=$TMP_PROXY \
+    HTTPS_PROXY=$TMP_PROXY '
 
 source_if_exists "/usr/share/nnn/quitcd/quitcd.bash_zsh"
 source_if_exists "$HOME/.cargo/env"
@@ -89,7 +96,13 @@ source_if_exists "$HOME/.p10k.zsh"
 
 export EDITOR="vim"
 
+export path=(
+    "$HOME/.ghcup/bin"
+    $path
+)
+
 # Directory shortcuts
+hash -d Downloads="$HOME/Downloads"
 hash -d Workspace="$HOME/Workspace"
 hash -d Temp="$HOME/Workspace/Code/Temp"
 hash -d QuarticCat="$HOME/Workspace/Code/QuarticCat"
