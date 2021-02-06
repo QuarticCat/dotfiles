@@ -1,29 +1,11 @@
-source_if_exists() {
-    [ -r $1 ] && source $1
+__source() {
+    [ -r "$1" ] && source "$1"
 }
 
 # Start p10k instant prompt
-source_if_exists "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+__source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 
-# Configure misc
-setopt auto_cd
-setopt auto_pushd
-setopt pushd_ignore_dups
-setopt pushd_minus
-setopt interactive_comments
-setopt multios
-setopt ksh_option_print
-
-# Configure history
-setopt hist_save_no_dups
-setopt hist_ignore_dups
-setopt hist_ignore_space
-setopt hist_verify
-setopt share_history
-HISTFILE="$HOME/.zsh_history"
-HISTSIZE=50000
-SAVEHIST=10000
-
+# Load plugins
 source "$HOME/.zinit/bin/zinit.zsh"
 zinit for \
     OMZL::completion.zsh \
@@ -53,6 +35,26 @@ zinit light-mode depth"1" for \
 zicompinit
 zicdreplay
 
+# Configure zsh misc
+setopt auto_cd
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt pushd_minus
+setopt interactive_comments
+setopt multios
+setopt ksh_option_print
+WORDCHARS='*?.[]~-_=&;!#$%^(){}<>'
+
+# Configure zsh history
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_verify
+setopt share_history
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=10000
+
 # Configure fzf
 export FZF_DEFAULT_OPTS="--ansi --layout=reverse --bind=tab:accept"
 
@@ -72,7 +74,7 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p --theme=\"Monokai Extended\"'"
 export MANROFFOPT="-c"
 
 # Aliases
-unalias zi zini zpl zplg
+unalias zi zini zpl zplg  # from zinit
 alias -g ...="../.."
 alias -g ....="../../.."
 alias -g .....="../../../.."
@@ -89,14 +91,9 @@ alias with-proxy=' \
     https_proxy=$TMP_PROXY \
     HTTPS_PROXY=$TMP_PROXY '
 
-source_if_exists "/usr/share/nnn/quitcd/quitcd.bash_zsh"
-source_if_exists "$HOME/.cargo/env"
-source_if_exists "$HOME/.opam/opam-init/init.zsh"
-source_if_exists "$HOME/.p10k.zsh"
-
+# Environment variables
 export EDITOR="vim"
-
-export path=(
+path=(  # no need to export
     "$HOME/.ghcup/bin"
     $path
 )
@@ -118,3 +115,9 @@ git-stats() {  # too hard to write it as a git alias
         awk '{ add += $1; subs += $2; loc += $1 - $2 } END { printf "  + %s\n  - %s\n  = %s\n", add, subs, loc }' -
     done
 }
+
+# Load scripts
+__source "/usr/share/nnn/quitcd/quitcd.bash_zsh"
+__source "$HOME/.cargo/env"
+__source "$HOME/.opam/opam-init/init.zsh"
+__source "$HOME/.p10k.zsh"
