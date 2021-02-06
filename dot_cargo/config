@@ -1,3 +1,6 @@
+[build]
+target-dir = ".cargo/target"
+
 [source.crates-io]
 registry = "https://github.com/rust-lang/crates.io-index"
 replace-with = "sjtu"
@@ -13,4 +16,3 @@ registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index"
 
 [source.rustcc]
 registry = "git://crates.rustcc.cn/crates.io-index"
-
