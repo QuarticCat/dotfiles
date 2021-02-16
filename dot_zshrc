@@ -1,5 +1,11 @@
+# # Star tmux
+# # if (not in tmux) and (interactive env) and (not embedded terminal)
+# [[ -z $TMUX && $- == *i* && ! $(</proc/$PPID/cmdline) =~ "dolphin|vim|emacs|code"]] && tmux
+
+# Internal functions
 __source() {
-    [ -r "$1" ] && source "$1"
+    # if (file exists and readable)
+    [[ -f $1 ]] && source "$1"
 }
 
 # Start p10k instant prompt
@@ -16,7 +22,7 @@ zinit for \
     https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zsh
 zinit svn for \
     OMZP::extract \
-    OMZP::pip
+    OMZP::pip  # svn is super slow, find a better alternative
 zinit as"completion" for \
     OMZP::ripgrep/_ripgrep \
     OMZP::cargo/_cargo \
@@ -80,10 +86,11 @@ alias -g ....="../../.."
 alias -g .....="../../../.."
 alias :q="exit"
 alias l="exa -lah --group-directories-first --git --time-style=long-iso"
-alias pc="proxychains -q "
-alias clc="clipcopy"
-alias clp="clippaste"
+alias tree="exa -lahTI '.git' --group-directories-first --git --time-style=long-iso"
+alias clc="clipcopy"  # from OMZL::clipboard.zsh
+alias clp="clippaste"  # from OMZL::clipboard.zsh
 alias sudo="sudo "
+alias pc="proxychains -q "
 alias with-proxy=' \
     TMP_PROXY=127.0.0.1:1999 \
     http_proxy=$TMP_PROXY \
@@ -102,17 +109,19 @@ path=(  # no need to export
 hash -d Downloads="$HOME/Downloads"
 hash -d Workspace="$HOME/Workspace"
 hash -d Temp="$HOME/Workspace/Code/Temp"
+hash -d NotMe="$HOME/Workspace/Code/NotMe"
 hash -d QuarticCat="$HOME/Workspace/Code/QuarticCat"
 hash -d Homework="$HOME/Workspace/Homework"
 
 # My functions
 git-stats() {  # too hard to write it as a git alias
-    git log --format='%aN' | \
-    sort -u | \
-    while read name; do
-        echo -e "$name:"
-        git log --author="$name" --pretty=tformat: --numstat | \
-        awk '{ add += $1; subs += $2; loc += $1 - $2 } END { printf "  + %s\n  - %s\n  = %s\n", add, subs, loc }' -
+    git shortlog -sn | \
+    while read line; do
+        read -d '\t' commits author <<< "$line"
+        git log --author="$author" --pretty=tformat: --numstat | \
+        awk '{ add += $1; subs += $2 } END { print add " " subs }' - | \
+        read add subs
+        echo -e "$author:\n  $commits commits, $add++, $subs--\n"
     done
 }
 

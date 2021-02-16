@@ -3,6 +3,9 @@
     email = QuarticCat@protonmail.com
     signingkey = 5F084C933EA64ACE
 
+[init]
+    defaultBranch = main
+
 [commit]
     gpgsign = true
 
