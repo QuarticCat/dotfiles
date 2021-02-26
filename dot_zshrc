@@ -1,6 +1,6 @@
 # # Star tmux
 # # if (not in tmux) and (interactive env) and (not embedded terminal)
-# [[ -z $TMUX && $- == *i* && ! $(</proc/$PPID/cmdline) =~ "dolphin|vim|emacs|code"]] && tmux
+# [[ -z $TMUX && $- == *i* && ! $(</proc/$PPID/cmdline) =~ "dolphin|vim|emacs|code" ]] && tmux
 
 # Internal functions
 __source() {
@@ -37,6 +37,7 @@ zinit light-mode depth"1" for \
     zsh-users/zsh-autosuggestions \
     zsh-users/zsh-history-substring-search \
     MichaelAquilina/zsh-you-should-use \
+    MichaelAquilina/zsh-autoswitch-virtualenv \
     hlissner/zsh-autopair
 zicompinit
 zicdreplay
@@ -78,6 +79,11 @@ export BAT_THEME="OneHalfDark"
 # Configure man-pages
 export MANPAGER="sh -c 'col -bx | bat -l man -p --theme=\"Monokai Extended\"'"
 export MANROFFOPT="-c"
+
+# Configure npm
+export NPM_CONFIG_PREFIX="$HOME/.local"
+export NPM_CONFIG_CACHE="$HOME/.cache/npm"
+export NPM_CONFIG_REGISTRY="https://registry.npm.taobao.org"
 
 # Aliases
 unalias zi zini zpl zplg  # from zinit
@@ -123,6 +129,9 @@ git-stats() {  # too hard to write it as a git alias
         read add subs
         echo -e "$author:\n  $commits commits, $add++, $subs--\n"
     done
+}
+print-path() {
+    printf "%s\n" $path
 }
 
 # Load scripts
