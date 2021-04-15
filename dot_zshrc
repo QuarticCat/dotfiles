@@ -28,12 +28,11 @@ zinit as"completion" for \
     OMZP::cargo/_cargo \
     OMZP::rust/_rust \
     OMZP::rustup/_rustup \
-    OMZP::docker/_docker \
-    OMZP::docker-compose/_docker-compose
+    OMZP::docker/_docker
 zinit light-mode depth"1" for \
     romkatv/powerlevel10k \
     Aloxaf/fzf-tab \
-    zdharma/fast-syntax-highlighting \
+    atload'FAST_HIGHLIGHT[chroma-man]=' zdharma/fast-syntax-highlighting \
     zsh-users/zsh-autosuggestions \
     zsh-users/zsh-history-substring-search \
     MichaelAquilina/zsh-you-should-use \
@@ -73,6 +72,9 @@ zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3
 zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
 zstyle ':completion:*:git-checkout:*' sort false
 
+# Configure zsh-autoswitch-virtualenv
+export AUTOSWITCH_VIRTUAL_ENV_DIR="virtualenv"
+
 # Configure bat
 export BAT_THEME="OneHalfDark"
 
@@ -84,6 +86,9 @@ export MANROFFOPT="-c"
 export NPM_CONFIG_PREFIX="$HOME/.local"
 export NPM_CONFIG_CACHE="$HOME/.cache/npm"
 export NPM_CONFIG_REGISTRY="https://registry.npm.taobao.org"
+
+# Configure GraalVM
+export GRAALVM_HOME="/usr/lib/jvm/java-11-graalvm"
 
 # Aliases
 unalias zi zini zpl zplg  # from zinit
@@ -118,6 +123,7 @@ hash -d Temp="$HOME/Workspace/Code/Temp"
 hash -d NotMe="$HOME/Workspace/Code/NotMe"
 hash -d QuarticCat="$HOME/Workspace/Code/QuarticCat"
 hash -d Homework="$HOME/Workspace/Homework"
+hash -d SteamApps="$HOME/.steam/root/steamapps/common"
 
 # My functions
 git-stats() {  # too hard to write it as a git alias
