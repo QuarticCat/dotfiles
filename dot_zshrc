@@ -22,14 +22,15 @@ zinit for \
     https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zsh
 zinit svn for \
     OMZP::extract \
-    OMZP::pip  # svn is super slow, find a better alternative
-zinit as"completion" for \
+    OMZP::pip
+zinit as'completion' for \
     OMZP::ripgrep/_ripgrep \
     OMZP::cargo/_cargo \
     OMZP::rust/_rust \
     OMZP::rustup/_rustup \
-    OMZP::docker/_docker
-zinit light-mode depth"1" for \
+    OMZP::docker/_docker \
+    OMZP::docker-compose/_docker-compose
+zinit light-mode depth'1' for \
     romkatv/powerlevel10k \
     Aloxaf/fzf-tab \
     atload'FAST_HIGHLIGHT[chroma-man]=' zdharma/fast-syntax-highlighting \
@@ -90,6 +91,9 @@ export NPM_CONFIG_REGISTRY="https://registry.npm.taobao.org"
 # Configure GraalVM
 export GRAALVM_HOME="/usr/lib/jvm/java-11-graalvm"
 
+# Key bindings
+bindkey -s '^n' 'cd ${$(xplr):-.}\n'  # [Ctrl-N] run xplr to navigate
+
 # Aliases
 unalias zi zini zpl zplg  # from zinit
 alias -g ...="../.."
@@ -136,12 +140,8 @@ git-stats() {  # too hard to write it as a git alias
         echo -e "$author:\n  $commits commits, $add++, $subs--\n"
     done
 }
-print-path() {
-    printf "%s\n" $path
-}
 
 # Load scripts
-__source "/usr/share/nnn/quitcd/quitcd.bash_zsh"
 __source "$HOME/.cargo/env"
 __source "$HOME/.opam/opam-init/init.zsh"
 __source "$HOME/.p10k.zsh"
