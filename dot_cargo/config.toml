@@ -1,0 +1,20 @@
+[build]
+target-dir = ".cargo/target"
+
+[cargo-new]
+name = "QuarticCat"
+email = "<QuarticCat@protonmail.com>"
+
+[source]
+crates-io = { replace-with = "sjtu" }
+tuna = { registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
+ustc = { registry = "git://mirrors.ustc.edu.cn/crates.io-index" }
+sjtu = { registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index" }
+rustcc = { registry = "git://crates.rustcc.cn/crates.io-index" }
+
+# required by cargo-update
+[registries]
+tuna = { index = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
+ustc = { index = "git://mirrors.ustc.edu.cn/crates.io-index" }
+sjtu = { index = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index" }
+rustcc = { index = "git://crates.rustcc.cn/crates.io-index" }

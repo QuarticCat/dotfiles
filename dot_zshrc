@@ -3,13 +3,17 @@
 # [[ -z $TMUX && $- == *i* && ! $(</proc/$PPID/cmdline) =~ "dolphin|vim|emacs|code" ]] && tmux
 
 # Internal functions
-__source() {
-    # if (file exists and readable)
+__source() {  # source if exist
+    # -f: file exists and readable
     [[ -f $1 ]] && source "$1"
+}
+__bindkey() {  # poorman's bindkey
+    # ^Q: push line
+    bindkey -s $1 "^Q$2\n"
 }
 
 # Start p10k instant prompt
-__source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+__source "$HOME/.cache/p10k-instant-prompt-${(%):-%n}.zsh"
 
 # Load plugins
 source "$HOME/.zinit/bin/zinit.zsh"
@@ -66,7 +70,7 @@ SAVEHIST=10000
 export FZF_DEFAULT_OPTS="--ansi --layout=reverse --bind=tab:accept"
 
 # Configure fzf-tab
-# zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup  # wait for tmux 3.2
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
@@ -86,13 +90,9 @@ export MANROFFOPT="-c"
 # Configure npm
 export NPM_CONFIG_PREFIX="$HOME/.local"
 export NPM_CONFIG_CACHE="$HOME/.cache/npm"
-export NPM_CONFIG_REGISTRY="https://registry.npm.taobao.org"
-
-# Configure GraalVM
-export GRAALVM_HOME="/usr/lib/jvm/java-11-graalvm"
 
 # Key bindings
-bindkey -s '^n' 'cd ${$(xplr):-.}\n'  # [Ctrl-N] run xplr to navigate
+__bindkey '^n' 'cd ${$(xplr):-.}'  # [Ctrl-N] run xplr to navigate
 
 # Aliases
 unalias zi zini zpl zplg  # from zinit
@@ -116,18 +116,20 @@ alias with-proxy=' \
 # Environment variables
 export EDITOR="vim"
 path=(  # no need to export
+    "$HOME/.local/bin"
     "$HOME/.ghcup/bin"
     $path
 )
 
 # Directory shortcuts
+hash -d config="$HOME/.config"
+hash -d cache="$HOME/.cache"
 hash -d Downloads="$HOME/Downloads"
 hash -d Workspace="$HOME/Workspace"
 hash -d Temp="$HOME/Workspace/Code/Temp"
 hash -d NotMe="$HOME/Workspace/Code/NotMe"
 hash -d QuarticCat="$HOME/Workspace/Code/QuarticCat"
 hash -d Homework="$HOME/Workspace/Homework"
-hash -d SteamApps="$HOME/.steam/root/steamapps/common"
 
 # My functions
 git-stats() {  # too hard to write it as a git alias
