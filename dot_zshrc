@@ -37,7 +37,7 @@ zinit as'completion' for \
 zinit light-mode depth'1' for \
     romkatv/powerlevel10k \
     Aloxaf/fzf-tab \
-    atload'FAST_HIGHLIGHT[chroma-man]=' zdharma/fast-syntax-highlighting \
+    zdharma/fast-syntax-highlighting \
     zsh-users/zsh-autosuggestions \
     zsh-users/zsh-history-substring-search \
     MichaelAquilina/zsh-you-should-use \
@@ -80,6 +80,9 @@ zstyle ':completion:*:git-checkout:*' sort false
 # Configure zsh-autoswitch-virtualenv
 export AUTOSWITCH_VIRTUAL_ENV_DIR="virtualenv"
 
+# Configure fast-syntax-highlighting
+export FAST_HIGHLIGHT[chroma-man]=""  # chroma-man will stuck history browsing
+
 # Configure bat
 export BAT_THEME="OneHalfDark"
 
@@ -92,7 +95,10 @@ export NPM_CONFIG_PREFIX="$HOME/.local"
 export NPM_CONFIG_CACHE="$HOME/.cache/npm"
 
 # Key bindings
-__bindkey '^n' 'cd ${$(xplr):-.}'  # [Ctrl-N] run xplr to navigate
+bindkey '^H' backward-kill-word  # [Ctrl-Backspace/H]
+bindkey '^Z' undo  # [Ctrl-Z]
+bindkey '^Y' redo  # [Ctrl-Y]
+__bindkey '^N' 'cd "${$(xplr):-.}"'  # [Ctrl-N] run xplr to navigate
 
 # Aliases
 unalias zi zini zpl zplg  # from zinit
