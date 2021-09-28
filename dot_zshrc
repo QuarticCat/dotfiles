@@ -70,6 +70,15 @@ path=(  # no need to export
     $path
 )
 
+# # Configure starship
+# __my_starship_precmd() {
+#     # Set window title
+#     echo -ne "\033]0; $(basename "$PWD") \007"
+#     # Set my pwd
+#     export MY_STARSHIP_PWD="${(D):-$PWD}"
+# }
+# precmd_functions+=(__my_starship_precmd)
+
 # Configure fzf
 export FZF_DEFAULT_OPTS="--ansi --layout=reverse --bind=tab:accept"
 
@@ -121,6 +130,12 @@ alias sc="sudo systemctl"
 alias scu="systemctl --user"
 alias sudo="sudo "
 alias cgp="cgproxy "
+alias pc="proxychains -q "
+alias with-proxy=' \
+    http_proxy=$MY_PROXY \
+    HTTP_PROXY=$MY_PROXY \
+    https_proxy=$MY_PROXY \
+    HTTPS_PROXY=$MY_PROXY '
 
 # Directory shortcuts
 hash -d config="$HOME/.config"
@@ -165,3 +180,4 @@ hash -d OneDrive="$HOME/OneDrive"
 __source "$HOME/.cargo/env"
 __source "$HOME/.opam/opam-init/init.zsh"
 __source "$HOME/.p10k.zsh"
+# eval "$(starship init zsh)"
