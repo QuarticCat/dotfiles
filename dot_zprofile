@@ -1,6 +1,0 @@
-path=(  # no need to export
-    "$HOME/.local/bin"
-    "$HOME/.ghcup/bin"
-    "/opt/riscv/bin"
-    $path
-)

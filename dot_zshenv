@@ -1,0 +1,19 @@
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+
+export INPUT_METHOD="fcitx5"
+export GTK_IM_MODULE="fcitx5"
+export QT_IM_MODULE="fcitx5"
+export XMODIFIERS="@im=fcitx5"
+
+export EDITOR="vim"
+export VISUAL="vim"
+
+path=(
+    "$HOME/.local/bin"
+    "$HOME/.cargo/bin"
+    "$HOME/.ghcup/bin"
+    "/opt/riscv/bin"
+    $path
+)

@@ -9,7 +9,7 @@ __source() {  # source if exist
 }
 
 # Start p10k instant prompt
-__source "$HOME/.cache/p10k-instant-prompt-${(%):-%n}.zsh"
+__source "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh"
 
 # Load plugins
 source "$HOME/.zinit/bin/zinit.zsh"
@@ -21,22 +21,21 @@ zinit for \
     https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zsh
 zinit svn for \
     OMZP::extract \
-    OMZP::pip
+    OMZP::pip \
+    # OMZP::cargo \
+    # OMZP::rustup
 zinit as'completion' for \
     OMZP::ripgrep/_ripgrep \
-    OMZP::cargo/_cargo \
     OMZP::rust/_rust \
-    OMZP::rustup/_rustup \
     OMZP::docker/_docker \
     OMZP::docker-compose/_docker-compose
 zinit light-mode depth'1' for \
     romkatv/powerlevel10k \
     Aloxaf/fzf-tab \
-    zdharma/fast-syntax-highlighting \
+    zdharma-continuum/fast-syntax-highlighting \
     zsh-users/zsh-autosuggestions \
     zsh-users/zsh-history-substring-search \
     MichaelAquilina/zsh-you-should-use \
-    MichaelAquilina/zsh-autoswitch-virtualenv \
     hlissner/zsh-autopair
 zicompinit
 zicdreplay
@@ -49,8 +48,8 @@ setopt auto_pushd
 setopt pushd_ignore_dups
 setopt pushd_minus
 setopt interactive_comments  # enable comments in interactive shells
-setopt multios               # enable multiple redirections (e.g. `>foo >bar`)
-setopt no_bang_hist          # disable history expansion (e.g. `!1`)
+setopt multios               # enable multiple redirections
+setopt no_bang_hist          # disable history expansion
 setopt ksh_option_print      # make `setopt` output all options
 WORDCHARS='*?.[]~-_=&;!#$%^(){}<>'
 
@@ -72,10 +71,11 @@ _complete_global_alias() {
     return 1
 }
 zstyle ':completion:*' completer _complete_global_alias _complete _ignored
+zstyle ':completion:*:git-checkout:*' sort false
+zstyle ':completion:*:git-rebase:*' sort false
 
 # General env variables
-export MY_PROXY="127.0.0.1:1999"
-export EDITOR="vim"
+MY_PROXY="127.0.0.1:1999"
 
 # # Configure starship
 # __my_starship_precmd() {
@@ -87,7 +87,7 @@ export EDITOR="vim"
 # precmd_functions+=(__my_starship_precmd)
 
 # Configure fzf
-export FZF_DEFAULT_OPTS="--ansi --height=60% --layout=reverse --cycle --bind=tab:accept"
+export FZF_DEFAULT_OPTS="--ansi --height=60% --reverse --cycle --bind=tab:accept"
 
 # Configure fzf-tab
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
@@ -95,8 +95,6 @@ zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
 zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
-zstyle ':completion:*:git-checkout:*' sort false
-zstyle ':completion:*:git-rebase:*' sort false
 
 # Configure zsh-autoswitch-virtualenv
 export AUTOSWITCH_VIRTUAL_ENV_DIR="virtualenv"
@@ -129,7 +127,7 @@ bindkey -s '^N' '^Q cd "${$(xplr):-.}" \n'  # [Ctrl-N] run xplr to navigate
 # Aliases
 unalias zi zini zpl zplg  # from zinit
 alias l="exa -lah --group-directories-first --git --time-style=long-iso"
-alias tree="exa -lahTI '.git' --group-directories-first --git --time-style=long-iso"
+alias lt="l -TI '.git'"
 alias clc="clipcopy"   # from OMZL::clipboard.zsh
 alias clp="clippaste"  # from OMZL::clipboard.zsh
 alias sc="sudo systemctl"
@@ -137,6 +135,7 @@ alias scu="systemctl --user"
 alias sudo="sudo "
 alias cgp="cgproxy "
 alias pc="proxychains -q "
+alias open="xdg-open"
 alias with-proxy=' \
     http_proxy=$MY_PROXY \
     HTTP_PROXY=$MY_PROXY \
@@ -146,8 +145,9 @@ alias -g :bg="&>/dev/null &"
 alias -g :bg!="&>/dev/null &!"
 
 # Directory shortcuts
-hash -d config="$HOME/.config"
-hash -d cache="$HOME/.cache"
+hash -d config="$XDG_CONFIG_HOME"
+hash -d cache="$XDG_CACHE_HOME"
+hash -d data="$XDG_DATA_HOME"
 hash -d Downloads="$HOME/Downloads"
 hash -d Workspace="$HOME/Workspace"
 hash -d Temp="$HOME/Workspace/Code/Temp"
@@ -166,7 +166,7 @@ f() {  # Some fzf utilities
     )   ;;
     hw) (
         cd ~Homework
-        selected="$(fd --type=directory | fzf)" &&
+        selected="$(fd --type=directory --max-depth=2 | fzf)" &&
         dolphin "$selected" :bg!
     )   ;;
     *)
