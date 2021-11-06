@@ -12,53 +12,49 @@ __source() {  # source if exist
 __source "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh"
 
 # Load plugins
-source "$HOME/.zinit/bin/zinit.zsh"
-zinit for \
-    OMZL::completion.zsh \
-    OMZL::key-bindings.zsh \
-    OMZL::clipboard.zsh \
-    OMZP::sudo \
-    https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zsh
-zinit svn for \
-    OMZP::extract \
-    OMZP::pip \
-    # OMZP::cargo \
-    # OMZP::rustup
-zinit as'completion' for \
-    OMZP::ripgrep/_ripgrep \
-    OMZP::rust/_rust \
-    OMZP::docker/_docker \
-    OMZP::docker-compose/_docker-compose
-zinit light-mode depth'1' for \
-    romkatv/powerlevel10k \
-    Aloxaf/fzf-tab \
-    zdharma-continuum/fast-syntax-highlighting \
-    zsh-users/zsh-autosuggestions \
-    zsh-users/zsh-history-substring-search \
-    MichaelAquilina/zsh-you-should-use \
-    hlissner/zsh-autopair
-zicompinit
-zicdreplay
+source "$HOME/.zgenom/zgenom.zsh"
+if ! zgenom saved; then
+    zgenom ohmyzsh lib/completion.zsh
+    zgenom ohmyzsh lib/key-bindings.zsh
+    zgenom ohmyzsh lib/clipboard.zsh
 
-# TODO: Add explanation to all `setopt` commands
+    zgenom ohmyzsh plugins/extract
+    zgenom ohmyzsh plugins/pip
+    # zgenom ohmyzsh plugins/ripgrep
+    # zgenom ohmyzsh plugins/rust
+    # zgenom ohmyzsh plugins/docker
+    # zgenom ohmyzsh plugins/docker-compose
+
+    zgenom load romkatv/powerlevel10k powerlevel10k
+    zgenom load junegunn/fzf shell/key-bindings.zsh
+    zgenom load Aloxaf/fzf-tab
+    zgenom load zdharma-continuum/fast-syntax-highlighting
+    zgenom load zsh-users/zsh-autosuggestions
+    zgenom load zsh-users/zsh-history-substring-search
+    zgenom load hlissner/zsh-autopair
+
+    zgenom save
+fi
+
+# TODO: Add completions for rustup and cargo by `rustup completions`
 
 # Configure zsh misc
-setopt auto_cd
-setopt auto_pushd
-setopt pushd_ignore_dups
-setopt pushd_minus
-setopt interactive_comments  # enable comments in interactive shells
-setopt multios               # enable multiple redirections
-setopt no_bang_hist          # disable history expansion
-setopt ksh_option_print      # make `setopt` output all options
+setopt auto_cd               # simply type dir name to cd
+setopt auto_pushd            # make cd behaves like pushd
+setopt pushd_ignore_dups     # don't pushd duplicates
+setopt pushd_minus           # exchange the meanings of `+` and `-` in pushd
+setopt interactive_comments  # comments in interactive shells
+setopt multios               # multiple redirections
+setopt ksh_option_print      # make setopt output all options
 WORDCHARS='*?.[]~-_=&;!#$%^(){}<>'
 
 # Configure zsh history
-setopt hist_save_no_dups
-setopt hist_ignore_dups
-setopt hist_ignore_space
-setopt hist_verify
-setopt share_history
+setopt hist_ignore_all_dups  # no duplicates
+setopt hist_save_no_dups     # don't save duplicates
+setopt hist_ignore_space     # no commands starting with space
+setopt hist_reduce_blanks    # remove all unneccesary spaces
+setopt sharehistory          # share history between sessions
+setopt no_bang_hist          # no history expansion
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
 SAVEHIST=10000
@@ -96,9 +92,6 @@ zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
 zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
 
-# Configure zsh-autoswitch-virtualenv
-export AUTOSWITCH_VIRTUAL_ENV_DIR="virtualenv"
-
 # Configure fast-syntax-highlighting
 export FAST_HIGHLIGHT[chroma-man]=""  # chroma-man will stuck history browsing
 
@@ -115,7 +108,7 @@ export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
 
 # Configure npm
 export NPM_CONFIG_PREFIX="$HOME/.local"
-export NPM_CONFIG_CACHE="$HOME/.cache/npm"
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
 export NPM_CONFIG_PROXY="$MY_PROXY"
 
 # Key bindings
@@ -125,7 +118,6 @@ bindkey '^Y' redo                # [Ctrl-Y]
 bindkey -s '^N' '^Q cd "${$(xplr):-.}" \n'  # [Ctrl-N] run xplr to navigate
 
 # Aliases
-unalias zi zini zpl zplg  # from zinit
 alias l="exa -lah --group-directories-first --git --time-style=long-iso"
 alias lt="l -TI '.git'"
 alias clc="clipcopy"   # from OMZL::clipboard.zsh
@@ -212,6 +204,7 @@ reboot-to-windows() {
 # }
 
 # Load scripts
+eval "$(direnv hook zsh)"
 __source "$HOME/.opam/opam-init/init.zsh"
 __source "$HOME/.p10k.zsh"
 # eval "$(starship init zsh)"
