@@ -2,31 +2,33 @@
 # # if (not in tmux) and (interactive env) and (not embedded terminal)
 # [[ -z $TMUX && $- == *i* && ! $(</proc/$PPID/cmdline) =~ "dolphin|vim|emacs|code" ]] && tmux
 
-# Internal functions
-__source() {  # source if exist
-    # -f: file exists and readable
-    [[ -f $1 ]] && source "$1"
-}
-
 # Start p10k instant prompt
-__source "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh"
+include -f $XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh
 
 # Load plugins
-source "$HOME/.zgenom/zgenom.zsh"
+include -f ~/.zgenom/zgenom.zsh
+zgenom autoupdate  # every 7 days
 if ! zgenom saved; then
     zgenom ohmyzsh lib/completion.zsh
     zgenom ohmyzsh lib/key-bindings.zsh
     zgenom ohmyzsh lib/clipboard.zsh
+    zgenom load junegunn/fzf shell/key-bindings.zsh
 
     zgenom ohmyzsh plugins/extract
     zgenom ohmyzsh plugins/pip
-    # zgenom ohmyzsh plugins/ripgrep
-    # zgenom ohmyzsh plugins/rust
-    # zgenom ohmyzsh plugins/docker
-    # zgenom ohmyzsh plugins/docker-compose
+
+    mkdir -p $ZGEN_DIR/my_comp  # TODO: move to ZDOTDIR in the future
+    >$ZGEN_DIR/my_comp/_rustup rustup completions zsh rustup
+    >$ZGEN_DIR/my_comp/_cargo  rustup completions zsh cargo
+
+    zgenom ohmyzsh --completion plugins/ripgrep
+    zgenom ohmyzsh --completion plugins/rust
+    zgenom ohmyzsh --completion plugins/docker
+    zgenom ohmyzsh --completion plugins/docker-compose
+    zgenom load --completion spwhitt/nix-zsh-completions
+    zgenom load --completion $ZGEN_DIR/my_comp
 
     zgenom load romkatv/powerlevel10k powerlevel10k
-    zgenom load junegunn/fzf shell/key-bindings.zsh
     zgenom load Aloxaf/fzf-tab
     zgenom load zdharma-continuum/fast-syntax-highlighting
     zgenom load zsh-users/zsh-autosuggestions
@@ -36,8 +38,6 @@ if ! zgenom saved; then
     zgenom save
 fi
 
-# TODO: Add completions for rustup and cargo by `rustup completions`
-
 # Configure zsh misc
 setopt auto_cd               # simply type dir name to cd
 setopt auto_pushd            # make cd behaves like pushd
@@ -46,16 +46,16 @@ setopt pushd_minus           # exchange the meanings of `+` and `-` in pushd
 setopt interactive_comments  # comments in interactive shells
 setopt multios               # multiple redirections
 setopt ksh_option_print      # make setopt output all options
-WORDCHARS='*?.[]~-_=&;!#$%^(){}<>'
+WORDCHARS='*?.~-_=&!#$%^<>'
 
 # Configure zsh history
 setopt hist_ignore_all_dups  # no duplicates
 setopt hist_save_no_dups     # don't save duplicates
 setopt hist_ignore_space     # no commands starting with space
 setopt hist_reduce_blanks    # remove all unneccesary spaces
-setopt sharehistory          # share history between sessions
+setopt share_history         # share history between sessions
 setopt no_bang_hist          # no history expansion
-HISTFILE="$HOME/.zsh_history"
+HISTFILE=~/.zsh_history
 HISTSIZE=50000
 SAVEHIST=10000
 
@@ -71,7 +71,7 @@ zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:git-rebase:*' sort false
 
 # General env variables
-MY_PROXY="127.0.0.1:1999"
+MY_PROXY='127.0.0.1:1999'
 
 # # Configure starship
 # __my_starship_precmd() {
@@ -83,7 +83,7 @@ MY_PROXY="127.0.0.1:1999"
 # precmd_functions+=(__my_starship_precmd)
 
 # Configure fzf
-export FZF_DEFAULT_OPTS="--ansi --height=60% --reverse --cycle --bind=tab:accept"
+export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'
 
 # Configure fzf-tab
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
@@ -93,76 +93,75 @@ zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3
 zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
 
 # Configure fast-syntax-highlighting
-export FAST_HIGHLIGHT[chroma-man]=""  # chroma-man will stuck history browsing
+unset 'FAST_HIGHLIGHT[chroma-man]'  # chroma-man will stuck history browsing
 
 # Configure bat
-export BAT_THEME="OneHalfDark"
+export BAT_THEME=OneHalfDark
 
 # Configure man-pages
-export MANPAGER="sh -c 'col -bx | bat -l man -p --theme=\"Monokai Extended\"'"
-export MANROFFOPT="-c"
+export MANPAGER='sh -c "col -bx | bat -l man -p --theme=Monokai\ Extended"'
+export MANROFFOPT='-c'
 
 # Configure rustup
-export RUSTUP_DIST_SERVER="https://rsproxy.cn"
-export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
+export RUSTUP_DIST_SERVER='https://rsproxy.cn'
+export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'
 
 # Configure npm
-export NPM_CONFIG_PREFIX="$HOME/.local"
-export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
-export NPM_CONFIG_PROXY="$MY_PROXY"
+export NPM_CONFIG_PREFIX=~/.local
+export NPM_CONFIG_CACHE=$XDG_CACHE_HOME/npm
+export NPM_CONFIG_PROXY=$MY_PROXY
 
 # Key bindings
 bindkey '^H' backward-kill-word  # [Ctrl-Backspace/H]
 bindkey '^Z' undo                # [Ctrl-Z]
 bindkey '^Y' redo                # [Ctrl-Y]
-bindkey -s '^N' '^Q cd "${$(xplr):-.}" \n'  # [Ctrl-N] run xplr to navigate
+bindkey -s '^N' '^Q cd ${$(xplr):-.} \n'  # [Ctrl-N] run xplr to navigate
 
 # Aliases
-alias l="exa -lah --group-directories-first --git --time-style=long-iso"
-alias lt="l -TI '.git'"
-alias clc="clipcopy"   # from OMZL::clipboard.zsh
-alias clp="clippaste"  # from OMZL::clipboard.zsh
-alias sc="sudo systemctl"
-alias scu="systemctl --user"
-alias sudo="sudo "
-alias cgp="cgproxy "
-alias pc="proxychains -q "
-alias open="xdg-open"
+alias l='exa -lah --group-directories-first --git --time-style=long-iso'
+alias lt='l -TI .git'
+alias clc='clipcopy'
+alias clp='clippaste'
+alias sc='sudo systemctl'
+alias scu='systemctl --user'
+alias sudo='sudo '
+alias cgp='cgproxy '
+alias pc='proxychains -q '
+alias open='xdg-open'
 alias with-proxy=' \
     http_proxy=$MY_PROXY \
     HTTP_PROXY=$MY_PROXY \
     https_proxy=$MY_PROXY \
     HTTPS_PROXY=$MY_PROXY '
-alias -g :bg="&>/dev/null &"
-alias -g :bg!="&>/dev/null &!"
+alias -g :n='/dev/null'
+alias -g :bg='&>/dev/null &'
+alias -g :bg!='&>/dev/null &!'
 
 # Directory shortcuts
-hash -d config="$XDG_CONFIG_HOME"
-hash -d cache="$XDG_CACHE_HOME"
-hash -d data="$XDG_DATA_HOME"
-hash -d Downloads="$HOME/Downloads"
-hash -d Workspace="$HOME/Workspace"
-hash -d Temp="$HOME/Workspace/Code/Temp"
-hash -d NotMe="$HOME/Workspace/Code/NotMe"
-hash -d QuarticCat="$HOME/Workspace/Code/QuarticCat"
-hash -d Homework="$HOME/Workspace/Homework"
-hash -d OneDrive="$HOME/OneDrive"
+hash -d config=$XDG_CONFIG_HOME
+hash -d cache=$XDG_CACHE_HOME
+hash -d data=$XDG_DATA_HOME
+hash -d OneDrive=~/OneDrive
+hash -d Downloads=~/Downloads
+hash -d Workspace=~/Workspace
+for p in ~Workspace/*; hash -d $(basename $p)=$p
+for p in ~Code/*; hash -d $(basename $p)=$p
 
 # My functions
 f() {  # Some fzf utilities
     case $1 in
     doc) (
         cd ~OneDrive/Documents
-        selected="$(fd --type=file | fzf)" &&
-        okular "$selected" :bg!
+        selected=$(fd --type=file | fzf) &&
+        okular $selected :bg!
     )   ;;
     hw) (
         cd ~Homework
-        selected="$(fd --type=directory --max-depth=2 | fzf)" &&
-        dolphin "$selected" :bg!
+        selected=$(fd --type=directory --max-depth=2 | fzf) &&
+        dolphin $selected :bg!
     )   ;;
     *)
-        echo "Unknown argument!" >&2
+        echo 'Unknown argument!' >&2
         return 1
         ;;
     esac
@@ -173,8 +172,8 @@ nbnhhsh() {
 }
 reboot-to-windows() {
     # Modified from https://unix.stackexchange.com/questions/43196
-    local windows_title="$(sudo rg -i windows /boot/grub/grub.cfg | cut -d "'" -f 2)"
-    sudo grub-reboot "$windows_title" && sudo reboot
+    local windows_title=$(sudo rg -i windows /boot/grub/grub.cfg | cut -d "'" -f 2)
+    sudo grub-reboot $windows_title && sudo reboot
 }
 # rfv() {
 #     # Modified from https://github.com/junegunn/fzf/blob/master/ADVANCED.md#using-fzf-as-the-secondary-filter
@@ -204,7 +203,6 @@ reboot-to-windows() {
 # }
 
 # Load scripts
-eval "$(direnv hook zsh)"
-__source "$HOME/.opam/opam-init/init.zsh"
-__source "$HOME/.p10k.zsh"
-# eval "$(starship init zsh)"
+include -c 'direnv hook zsh'
+include -f ~/.p10k.zsh
+# include -c 'starship init zsh'

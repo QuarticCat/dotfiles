@@ -9,6 +9,9 @@ pager = less -+FX
 [init]
 defaultBranch = main
 
+[http]
+proxy = socks5://127.0.0.1:1089
+
 [commit]
 gpgsign = true
 
@@ -38,4 +41,8 @@ quick-update-amend = ! \
 delete-branch = ! \
     git branch -d \"$1\" && \
     git push --delete origin \"$1\" && \
+    :
+pr = ! \
+    git fetch origin pull/$1/head:pr-$1 && \
+    git checkout pr-$1 && \
     :
