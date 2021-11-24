@@ -102,6 +102,9 @@ ssh.pf \
     ~/.ssh 'config*'
 ssh.enc 'config-private'
 
+git.pf \
+    ~ '.gitconfig'
+
 cargo.pf \
     ~/.cargo 'config.toml' \
     ~/.config 'user-tmpfiles.d/cargo.conf'

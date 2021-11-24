@@ -1,0 +1,48 @@
+[user]
+name = QuarticCat
+email = QuarticCat@protonmail.com
+signingkey = 5F084C933EA64ACE
+
+[core]
+pager = less -+FX
+excludesFile = ~/.gitignore_global
+
+[init]
+defaultBranch = main
+
+[http]
+proxy = socks5://127.0.0.1:1089
+
+[commit]
+gpgsign = true
+
+[credential]
+helper = cache --timeout=604800
+
+[alias]
+rollback = reset --hard
+uncommit = reset --soft HEAD@{1}
+update-submodules = submodule update --rebase --remote
+graph = log \
+    --graph \
+    --abbrev-commit \
+    --decorate \
+    --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+quick-update = ! \
+    git add -A && \
+    git commit -m \"$1\" && \
+    git push origin && \
+    :
+quick-update-amend = ! \
+    git add -A && \
+    git commit --amend ${1+\"-m\"} ${1-\"--no-edit\"} && \
+    git push --force origin && \
+    :
+delete-branch = ! \
+    git branch -d \"$1\" && \
+    git push --delete origin \"$1\" && \
+    :
+pr = ! \
+    git fetch origin pull/$1/head:pr-$1 && \
+    git checkout pr-$1 && \
+    :
