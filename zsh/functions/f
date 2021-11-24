@@ -1,0 +1,25 @@
+##
+## Some fzf utilities
+##
+
+doc() {
+    local base=~OneDrive/Documents
+    local selected=$(
+        fd --base-directory=$base --type=file | fzf
+    )
+    if [[ $selected != '' ]]; then
+        okular $base/$selected &>/dev/null &!
+    fi
+}
+
+hw() {
+    local base=~Homework
+    local selected=$(
+        fd --base-directory=$base --type=directory --max-depth=2 | fzf
+    )
+    if [[ $selected != '' ]]; then
+        dolphin $base/$selected &>/dev/null &!
+    fi
+}
+
+$@

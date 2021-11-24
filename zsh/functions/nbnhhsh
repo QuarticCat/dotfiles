@@ -1,0 +1,2 @@
+# "'$*'": join arguments into a single string with spaces
+proxychains -q xh --body post https://lab.magiconch.com/api/nbnhhsh/guess text="'$*'"

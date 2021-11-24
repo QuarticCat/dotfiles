@@ -25,7 +25,7 @@ export XMODIFIERS='@im=fcitx5'
 export EDITOR='vim'
 export VISUAL='vim'
 
-# ZDOTDIR="$HOME"
+ZDOTDIR=$XDG_CONFIG_HOME/zsh
 
 path=(
     ~/.local/bin

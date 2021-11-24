@@ -1,0 +1,4 @@
+# Ref: https://unix.stackexchange.com/questions/43196
+
+windows_title=$(sudo rg -i windows /boot/grub/grub.cfg | cut -d "'" -f 2)
+sudo grub-reboot $windows_title && sudo reboot

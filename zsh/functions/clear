@@ -1,0 +1,2 @@
+printf "$terminfo[cud1]%.0s" {1..$LINES}  # cursor down
+printf "$terminfo[cuu1]%.0s" {1..$LINES}  # cursor up
