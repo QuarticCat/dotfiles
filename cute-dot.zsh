@@ -33,8 +33,8 @@ _sync() {
     echo $CYAN"$pf_name[$1] <- ${(D)pf_loc[$1]}"$NC
     local dst=$DOT_DIR/$pf_name[$1]
     local src=$pf_loc[$1]
-    local pat=(${(s/;/)pf_pat[$1]})
-    cd $src && rsync $=rsync_opt -R $~=pat $dst/
+    local pat=$pf_pat[$1]
+    cd $src &>/dev/null && rsync $=rsync_opt -R $~=pat $dst/
     echo
 }
 
@@ -42,30 +42,30 @@ _apply() {
     echo $CYAN"$pf_name[$1] -> ${(D)pf_loc[$1]}"$NC
     local dst=$DOT_DIR/$pf_name[$1]
     local src=$pf_loc[$1]
-    local pat=(${(s/;/)pf_pat[$1]})
-    cd $dst && rsync $=rsync_opt -R $~=pat $src/
+    local pat=$pf_pat[$1]
+    cd $dst &>/dev/null && rsync $=rsync_opt -R $~=pat $src/
     echo
 }
 
 _encrypt() {
-    local name=$1
-    local pat=(${(s/;/)enc_pat[$1]})
-    cd $DOT_DIR/$name &>/dev/null &&
+    local dir=$DOT_DIR/$1
+    local pat=$enc_pat[$1]
+    cd $dir &>/dev/null &&
     for f in $~=pat; {
         [[ -f $f ]] &&
-        gpg -e -r $gpg_rcpt $f &&
-        rm $f
+        gpg -e -r $gpg_rcpt -o $f.temp $f &&
+        mv -f $f.temp $f
     }
 }
 
 _decrypt() {
-    local name=$1
-    local pat=(${(s/;/)enc_pat[$1]})
-    cd $DOT_DIR/$name &>/dev/null &&
-    for f in $~^=pat.gpg; {
+    local dir=$DOT_DIR/$1
+    local pat=$enc_pat[$1]
+    cd $dir &>/dev/null &&
+    for f in $~=pat; {
         [[ -f $f ]] &&
-        gpg -d -o ${f%.gpg} $f &&
-        rm $f
+        gpg -d -o $f.temp $f &&
+        mv -f $f.temp $f
     }
 }
 
@@ -96,7 +96,7 @@ gpg_rcpt='QuarticCat'  # gpg recipient
 
 zsh.pf \
     ~ '.zshenv' \
-    ~/.config/zsh '.zshrc; *.zsh; (^.*)/(^*.zwc)'
+    ~/.config/zsh '.zshrc *.zsh (^.*)/(^*.zwc)'
 
 ssh.pf \
     ~/.ssh 'config*'
