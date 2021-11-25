@@ -27,6 +27,7 @@ export VISUAL='vim'
 
 ZDOTDIR=$XDG_CONFIG_HOME/zsh
 
+typeset -U path  # set unique
 path=(
     ~/.local/bin
     ~/.cargo/bin

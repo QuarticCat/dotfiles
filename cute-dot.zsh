@@ -29,44 +29,40 @@ _add-enc() {
 }
 alias -s enc='_add-enc'
 
+_rsync-pat() {
+    cd $1 &>/dev/null && rsync $=rsync_opt -R $~=3 $2/
+}
+
 _sync() {
     echo $CYAN"$pf_name[$1] <- ${(D)pf_loc[$1]}"$NC
-    local dst=$DOT_DIR/$pf_name[$1]
-    local src=$pf_loc[$1]
-    local pat=$pf_pat[$1]
-    cd $src &>/dev/null && rsync $=rsync_opt -R $~=pat $dst/
+    _rsync-pat $pf_loc[$1] $DOT_DIR/$pf_name[$1] $pf_pat[$1]
     echo
 }
 
 _apply() {
     echo $CYAN"$pf_name[$1] -> ${(D)pf_loc[$1]}"$NC
-    local dst=$DOT_DIR/$pf_name[$1]
-    local src=$pf_loc[$1]
-    local pat=$pf_pat[$1]
-    cd $dst &>/dev/null && rsync $=rsync_opt -R $~=pat $src/
+    _rsync-pat $DOT_DIR/$pf_name[$1] $pf_loc[$1] $pf_pat[$1]
     echo
 }
 
-_encrypt() {
-    local dir=$DOT_DIR/$1
-    local pat=$enc_pat[$1]
+_gpg-pat() {
+    local opt=$1
+    local dir=$DOT_DIR/$2
+    local pat=$enc_pat[$2]
     cd $dir &>/dev/null &&
     for f in $~=pat; {
         [[ -f $f ]] &&
-        gpg -e -r $gpg_rcpt -o $f.temp $f &&
+        gpg $=opt -o $f.temp $f &&
         mv -f $f.temp $f
     }
 }
 
+_encrypt() {
+    _gpg-pat "-e -r $gpg_rcpt" $1
+}
+
 _decrypt() {
-    local dir=$DOT_DIR/$1
-    local pat=$enc_pat[$1]
-    cd $dir &>/dev/null &&
-    for f in $~=pat; {
-        [[ -f $f ]] &&
-        gpg -d -o $f.temp $f &&
-        mv -f $f.temp $f
-    }
+    _gpg-pat "-d" $1
 }
 
 _for-each-pf() {
