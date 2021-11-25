@@ -13,7 +13,7 @@ pf_pat=()   # array of profile patterns
 
 declare -A enc_pat  # associative array of encrypt patterns
 
-_add-pf() {
+_add-pf() {  # <pf-name> {<pf-loc> <pf-pat>}...
     local name=${1%.pf}
     for i in {2..$#@..2}; {
         pf_name+=($name)
@@ -23,49 +23,47 @@ _add-pf() {
 }
 alias -s pf='_add-pf'
 
-_add-enc() {
+_add-enc() {  # <pf-name> <pat>
     local name=${1%.enc}
     enc_pat[$name]=$2
 }
 alias -s enc='_add-enc'
 
-_rsync-pat() {
-    cd $1 &>/dev/null && rsync $=rsync_opt -R $~=3 $2/
+_rsync-pat() {  # <src> <dst> <pat>
+    cd $1 &>/dev/null &&
+    rsync $=rsync_opt -R $~=3 $2/
 }
 
-_sync() {
+_sync() {  # <pf-idx>
     echo $CYAN"$pf_name[$1] <- ${(D)pf_loc[$1]}"$NC
     _rsync-pat $pf_loc[$1] $DOT_DIR/$pf_name[$1] $pf_pat[$1]
     echo
 }
 
-_apply() {
+_apply() {  # <pf-idx>
     echo $CYAN"$pf_name[$1] -> ${(D)pf_loc[$1]}"$NC
     _rsync-pat $DOT_DIR/$pf_name[$1] $pf_loc[$1] $pf_pat[$1]
     echo
 }
 
-_gpg-pat() {
-    local opt=$1
-    local dir=$DOT_DIR/$2
-    local pat=$enc_pat[$2]
-    cd $dir &>/dev/null &&
-    for f in $~=pat; {
+_gpg-pat() {  # <gpg-opt> <dir> <pat>
+    cd $2 &>/dev/null &&
+    for f in $~=3; {
         [[ -f $f ]] &&
-        gpg $=opt -o $f.temp $f &&
+        gpg $=1 -o $f.temp $f &&
         mv -f $f.temp $f
     }
 }
 
-_encrypt() {
-    _gpg-pat "-e -r $gpg_rcpt" $1
+_encrypt() {  # <pf-name>
+    _gpg-pat "-e -r $gpg_rcpt" $DOT_DIR/$1 $enc_pat[$1]
 }
 
-_decrypt() {
-    _gpg-pat "-d" $1
+_decrypt() {  # <pf-name>
+    _gpg-pat "-d"  $DOT_DIR/$1 $enc_pat[$1]
 }
 
-_for-each-pf() {
+_for-each-pf() {  # <func> {'--all'|<pf-name>...}
     local func=$1; shift
     if [[ $1 == --all ]] {
         for n in ${(k)enc_pat}; _decrypt $n
@@ -101,6 +99,9 @@ ssh.enc 'config-private'
 git.pf \
     ~ '.gitconfig'
 
+proxychains.pf \
+    ~/.proxychains 'proxychains.conf'
+
 cargo.pf \
     ~/.cargo 'config.toml' \
     ~/.config 'user-tmpfiles.d/cargo.conf'
@@ -112,11 +113,11 @@ stack.pf \
     ~/.stack 'config.yaml' \
     ~/.config 'user-tmpfiles.d/stack.conf'
 
+pip.pf \
+    ~/.config/pip 'pip.conf'
+
 ipython.pf \
     ~/.ipython/profile_default 'ipython_config.py'
-
-proxychains.pf \
-    ~/.proxychains 'proxychains.conf'
 
 direnv.pf \
     ~/.config/direnv 'direnvrc'
@@ -124,14 +125,11 @@ direnv.pf \
 fontconfig.pf \
     ~/.config/fontconfig 'fonts.conf'
 
-paru.pf \
-    ~/.config/paru 'paru.conf'
-
-pip.pf \
-    ~/.config/pip 'pip.conf'
-
 pacman.pf \
     /etc 'pacman.conf'
+
+paru.pf \
+    ~/.config/paru 'paru.conf'
 
 docker.pf \
     /etc/docker 'daemon.json'
