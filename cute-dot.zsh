@@ -7,25 +7,25 @@ NC='\033[0m'  # No Color
 
 DOT_DIR=${0:a:h}  # the directory of this script
 
-pf_name=()  # array of profile names
-pf_loc=()   # array of profile locations
-pf_pat=()   # array of profile patterns
+pf_loc=()  # profile locations
+pf_pat=()  # profile patterns
 
-declare -A enc_pat  # associative array of encrypt patterns
+declare -A pf_map   # <pf-name> : <indexes> (e.g. ' 1 2 3')
+declare -A enc_map  # <pf-name> : <pat>
 
 _add-pf() {  # <pf-name> {<pf-loc> <pf-pat>}...
     local name=${1%.pf}
     for i in {2..$#@..2}; {
-        pf_name+=($name)
         pf_loc+=($@[i])
         pf_pat+=($@[i+1])
+        pf_map[$name]+=" $#pf_loc"
     }
 }
 alias -s pf='_add-pf'
 
 _add-enc() {  # <pf-name> <pat>
     local name=${1%.enc}
-    enc_pat[$name]=$2
+    enc_map[$name]=$2
 }
 alias -s enc='_add-enc'
 
@@ -34,16 +34,20 @@ _rsync-pat() {  # <src> <dst> <pat>
     rsync $=rsync_opt -R $~=3 $2/
 }
 
-_sync() {  # <pf-idx>
-    echo $CYAN"$pf_name[$1] <- ${(D)pf_loc[$1]}"$NC
-    _rsync-pat $pf_loc[$1] $DOT_DIR/$pf_name[$1] $pf_pat[$1]
-    echo
+_sync() {  # <pf-name>
+    for i in ${=pf_map[$1]:1}; {
+        echo $CYAN"$1 <- ${(D)pf_loc[i]}"$NC
+        _rsync-pat $pf_loc[i] $DOT_DIR/$1 $pf_pat[i]
+        echo
+    }
 }
 
-_apply() {  # <pf-idx>
-    echo $CYAN"$pf_name[$1] -> ${(D)pf_loc[$1]}"$NC
-    _rsync-pat $DOT_DIR/$pf_name[$1] $pf_loc[$1] $pf_pat[$1]
-    echo
+_apply() {  # <pf-name>
+    for i in ${=pf_map[$1]:1}; {
+        echo $CYAN"$1 -> ${(D)pf_loc[i]}"$NC
+        _rsync-pat $DOT_DIR/$1 $pf_loc[i] $pf_pat[i]
+        echo
+    }
 }
 
 _gpg-pat() {  # <gpg-opt> <dir> <pat>
@@ -56,29 +60,33 @@ _gpg-pat() {  # <gpg-opt> <dir> <pat>
 }
 
 _encrypt() {  # <pf-name>
-    _gpg-pat "-e -r $gpg_rcpt" $DOT_DIR/$1 $enc_pat[$1]
+    _gpg-pat "-e -r $gpg_rcpt" $DOT_DIR/$1 $enc_map[$1]
 }
 
 _decrypt() {  # <pf-name>
-    _gpg-pat "-d"  $DOT_DIR/$1 $enc_pat[$1]
+    _gpg-pat "-d -q" $DOT_DIR/$1 $enc_map[$1]
+}
+
+_complete_sync() {  # <pf-name>
+    _decrypt $1 && _sync $1 && _encrypt $1
+}
+
+_complete_apply() {  # <pf-name>
+    _decrypt $1 && _apply $1 && _encrypt $1
 }
 
 _for-each-pf() {  # <func> {'--all'|<pf-name>...}
     local func=$1; shift
     if [[ $1 == --all ]] {
-        for n in ${(k)enc_pat}; _decrypt $n
-        for i in {1..$#pf_name}; $func $i
-        for n in ${(k)enc_pat}; _encrypt $n
+        for i in ${(k)pf_map}; $func $i
     } else {
-        for n in $@; [[ -v enc_pat[$n] ]] && _decrypt $n
-        for i in {1..$#pf_name}; (( $@[(Ie)$pf_name[i]] )) && $func $i
-        for n in $@; [[ -v enc_pat[$n] ]] && _encrypt $n
+        for i in ${(u)@}; [[ -v pf_map[$i] ]] && $func $i
     }
 }
 
 profile-list()  { printf '%s\n' ${(u)pf_name} }
-profile-sync()  { _for-each-pf _sync $@ }
-profile-apply() { _for-each-pf _apply $@ }
+profile-sync()  { _for-each-pf _complete_sync $@ }
+profile-apply() { _for-each-pf _complete_apply $@ }
 
 # -------------------------------- Config Begin --------------------------------
 
