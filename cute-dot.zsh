@@ -10,7 +10,7 @@ DOT_DIR=${0:a:h}  # the directory of this script
 pf_loc=()  # profile locations
 pf_pat=()  # profile patterns
 
-declare -A pf_map   # <pf-name> : <indexes> (e.g. ' 1 2 3')
+declare -A pf_map   # <pf-name> : <idxes> (e.g. ' 1 2 3')
 declare -A enc_map  # <pf-name> : <pat>
 
 _add-pf() {  # <pf-name> {<pf-loc> <pf-pat>}...
@@ -84,9 +84,9 @@ _for-each-pf() {  # <func> {'--all'|<pf-name>...}
     }
 }
 
-profile-list()  { printf '%s\n' ${(u)pf_name} }
-profile-sync()  { _for-each-pf _complete_sync $@ }
-profile-apply() { _for-each-pf _complete_apply $@ }
+cute-dot-list()  { printf '%s\n' ${(ko)pf_map} }
+cute-dot-sync()  { _for-each-pf _complete_sync $@ }
+cute-dot-apply() { _for-each-pf _complete_apply $@ }
 
 # -------------------------------- Config Begin --------------------------------
 
@@ -144,4 +144,4 @@ docker.pf \
 
 # --------------------------------- Config End ---------------------------------
 
-profile-$1 ${@:2}
+cute-dot-$1 ${@:2}
