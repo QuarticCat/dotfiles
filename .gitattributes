@@ -1,0 +1,1 @@
+ssh/config-private filter=git-crypt diff=git-crypt

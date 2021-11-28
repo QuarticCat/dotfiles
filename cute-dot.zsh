@@ -11,7 +11,6 @@ pf_loc=()  # profile locations
 pf_pat=()  # profile patterns
 
 declare -A pf_map   # <pf-name> : <idxes> (e.g. ' 1 2 3')
-declare -A enc_map  # <pf-name> : <pat>
 
 _add-pf() {  # <pf-name> {<pf-loc> <pf-pat>}...
     local name=${1%.pf}
@@ -22,12 +21,6 @@ _add-pf() {  # <pf-name> {<pf-loc> <pf-pat>}...
     }
 }
 alias -s pf='_add-pf'
-
-_add-enc() {  # <pf-name> <pat>
-    local name=${1%.enc}
-    enc_map[$name]=$2
-}
-alias -s enc='_add-enc'
 
 _rsync-pat() {  # <src> <dst> <pat>
     cd $1 &>/dev/null &&
@@ -50,32 +43,7 @@ _apply() {  # <pf-name>
     }
 }
 
-_gpg-pat() {  # <gpg-opt> <dir> <pat>
-    cd $2 &>/dev/null &&
-    for f in $~=3; {
-        [[ -f $f ]] &&
-        gpg $=1 -o $f.temp $f &&
-        mv -f $f.temp $f
-    }
-}
-
-_encrypt() {  # <pf-name>
-    _gpg-pat "-e -r $gpg_rcpt" $DOT_DIR/$1 $enc_map[$1]
-}
-
-_decrypt() {  # <pf-name>
-    _gpg-pat "-d -q" $DOT_DIR/$1 $enc_map[$1]
-}
-
-_complete_sync() {  # <pf-name>
-    _decrypt $1 && _sync $1 && _encrypt $1
-}
-
-_complete_apply() {  # <pf-name>
-    _decrypt $1 && _apply $1 && _encrypt $1
-}
-
-_for-each-pf() {  # <func> {'--all'|<pf-name>...}
+_for-each-pf() {  # <func> [--all | <pf-name>...]
     local func=$1; shift
     if [[ $1 == --all ]] {
         for i in ${(k)pf_map}; $func $i
@@ -85,14 +53,12 @@ _for-each-pf() {  # <func> {'--all'|<pf-name>...}
 }
 
 cute-dot-list()  { printf '%s\n' ${(ko)pf_map} }
-cute-dot-sync()  { _for-each-pf _complete_sync $@ }
-cute-dot-apply() { _for-each-pf _complete_apply $@ }
+cute-dot-sync()  { _for-each-pf _sync $@ }
+cute-dot-apply() { _for-each-pf _apply $@ }
 
 # -------------------------------- Config Begin --------------------------------
 
 rsync_opt='-ri'  # rsync options
-
-gpg_rcpt='QuarticCat'  # gpg recipient
 
 # profile list
 
@@ -102,10 +68,9 @@ zsh.pf \
 
 ssh.pf \
     ~/.ssh 'config*'
-ssh.enc 'config-private'
 
 git.pf \
-    ~ '.gitconfig'
+    ~ '.gitconfig .gitignore_global'
 
 proxychains.pf \
     ~/.proxychains 'proxychains.conf'
