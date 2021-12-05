@@ -10,7 +10,7 @@ layout_python-venv() {
         VIRTUAL_ENV=$(realpath "${VIRTUAL_ENV}")
     else
         local python_version
-        python_version=$("$python" -c "import platform; print(platform.python_version())")
+        python_version=$("$python" -c "import sys; v = sys.version_info; print(f'{v.major}.{v.minor}')")
         if [[ -z $python_version ]]; then
             log_error "Could not detect Python version"
             return 1

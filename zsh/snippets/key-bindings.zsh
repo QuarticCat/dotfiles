@@ -9,26 +9,24 @@ bindkey '^A' vi-beginning-of-line # [Ctrl-A]
 bindkey '^E' vi-end-of-line       # [Ctrl-E]
 bindkey ' ' magic-space           # [Space] do history expansion
 
+bindkey -r '^['  # [Esc]
+
 # from zsh-history-substring-search
 bindkey '^[[A' history-substring-search-up    # [UpArrow]
 bindkey '^[[B' history-substring-search-down  # [DownArrow]
 
-# [Enter] clear screen if no input
-# magic-enter() {
-#     # Ref: https://superuser.com/questions/1389834
-#     if [[ $BUFFER == '' ]]; then
-#         local prompt_height=$(echo -n ${(%%)PS1} | wc -l)
-#         local lines=$((LINES - prompt_height))
-#         printf "$terminfo[cud1]%.0s" {1..$lines}  # cursor down
-#         printf "$terminfo[cuu1]%.0s" {1..$lines}  # cursor up
-#         zle reset-prompt
-#     else
-#         zle accept-line
-#     fi
-# }
-# zle -N magic-enter
-# bindkey '^M' magic-enter
-# FIXME: highlight of zsh-autosuggestions is incorrect
+# [Ctrl+L] clear screen while maintaining scrollback
+fixed-clear-screen() {
+    # Ref: https://superuser.com/questions/1389834
+    # FIXME: works incorrectly in tmux
+    local prompt_height=$(echo -n ${(%%)PS1} | wc -l)
+    local lines=$((LINES - prompt_height))
+    printf "$terminfo[cud1]%.0s" {1..$lines}  # cursor down
+    printf "$terminfo[cuu1]%.0s" {1..$lines}  # cursor up
+    zle reset-prompt
+}
+zle -N fixed-clear-screen
+bindkey '^L' fixed-clear-screen
 
 # [Ctrl-R] search history by fzf-tab
 fzf-history-search() {
@@ -37,9 +35,9 @@ fzf-history-search() {
         fc -rl 1 |
         ftb-tmux-popup -n '2..' --tiebreak=index --prompt='cmd> ' ${BUFFER:+-q$BUFFER}
     )
-    if [[ $selected != '' ]]; then
+    if [[ $selected != '' ]] {
         zle vi-fetch-history -n $selected
-    fi
+    }
     zle reset-prompt
 }
 zle -N fzf-history-search
@@ -49,9 +47,9 @@ bindkey '^R' fzf-history-search
 bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
 # xplr-navigate() {
 #     local dir=$(xplr)
-#     if [[ $dir != '' ]]; then
+#     if [[ $dir != '' ]] {
 #         cd -- $dir
-#     fi
+#     }
 #     zle reset-prompt
 # }
 # zle -N xplr-navigate

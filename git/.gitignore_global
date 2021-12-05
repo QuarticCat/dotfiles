@@ -2,6 +2,7 @@
 .vscode
 
 .ccls-cache
+.direnv
 
 cmake-build-*
 compile_commands.json

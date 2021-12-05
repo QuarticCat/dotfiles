@@ -1,7 +1,5 @@
 #!/bin/zsh
 
-setopt null_glob extended_glob no_bare_glob_qual
-
 CYAN='\033[0;36m'
 NC='\033[0m'  # No Color
 
@@ -22,7 +20,12 @@ _add-pf() {  # <pf-name> {<pf-loc> <pf-pat>}...
 }
 alias -s pf='_add-pf'
 
+_set_glob_opts() {
+    setopt null_glob extended_glob no_bare_glob_qual
+}
+
 _rsync-pat() {  # <src> <dst> <pat>
+    _set_glob_opts
     cd $1 &>/dev/null &&
     rsync $=rsync_opt -R $~=3 $2/
 }
@@ -43,12 +46,14 @@ _apply() {  # <pf-name>
     }
 }
 
+source $(which env_parallel.zsh)
+
 _for-each-pf() {  # <func> [--all | <pf-name>...]
     local func=$1; shift
     if [[ $1 == --all ]] {
-        for i in ${(k)pf_map}; $func $i
+        env_parallel $func ::: ${(k)pf_map}
     } else {
-        for i in ${(u)@}; [[ -v pf_map[$i] ]] && $func $i
+        env_parallel $func ::: ${(u)@}
     }
 }
 

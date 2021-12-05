@@ -40,6 +40,7 @@ if ! zgenom saved; then
     zgenom ohmyzsh lib/completion.zsh
     zgenom ohmyzsh lib/clipboard.zsh
 
+    zgenom ohmyzsh plugins/sudo
     zgenom ohmyzsh plugins/extract
     zgenom ohmyzsh plugins/pip
 
@@ -108,6 +109,9 @@ zstyle ':completion:*:git-diff:*' sort false
 # my env variables
 MY_PROXY='127.0.0.1:1999'
 
+# less
+export LESS='--mouse'
+
 # fzf
 export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'
 
@@ -152,6 +156,7 @@ alias l='exa -lah --group-directories-first --git --time-style=long-iso'
 alias lt='l -TI .git'
 alias clc='clipcopy'
 alias clp='clippaste'
+alias clco='tee >(clipcopy)'  # clicpcopy + stdout
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
 alias sudo='sudo '
@@ -163,6 +168,7 @@ alias with-proxy=' \
     HTTP_PROXY=$MY_PROXY \
     https_proxy=$MY_PROXY \
     HTTPS_PROXY=$MY_PROXY '
+alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
 
 alias -g :n='/dev/null'
 alias -g :bg='&>/dev/null &'
