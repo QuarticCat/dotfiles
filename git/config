@@ -5,7 +5,6 @@ signingkey = 5F084C933EA64ACE
 
 [core]
 pager = less -+FX
-excludesFile = ~/.gitignore_global
 
 [init]
 defaultBranch = main

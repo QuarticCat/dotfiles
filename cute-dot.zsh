@@ -71,43 +71,41 @@ zsh.pf \
     ~ '.zshenv' \
     ~/.config/zsh '.zshrc *.zsh (^.*)/(^*.zwc)'
 
+systemd.pf \
+    ~/.config 'user-tmpfiles.d/*'
+
 ssh.pf \
     ~/.ssh 'config*'
 
 git.pf \
-    ~ '.gitconfig .gitignore_global'
+    ~/.config/git '*'
 
 proxychains.pf \
     ~/.proxychains 'proxychains.conf'
 
 cargo.pf \
-    ~/.cargo 'config.toml' \
-    ~/.config 'user-tmpfiles.d/cargo.conf'
+    ~/.cargo 'config.toml'
 
 ghc.pf \
     ~/.ghc 'ghci.conf'
 
-stack.pf \
-    ~/.stack 'config.yaml' \
-    ~/.config 'user-tmpfiles.d/stack.conf'
-
 pip.pf \
-    ~/.config/pip 'pip.conf'
+    ~/.config/pip '*'
 
 ipython.pf \
     ~/.ipython/profile_default 'ipython_config.py'
 
 direnv.pf \
-    ~/.config/direnv 'direnvrc'
+    ~/.config/direnv '*'
 
 fontconfig.pf \
-    ~/.config/fontconfig 'fonts.conf'
+    ~/.config/fontconfig '*'
 
 pacman.pf \
     /etc 'pacman.conf'
 
 paru.pf \
-    ~/.config/paru 'paru.conf'
+    ~/.config/paru '*'
 
 docker.pf \
     /etc/docker 'daemon.json'
