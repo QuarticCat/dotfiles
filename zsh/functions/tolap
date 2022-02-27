@@ -1,0 +1,1 @@
+scp $@ laptop:Downloads/SCP

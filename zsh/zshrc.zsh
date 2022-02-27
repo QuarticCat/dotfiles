@@ -81,7 +81,7 @@ setopt multios               # multiple redirections
 setopt ksh_option_print      # make setopt output all options
 setopt extended_glob         # extended globbing
 setopt no_bare_glob_qual     # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
-WORDCHARS='*?.~-_&!#$%^<>'
+WORDCHARS='*?~-_&!#$%^<>'
 
 # zsh history
 setopt hist_ignore_all_dups  # no duplicates
@@ -108,9 +108,6 @@ zstyle ':completion:*:git-diff:*' sort false
 
 # my env variables
 MY_PROXY='127.0.0.1:1999'
-
-# less
-export LESS='--mouse'
 
 # fzf
 export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'

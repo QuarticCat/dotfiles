@@ -4,13 +4,13 @@ email = QuarticCat@protonmail.com
 signingkey = 5F084C933EA64ACE
 
 [core]
-pager = less -+FX
+pager = less -+F -RSX
 
 [init]
 defaultBranch = main
 
-[http]
-proxy = socks5://127.0.0.1:1089
+# [http]
+# proxy = socks5://127.0.0.1:1089
 
 [commit]
 gpgsign = true

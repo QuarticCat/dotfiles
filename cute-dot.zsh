@@ -20,12 +20,7 @@ _add-pf() {  # <pf-name> {<pf-loc> <pf-pat>}...
 }
 alias -s pf='_add-pf'
 
-_set_glob_opts() {
-    setopt null_glob extended_glob no_bare_glob_qual
-}
-
 _rsync-pat() {  # <src> <dst> <pat>
-    _set_glob_opts
     cd $1 &>/dev/null &&
     rsync $=rsync_opt -R $~=3 $2/
 }
@@ -48,12 +43,16 @@ _apply() {  # <pf-name>
 
 source $(which env_parallel.zsh)
 
+_init() {
+    setopt null_glob extended_glob no_bare_glob_qual
+}
+
 _for-each-pf() {  # <func> [--all | <pf-name>...]
     local func=$1; shift
     if [[ $1 == --all ]] {
-        env_parallel $func ::: ${(k)pf_map}
+        env_parallel "_init; $func" ::: ${(k)pf_map}
     } else {
-        env_parallel $func ::: ${(u)@}
+        env_parallel "_init; $func" ::: ${(u)@}
     }
 }
 

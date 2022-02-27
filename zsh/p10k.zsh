@@ -876,8 +876,13 @@
   typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV=false
   # Separate environment name from Python version only with a space.
   typeset -g POWERLEVEL9K_VIRTUALENV_{LEFT,RIGHT}_DELIMITER=
+  # When a virtual environment name is generic and meaningless (such as ".venv"),
+  # Powerlevel10k by default shows the name of the parent directory. By setting
+  # POWERLEVEL9K_VIRTUALENV_GENERIC_NAMES=() we disable this.
+  typeset -g POWERLEVEL9K_VIRTUALENV_GENERIC_NAMES=()
   # Custom icon.
   # typeset -g POWERLEVEL9K_VIRTUALENV_VISUAL_IDENTIFIER_EXPANSION='⭐'
+
 
   #####################[ anaconda: conda environment (https://conda.io/) ]######################
   # Anaconda environment color.
