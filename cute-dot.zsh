@@ -8,14 +8,14 @@ DOT_DIR=${0:a:h}  # the directory of this script
 pf_loc=()  # profile locations
 pf_pat=()  # profile patterns
 
-declare -A pf_map   # <pf-name> : <idxes> (e.g. ' 1 2 3')
+declare -A pf_map   # <pf-name> : <idxes>
 
 _add-pf() {  # <pf-name> {<pf-loc> <pf-pat>}...
     local name=${1%.pf}
     for i in {2..$#@..2}; {
         pf_loc+=($@[i])
         pf_pat+=($@[i+1])
-        pf_map[$name]+=" $#pf_loc"
+        pf_map[$name]+="$#pf_loc "
     }
 }
 alias -s pf='_add-pf'
@@ -26,7 +26,7 @@ _rsync-pat() {  # <src> <dst> <pat>
 }
 
 _sync() {  # <pf-name>
-    for i in ${=pf_map[$1]:1}; {
+    for i in $=pf_map[$1]; {
         echo $CYAN"$1 <- ${(D)pf_loc[i]}"$NC
         _rsync-pat $pf_loc[i] $DOT_DIR/$1 $pf_pat[i]
         echo
@@ -34,7 +34,7 @@ _sync() {  # <pf-name>
 }
 
 _apply() {  # <pf-name>
-    for i in ${=pf_map[$1]:1}; {
+    for i in $=pf_map[$1]; {
         echo $CYAN"$1 -> ${(D)pf_loc[i]}"$NC
         _rsync-pat $DOT_DIR/$1 $pf_loc[i] $pf_pat[i]
         echo
