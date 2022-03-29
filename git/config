@@ -18,6 +18,9 @@ gpgsign = true
 [credential]
 helper = cache --timeout=604800
 
+[rerere]
+enabled = true
+
 [alias]
 rollback = reset --hard
 uncommit = reset --soft HEAD@{1}
