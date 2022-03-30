@@ -1,17 +1,25 @@
-realpath() {
-    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
-}
+source $HOME/.nix-profile/share/nix-direnv/direnvrc
 
 layout_python-venv() {
-    local interpreter=${1:-python3}
+    local python_exe=$(which ${1:-python3})
     local env_dir=$PWD/${2:-venv}
+    local python_ver=$($python_exe --version)
 
     if [[ ! -d $env_dir ]]; then
         log_status "no venv found; creating $env_dir"
-        "$interpreter" -m venv "$env_dir"
+        $python_exe -m venv "$env_dir"
     fi
 
+    # activate venv
     unset PYTHONHOME
-    export VIRTUAL_ENV=$env_dir
-    export PATH="${env_dir}/bin:${PATH}"
+    export VIRTUAL_ENV="$env_dir"
+    PATH_add "$env_dir/bin"
+
+    local local_ver=$(python --version)
+    log_status "activating $(user_rel_path $env_dir) ($local_ver)"
+
+    if [[ $local_ver != $python_ver ]]; then
+        log_status "upgrading venv to $python_ver"
+        $python_exe -m venv --upgrade "$env_dir"
+    fi
 }
