@@ -7,13 +7,19 @@ bindkey '^Y' redo                 # [Ctrl-Y]
 bindkey '^Q' push-line            # [Ctrl-Q]
 bindkey '^A' vi-beginning-of-line # [Ctrl-A]
 bindkey '^E' vi-end-of-line       # [Ctrl-E]
-bindkey ' ' magic-space           # [Space] do history expansion
+bindkey ' ' magic-space           # [Space] Do history expansion
 
 bindkey -r '^['  # [Esc]
 
-# from zsh-history-substring-search
+# Widgets are from zsh-history-substring-search
 bindkey '^[[A' history-substring-search-up    # [UpArrow]
 bindkey '^[[B' history-substring-search-down  # [DownArrow]
+
+# Trim trailing newline from pasted text
+bracketed-paste() {
+  zle .$WIDGET && LBUFFER=${LBUFFER%$'\n'}
+}
+zle -N bracketed-paste
 
 # [Ctrl+L] clear screen while maintaining scrollback
 fixed-clear-screen() {
@@ -28,7 +34,7 @@ fixed-clear-screen() {
 zle -N fixed-clear-screen
 bindkey '^L' fixed-clear-screen
 
-# [Ctrl-R] search history by fzf-tab
+# [Ctrl-R] Search history by fzf-tab
 fzf-history-search() {
     # Ref: https://github.com/Aloxaf/dotfiles/blob/0619025cb2/zsh/.config/zsh/snippets/key-bindings.zsh#L80-L102
     local selected=$(
@@ -43,7 +49,7 @@ fzf-history-search() {
 zle -N fzf-history-search
 bindkey '^R' fzf-history-search
 
-# [Ctrl-N] navigate by xplr
+# [Ctrl-N] Navigate by xplr
 bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
 # xplr-navigate() {
 #     local dir=$(xplr)

@@ -48,6 +48,7 @@ if ! zgenom saved; then
     zgenom ohmyzsh --completion plugins/docker-compose
     zgenom load --completion spwhitt/nix-zsh-completions
 
+    zgenom load chisui/zsh-nix-shell
     zgenom load Aloxaf/fzf-tab  # TODO: move `compinit` before this?
     zgenom load zdharma-continuum/fast-syntax-highlighting
     zgenom load zsh-users/zsh-autosuggestions
@@ -104,6 +105,7 @@ _galiases() {
 }
 zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:git-rebase:*' sort false
+zstyle ':completion:*:git-reset:*' sort false
 zstyle ':completion:*:git-diff:*' sort false
 
 # my env variables

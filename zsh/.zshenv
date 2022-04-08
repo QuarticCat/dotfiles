@@ -32,7 +32,7 @@ path=(
     ~/.local/bin
     ~/.cargo/bin
     ~/.ghcup/bin
-    /opt/riscv/bin
+    ~/go/bin
     $path
 )
 
