@@ -4,7 +4,7 @@ email = QuarticCat@protonmail.com
 signingkey = 5F084C933EA64ACE
 
 [core]
-pager = less -+F -RSX
+pager = less -+F -RSX --mouse
 
 [init]
 defaultBranch = main
@@ -24,13 +24,15 @@ enabled = true
 [alias]
 rollback = reset --hard
 uncommit = reset --soft HEAD@{1}
-set-date = commit --amend --no-edit --date
 update-submodules = submodule update --rebase --remote
 graph = log \
     --graph \
     --abbrev-commit \
     --decorate \
     --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+set-date = ! \
+    GIT_COMMITTER_DATE=\"$1\" git commit --amend --no-edit --date=\"$1\" \
+    :
 quick-update = ! \
     git add -A && \
     git commit -m \"$1\" && \
@@ -38,14 +40,14 @@ quick-update = ! \
     :
 quick-update-amend = ! \
     git add -A && \
-    git commit --amend ${1+\"-m\"} ${1-\"--no-edit\"} && \
+    git commit --amend \"${1:+-m}\" \"${1:---no-edit}\" && \
     git push --force origin && \
     :
 delete-branch = ! \
     git branch -d \"$1\" && \
     git push --delete origin \"$1\" && \
     :
-pr = ! \
-    git fetch origin pull/$1/head:pr-$1 && \
-    git checkout pr-$1 && \
+checkout-pr = ! \
+    git fetch origin \"pull/$1/head:pr-$1\" && \
+    git checkout \"pr-$1\" && \
     :

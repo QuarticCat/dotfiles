@@ -105,6 +105,7 @@ _galiases() {
 }
 zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:git-rebase:*' sort false
+zstyle ':completion:*:git-revert:*' sort false
 zstyle ':completion:*:git-reset:*' sort false
 zstyle ':completion:*:git-diff:*' sort false
 

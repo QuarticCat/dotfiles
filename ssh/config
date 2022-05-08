@@ -2,3 +2,5 @@ Include config-private
 
 ServerAliveInterval 60
 ServerAliveCountMax 120
+
+StrictHostKeyChecking no

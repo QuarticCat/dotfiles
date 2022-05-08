@@ -5,6 +5,21 @@ target-dir = ".cargo/target"
 name = "QuarticCat"
 email = "<QuarticCat@protonmail.com>"
 
+[profile.dev]
+split-debuginfo = "unpacked"
+# opt-level = 1
+# package."*".opt-level = 3    # override dependencies
+# build-override.opt-level = 3 # override build scripts and proc-macros
+
+# applied through `cargo build --profile release-product`
+[profile.release-product]
+inherits = "release"
+lto = "thin"
+strip = true
+
+[target.x86_64-unknown-linux-gnu]
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
 [source]
 crates-io = { replace-with = "sjtu" }
 tuna = { registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
