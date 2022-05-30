@@ -4,7 +4,7 @@ email = QuarticCat@protonmail.com
 signingkey = 5F084C933EA64ACE
 
 [core]
-pager = less -+F -RSX --mouse
+pager = less --mouse --chop-long-lines  # default flags: -FRSX
 
 [init]
 defaultBranch = main
@@ -38,11 +38,15 @@ quick-update = ! \
     git commit -m \"$1\" && \
     git push origin && \
     :
-quick-update-amend = ! \
+quick-update-amend = "! \
     git add -A && \
-    git commit --amend \"${1:+-m}\" \"${1:---no-edit}\" && \
+    if [[ \"$1\" == '' ]]; then \
+        git commit --amend --no-edit; \
+    else \
+        git commit --amend -m \"$1\"; \
+    fi && \
     git push --force origin && \
-    :
+    :"
 delete-branch = ! \
     git branch -d \"$1\" && \
     git push --delete origin \"$1\" && \
