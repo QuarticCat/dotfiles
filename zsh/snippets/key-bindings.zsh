@@ -1,15 +1,9 @@
-bindkey '^[[1;5C' forward-word    # [Ctrl-RightArrow]
-bindkey '^[[1;5D' backward-word   # [Ctrl-LeftArrow]
-bindkey '^H' backward-kill-word   # [Ctrl-Backspace]
-bindkey '^?' backward-delete-char # [Backspace]
-bindkey '^Z' undo                 # [Ctrl-Z]
-bindkey '^Y' redo                 # [Ctrl-Y]
-bindkey '^Q' push-line            # [Ctrl-Q]
-bindkey '^A' vi-beginning-of-line # [Ctrl-A]
-bindkey '^E' vi-end-of-line       # [Ctrl-E]
-bindkey ' ' magic-space           # [Space] Do history expansion
+bindkey -r '^['  # [Esc] (Default: vi-cmd-mode)
 
-bindkey -r '^['  # [Esc]
+bindkey '^Z' undo         # [Ctrl-Z]
+bindkey '^Y' redo         # [Ctrl-Y]
+bindkey '^Q' push-line    # [Ctrl-Q]
+bindkey ' '  magic-space  # [Space] Do history expansion
 
 # Widgets are from zsh-history-substring-search
 bindkey '^[[A' history-substring-search-up    # [UpArrow]
@@ -17,7 +11,7 @@ bindkey '^[[B' history-substring-search-down  # [DownArrow]
 
 # Trim trailing newline from pasted text
 bracketed-paste() {
-  zle .$WIDGET && LBUFFER=${LBUFFER%$'\n'}
+    zle .$WIDGET && LBUFFER=${LBUFFER%$'\n'}
 }
 zle -N bracketed-paste
 

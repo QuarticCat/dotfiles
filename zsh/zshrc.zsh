@@ -53,7 +53,8 @@ if ! zgenom saved; then
     zgenom load zdharma-continuum/fast-syntax-highlighting
     zgenom load zsh-users/zsh-autosuggestions
     zgenom load zsh-users/zsh-history-substring-search
-    zgenom load hlissner/zsh-autopair
+    zgenom load marlonrichert/zsh-edit
+    zgenom load QuarticCat/zsh-autopair
     zgenom load ~zdot/snippets/key-bindings.zsh
 
     zgenom save
@@ -82,7 +83,6 @@ setopt multios               # multiple redirections
 setopt ksh_option_print      # make setopt output all options
 setopt extended_glob         # extended globbing
 setopt no_bare_glob_qual     # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
-WORDCHARS='*?~-_&!#$%^<>'
 
 # zsh history
 setopt hist_ignore_all_dups  # no duplicates
