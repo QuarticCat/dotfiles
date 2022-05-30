@@ -21,13 +21,13 @@ for p in ~Workspace/*; hash -d $(basename $p)=$p
 for p in ~Code/*; hash -d $(basename $p)=$p
 
 ##
-## Start p10k instant prompt
+## P10k instant prompt
 ##
 
 include -f ~config/p10k-instant-prompt-${(%):-%n}.zsh
 
 ##
-## Load plugins
+## Plugins
 ##
 
 include -f ~zdot/.zgenom/zgenom.zsh
@@ -83,6 +83,7 @@ setopt multios               # multiple redirections
 setopt ksh_option_print      # make setopt output all options
 setopt extended_glob         # extended globbing
 setopt no_bare_glob_qual     # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'  # remove '/'
 
 # zsh history
 setopt hist_ignore_all_dups  # no duplicates
@@ -175,7 +176,7 @@ alias -g :bg='&>/dev/null &'
 alias -g :bg!='&>/dev/null &!'  # &!: background + disown
 
 ##
-## Load scripts
+## Scripts
 ##
 
 include -c 'direnv hook zsh'
