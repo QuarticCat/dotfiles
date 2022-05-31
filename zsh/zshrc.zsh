@@ -62,6 +62,10 @@ if ! zgenom saved; then
     zgenom compile ~zdot
 fi
 
+##
+## My Own Completions and Functions
+##
+
 fpath=(
     ~zdot/completions
     ~zdot/functions
@@ -98,11 +102,11 @@ SAVEHIST=10000
 # zsh completion
 compdef _galiases -first-
 _galiases() {
-    if [[ $PREFIX == :* ]]; then
+    if [[ $PREFIX == :* ]] {
         local des
         for k v ("${(@kv)galiases}") des+=("${k//:/\\:}:alias -g '$v'")
         _describe 'alias' des
-    fi
+    }
 }
 zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:git-rebase:*' sort false
