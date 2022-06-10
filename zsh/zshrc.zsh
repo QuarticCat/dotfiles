@@ -17,20 +17,22 @@ hash -d zdot=$ZDOTDIR
 hash -d OneDrive=~/OneDrive
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
-for p in ~Workspace/*; hash -d $(basename $p)=$p
-for p in ~Code/*; hash -d $(basename $p)=$p
+for p in ~Workspace/*; hash -d ${p:t}=$p
+for p in ~Code/*; hash -d ${p:t}=$p
 
 ##
 ## P10k instant prompt
 ##
 
-include -f ~config/p10k-instant-prompt-${(%):-%n}.zsh
+include -f ~cache/p10k-instant-prompt-${(%):-%n}.zsh
 
 ##
 ## Plugins
 ##
 
-include -f ~zdot/.zgenom/zgenom.zsh
+[[ -d ~zdot/.zgenom ]] || git clone https://github.com/jandamm/zgenom ~zdot/.zgenom
+
+source ~zdot/.zgenom/zgenom.zsh
 
 zgenom autoupdate  # every 7 days
 
@@ -48,8 +50,8 @@ if ! zgenom saved; then
     zgenom ohmyzsh --completion plugins/docker-compose
     zgenom load --completion spwhitt/nix-zsh-completions
 
-    zgenom load chisui/zsh-nix-shell
     zgenom load Aloxaf/fzf-tab  # TODO: move `compinit` before this?
+    zgenom load chisui/zsh-nix-shell
     zgenom load zdharma-continuum/fast-syntax-highlighting
     zgenom load zsh-users/zsh-autosuggestions
     zgenom load zsh-users/zsh-history-substring-search
@@ -63,7 +65,7 @@ if ! zgenom saved; then
 fi
 
 ##
-## My Own Completions and Functions
+## Completions & Functions
 ##
 
 fpath=(
@@ -145,13 +147,13 @@ export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
 
 # rustup
-export RUSTUP_DIST_SERVER='https://rsproxy.cn'
-export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'
+# export RUSTUP_DIST_SERVER='https://rsproxy.cn'
+# export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'
 
 # npm
 export NPM_CONFIG_PREFIX=~/.local
 export NPM_CONFIG_CACHE=~cache/npm
-export NPM_CONFIG_PROXY=$MY_PROXY
+# export NPM_CONFIG_PROXY=$MY_PROXY
 
 ##
 ## Aliases
@@ -183,5 +185,5 @@ alias -g :bg!='&>/dev/null &!'  # &!: background + disown
 ## Scripts
 ##
 
-include -c 'direnv hook zsh'
+include -c direnv hook zsh
 include -f ~zdot/p10k.zsh

@@ -1,16 +1,29 @@
 include() {
-    case $1 in
+    local opt=$1; shift
+    case $opt {
     -f)
-        [[ -f $2 ]] && source $2
+        [[ -f $1 ]] && source $1
         ;;
     -c)
-        local output=$($=2) &>/dev/null && eval $output
+        # not cached
+        (( $+commands[$1] )) && eval "$($@)"
+
+        # # cached
+        # if (( $+commands[$1] )) {
+        #     local cache=/tmp/zsh-cmdcache-$1
+        #     if [[ -f $cache ]] {
+        #         source $cache
+        #     } else {
+        #         eval "$($@)"
+        #     }
+        #     $@ > $cache &!  # update cache in the background
+        # }
         ;;
     *)
         echo 'Unknown argument!' >&2
         return 1
         ;;
-    esac
+    }
 }
 
 export XDG_CONFIG_HOME=~/.config
@@ -27,7 +40,7 @@ export VISUAL='vim'
 
 ZDOTDIR=$XDG_CONFIG_HOME/zsh
 
-typeset -U path  # set unique
+typeset -U path  # set unique (fpath has been set unique)
 path=(
     ~/.local/bin
     ~/.cargo/bin

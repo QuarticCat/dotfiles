@@ -11,6 +11,7 @@ bindkey '^[[B' history-substring-search-down  # [DownArrow]
 
 # Trim trailing newline from pasted text
 bracketed-paste() {
+    # Ref: https://unix.stackexchange.com/questions/693118
     zle .$WIDGET && LBUFFER=${LBUFFER%$'\n'}
 }
 zle -N bracketed-paste
