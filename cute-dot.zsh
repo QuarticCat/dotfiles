@@ -62,7 +62,7 @@ cute-dot-apply() { _for-each-pf _apply $@ }
 
 # -------------------------------- Config Begin --------------------------------
 
-rsync_opt='-ri'  # rsync options
+rsync_opt='-ri --mkpath'  # rsync options
 
 # profile list
 
@@ -108,6 +108,12 @@ paru.pf \
 
 docker.pf \
     /etc/docker 'daemon.json'
+
+clang/clang-format.pf \
+    ~ '.clang-format'
+
+clang/clangd.pf \
+    ~/.config/clangd '*'
 
 # --------------------------------- Config End ---------------------------------
 
