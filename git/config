@@ -4,7 +4,8 @@ email = QuarticCat@protonmail.com
 signingkey = 5F084C933EA64ACE
 
 [core]
-pager = less --mouse --chop-long-lines  # default flags: -FRSX
+# FIXME: mouse cannot select in konsole
+pager = less --mouse --chop-long-lines # default flags: -FRSX
 
 [init]
 defaultBranch = main

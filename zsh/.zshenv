@@ -5,19 +5,22 @@ include() {
         [[ -f $1 ]] && source $1
         ;;
     -c)
-        # not cached
-        (( $+commands[$1] )) && eval "$($@)"
-
-        # # cached
-        # if (( $+commands[$1] )) {
-        #     local cache=/tmp/zsh-cmdcache-$1
-        #     if [[ -f $cache ]] {
-        #         source $cache
-        #     } else {
-        #         eval "$($@)"
-        #     }
-        #     $@ > $cache &!  # update cache in the background
-        # }
+        (( $+commands[$1] )) || return
+        local cache=/tmp/zsh-cmdcache-$(md5sum <<< $@)
+        if [[ ! -f $cache ]] {
+            local output=$($@)
+            eval $output
+            echo $output > $cache &!
+        } else {
+            source $cache
+            (
+                local output=$($@)
+                if [[ $output != $(<$cache) ]] {
+                    echo $output > $cache
+                    echo "Cache updated: '$@' (will be applied next time)"
+                }
+            ) &!
+        }
         ;;
     *)
         echo 'Unknown argument!' >&2
@@ -42,6 +45,7 @@ ZDOTDIR=$XDG_CONFIG_HOME/zsh
 
 typeset -U path  # set unique (fpath has been set unique)
 path=(
+    $ZDOTDIR/scripts
     ~/.local/bin
     ~/.cargo/bin
     ~/.ghcup/bin

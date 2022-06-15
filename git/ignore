@@ -1,7 +1,11 @@
 .idea
 .vscode
 
+.ccls
 .ccls-cache
+.clangd
+.cache  # clangd index
+.xmake
 .direnv
 .envrc
 

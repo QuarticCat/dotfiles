@@ -55,12 +55,12 @@ if ! zgenom saved; then
     zgenom load zdharma-continuum/fast-syntax-highlighting
     zgenom load zsh-users/zsh-autosuggestions
     zgenom load zsh-users/zsh-history-substring-search
-    zgenom load marlonrichert/zsh-edit
+    zgenom load marlonrichert/zsh-edit  # TODO: remove it but keep subword widget
     zgenom load QuarticCat/zsh-autopair
     zgenom load ~zdot/snippets/key-bindings.zsh
 
+    zgenom clean
     zgenom save
-
     zgenom compile ~zdot
 fi
 
