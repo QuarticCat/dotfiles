@@ -4,14 +4,19 @@ email = QuarticCat@protonmail.com
 signingkey = 5F084C933EA64ACE
 
 [core]
-# FIXME: mouse cannot select in konsole
-pager = less --mouse --chop-long-lines # default flags: -FRSX
+# Ref: https://askubuntu.com/questions/803486
+# Default flags:
+#   -F, --quit-if-one-screen
+#   -R, --RAW-CONTROL-CHARS
+#   -S, --chop-long-lines
+#   -X, --no-init
+pager = less -RS -+FX
 
 [init]
 defaultBranch = main
 
-# [http]
-# proxy = socks5://127.0.0.1:1089
+[http]
+proxy = socks5://127.0.0.1:1089
 
 [commit]
 gpgsign = true
@@ -22,7 +27,20 @@ helper = cache --timeout=604800
 [rerere]
 enabled = true
 
+[diff]
+tool = difftastic
+
+[difftool]
+prompt = false
+
+[difftool "difftastic"]
+cmd = difft "$LOCAL" "$REMOTE"
+
+[pager]
+difftool = true
+
 [alias]
+difft = ! GIT_EXTERNAL_DIFF=difft git diff
 rollback = reset --hard
 uncommit = reset --soft HEAD@{1}
 update-submodules = submodule update --rebase --remote

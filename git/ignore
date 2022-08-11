@@ -1,14 +1,15 @@
 .idea
 .vscode
 
-.ccls
-.ccls-cache
 .clangd
-.cache  # clangd index
+# clangd index
+.cache
 .xmake
 .direnv
 .envrc
 
+build
 cmake-build-*
+bazel-*
 compile_commands.json
 CMakeUserPresets.json

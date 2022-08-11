@@ -21,7 +21,7 @@ strip = true
 rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 
 [source]
-# crates-io = { replace-with = "sjtu" }
+crates-io = { replace-with = "sjtu" }
 tuna = { registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
 ustc = { registry = "git://mirrors.ustc.edu.cn/crates.io-index" }
 sjtu = { registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index" }

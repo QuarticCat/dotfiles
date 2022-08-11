@@ -1,11 +1,8 @@
+# Based on clangd-14
+
 CompileFlags:
   Compiler: clang++
   Add: [-std=c++20, -Wall, -Wextra, -march=native]
 
-# wait for clangd-14
-Diagnostics:
-  UnusedIncludes: Strict
-
-# wait for clangd-14
 Hover:
   ShowAKA: Yes
