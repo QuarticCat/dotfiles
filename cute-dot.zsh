@@ -22,7 +22,7 @@ alias -s pf='_add-pf'
 
 _rsync-pat() {  # <src> <dst> <pat>
     cd $1 &>/dev/null &&
-    rsync $=rsync_opt -R $~=3 $2/
+    rsync $rsync_opt -R $~=3 $2/
 }
 
 _sync() {  # <pf-name>
@@ -60,11 +60,13 @@ cute-dot-list()  { printf '%s\n' ${(ko)pf_map} }
 cute-dot-sync()  { _for-each-pf _sync $@ }
 cute-dot-apply() { _for-each-pf _apply $@ }
 
-# -------------------------------- Config Begin --------------------------------
+# ------------------------------- Config Begin ------------------------------- #
 
-rsync_opt='-ri --mkpath'  # rsync options
-
-# profile list
+rsync_opt=(
+    '--recursive'
+    '--mkpath'
+    '--itemize-changes'
+)
 
 zsh.pf \
     ~ '.zshenv' \
@@ -100,14 +102,8 @@ direnv.pf \
 fontconfig.pf \
     ~/.config/fontconfig '*'
 
-pacman.pf \
-    /etc 'pacman.conf'
-
 paru.pf \
     ~/.config/paru '*'
-
-docker.pf \
-    /etc/docker 'daemon.json'
 
 clang/clang-format.pf \
     ~ '.clang-format'
@@ -115,6 +111,14 @@ clang/clang-format.pf \
 clang/clangd.pf \
     ~/.config/clangd '*'
 
-# --------------------------------- Config End ---------------------------------
+# TODO: consider a better way to manage dotfiles outside $HOME
+
+# pacman.pf \
+#     /etc 'pacman.conf'
+
+# docker.pf \
+#     /etc/docker 'daemon.json'
+
+# -------------------------------- Config End -------------------------------- #
 
 cute-dot-$1 ${@:2}

@@ -11,7 +11,7 @@ split-debuginfo = "unpacked"
 # package."*".opt-level = 3    # override dependencies
 # build-override.opt-level = 3 # override build scripts and proc-macros
 
-# applied through `cargo build --profile release-product`
+# Applied through `cargo build --profile release-product`
 [profile.release-product]
 inherits = "release"
 lto = "thin"
@@ -19,15 +19,17 @@ strip = true
 
 [target.x86_64-unknown-linux-gnu]
 rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+# TODO: shared generics
 
 [source]
-crates-io = { replace-with = "sjtu" }
+crates-io = { replace-with = "ustc" }
 tuna = { registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
 ustc = { registry = "git://mirrors.ustc.edu.cn/crates.io-index" }
 sjtu = { registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index" }
 rustcc = { registry = "git://crates.rustcc.cn/crates.io-index" }
 
-# required by cargo-update
+# Required by cargo-update
+# Ref: https://github.com/nabijaczleweli/cargo-update#source-replacement-vs-custom-registries
 [registries]
 tuna = { index = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
 ustc = { index = "git://mirrors.ustc.edu.cn/crates.io-index" }

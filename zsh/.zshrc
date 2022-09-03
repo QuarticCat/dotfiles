@@ -50,12 +50,12 @@ if ! zgenom saved; then
     zgenom ohmyzsh --completion plugins/docker-compose
     zgenom load --completion spwhitt/nix-zsh-completions
 
-    zgenom load Aloxaf/fzf-tab  # TODO: move `compinit` before this?
+    zgenom load Aloxaf/fzf-tab  # TODO: move `compinit` to the top of it?
     zgenom load chisui/zsh-nix-shell
     zgenom load zdharma-continuum/fast-syntax-highlighting
     zgenom load zsh-users/zsh-autosuggestions
     zgenom load zsh-users/zsh-history-substring-search
-    zgenom load marlonrichert/zsh-edit  # TODO: remove it but keep subword widget
+    zgenom load marlonrichert/zsh-edit  # TODO: remove it but keep the subword widget
     zgenom load QuarticCat/zsh-autopair
 
     zgenom clean
@@ -98,11 +98,7 @@ _galiases() {
         _describe 'alias' des
     }
 }
-zstyle ':completion:*:git-checkout:*' sort false
-zstyle ':completion:*:git-rebase:*' sort false
-zstyle ':completion:*:git-revert:*' sort false
-zstyle ':completion:*:git-reset:*' sort false
-zstyle ':completion:*:git-diff:*' sort false
+zstyle ':completion:*' sort false
 
 # my env variables
 MY_PROXY='127.0.0.1:1999'
@@ -113,7 +109,7 @@ export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept
 # fzf-tab
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
-zstyle ':fzf-tab:*' switch-group ',' '.'  # ?
+zstyle ':fzf-tab:*' switch-group ',' '.'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
 zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
@@ -126,6 +122,9 @@ ZSH_AUTOSUGGEST_MANUAL_REBIND='1'
 
 # zsh-history-substring-search
 HISTORY_SUBSTRING_SEARCH_FUZZY='1'
+
+# less
+export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'
 
 # bat
 export BAT_THEME='OneHalfDark'
@@ -149,15 +148,14 @@ export NPM_CONFIG_PROXY=$MY_PROXY
 
 alias l='exa -lah --group-directories-first --git --time-style=long-iso'
 alias lt='l -TI .git'
+alias cp='cp --reflink=auto --sparse=always'
 alias clc='clipcopy'
 alias clp='clippaste'
-alias clco='tee >(clipcopy)'  # clicpcopy + stdout
+alias clco='tee >(clipcopy)'  # clipcopy + stdout
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
 alias sudo='sudo '
-alias cgp='cgproxy '
 alias pc='proxychains -q '
-alias open='xdg-open'
 alias with-proxy=' \
     http_proxy=$MY_PROXY \
     HTTP_PROXY=$MY_PROXY \
@@ -196,6 +194,10 @@ f() {
     }
 }
 
+open() {
+    xdg-open $@ &>/dev/null &!
+}
+
 bench() {
     case $1 {
     start)
@@ -213,10 +215,38 @@ tolap() {
     scp $@ laptop:Downloads/SCP
 }
 
-reboot-to-windows() {
-    # Ref: https://unix.stackexchange.com/questions/43196
-    windows_title=$(sudo rg -i windows /boot/grub/grub.cfg | cut -d "'" -f 2)
-    sudo grub-reboot $windows_title && sudo reboot
+update-all() {
+    paru -Syu
+    rustup update
+    cargo install-update --all  # depends on cargo-update
+}
+
+# Disabled until I know how to fix the 'sparse file not allowed' error
+# reboot-to-windows() {
+#     # Ref: https:// unix.stackexchange.com/questions/43196
+#     windows_title=$(sudo rg -i windows /boot/grub/grub.cfg | cut -d "'" -f 2)
+#     sudo grub-reboot $windows_title && sudo reboot
+# }
+
+restart-plasma() {
+    # Ref: https://askubuntu.com/questions/481329
+    kquitapp5 plasmashell || killall plasmashell && kstart5 plasmashell &>/dev/null &!
+}
+
+clean-build-dirs() {  # TODO
+    local patterns=(
+        'build'
+        'cmake-build-*'
+        'bazel-*'
+        'target'
+    )
+    for pat in $patterns; {
+        for dir in $(fd --hidden --case-sensitive --type=directory --glob $pat ~Workspace); {
+            # if not tracked by Git then
+            git -C ${dir:h} ls-files --error-unmatch $dir &>/dev/null ||
+            echo $dir
+        }
+    }
 }
 
 #--------------#
@@ -244,7 +274,7 @@ zle -N bracketed-paste
 # [Ctrl+L] clear screen while maintaining scrollback
 fixed-clear-screen() {
     # Ref: https://superuser.com/questions/1389834
-    # FIXME: works incorrectly in tmux
+    # FIXME: goes wrong in tmux
     local prompt_height=$(echo -n ${(%%)PS1} | wc -l)
     local lines=$((LINES - prompt_height))
     printf "$terminfo[cud1]%.0s" {1..$lines}  # cursor down

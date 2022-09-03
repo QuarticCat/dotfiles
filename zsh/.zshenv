@@ -33,10 +33,11 @@ export XDG_CONFIG_HOME=~/.config
 export XDG_CACHE_HOME=~/.cache
 export XDG_DATA_HOME=~/.local/share
 
-export INPUT_METHOD='fcitx5'
-export GTK_IM_MODULE='fcitx5'
-export QT_IM_MODULE='fcitx5'
-export XMODIFIERS='@im=fcitx5'
+export GTK_IM_MODULE='fcitx'
+export QT_IM_MODULE='fcitx'
+export XMODIFIERS='@im=fcitx'
+export SDL_IM_MODULE='fcitx'
+export GLFW_IM_MODULE='ibux'
 
 export EDITOR='vim'
 export VISUAL='vim'
