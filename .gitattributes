@@ -1,1 +1,2 @@
 ssh/config-private filter=git-crypt diff=git-crypt
+ssh/authorized_keys filter=git-crypt diff=git-crypt

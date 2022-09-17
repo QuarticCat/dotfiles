@@ -69,7 +69,7 @@ fi
 
 # zsh misc
 setopt auto_cd               # simply type dir name to cd
-setopt auto_pushd            # make cd behaves like pushd
+setopt auto_pushd            # make cd behave like pushd
 setopt pushd_ignore_dups     # don't pushd duplicates
 setopt pushd_minus           # exchange the meanings of `+` and `-` in pushd
 setopt interactive_comments  # comments in interactive shells
@@ -86,8 +86,8 @@ setopt hist_ignore_space     # no commands starting with space
 setopt hist_reduce_blanks    # remove all unneccesary spaces
 setopt share_history         # share history between sessions
 HISTFILE=~zdot/.zsh_history
-HISTSIZE=50000
-SAVEHIST=10000
+HISTSIZE=1000000  # number of commands that are loaded into memory
+SAVEHIST=1000000  # number of commands that are stored
 
 # zsh completion
 compdef _galiases -first-
