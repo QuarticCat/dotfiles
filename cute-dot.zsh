@@ -76,7 +76,7 @@ systemd.pf \
     ~/.config 'user-tmpfiles.d/*'
 
 ssh.pf \
-    ~/.ssh 'config* authorized_keys'
+    ~/.ssh 'config'
 
 git.pf \
     ~/.config/git '*'

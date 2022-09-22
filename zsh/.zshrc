@@ -77,6 +77,7 @@ setopt multios               # multiple redirections
 setopt ksh_option_print      # make setopt output all options
 setopt extended_glob         # extended globbing
 setopt no_bare_glob_qual     # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
+setopt glob_dots             # match hidden files (affect completion)
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'  # remove '/'
 
 # zsh history
@@ -99,9 +100,10 @@ _galiases() {
     }
 }
 zstyle ':completion:*' sort false
+zstyle ':completion:*' special-dirs false  # exclude `.` and `..`
 
 # my env variables
-MY_PROXY='127.0.0.1:1999'
+MY_PROXY='127.0.0.1:1089'
 
 # fzf
 export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'
@@ -140,7 +142,7 @@ export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'
 # npm
 export NPM_CONFIG_PREFIX=~/.local
 export NPM_CONFIG_CACHE=~cache/npm
-export NPM_CONFIG_PROXY=$MY_PROXY
+# export NPM_CONFIG_PROXY=$MY_PROXY
 
 #---------#
 # Aliases #
@@ -233,22 +235,6 @@ restart-plasma() {
     kquitapp5 plasmashell || killall plasmashell && kstart5 plasmashell &>/dev/null &!
 }
 
-clean-build-dirs() {  # TODO
-    local patterns=(
-        'build'
-        'cmake-build-*'
-        'bazel-*'
-        'target'
-    )
-    for pat in $patterns; {
-        for dir in $(fd --hidden --case-sensitive --type=directory --glob $pat ~Workspace); {
-            # if not tracked by Git then
-            git -C ${dir:h} ls-files --error-unmatch $dir &>/dev/null ||
-            echo $dir
-        }
-    }
-}
-
 #--------------#
 # Key Bindings #
 #--------------#
@@ -316,6 +302,11 @@ bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
 # Scripts #
 #---------#
 
+include -c thefuck --alias
 include -c direnv hook zsh
 include -f ~zdot/p10k.zsh
 # include -f /opt/intel/oneapi/setvars.sh
+
+# Enable alternate-scroll-mode
+# Ref: https://github.com/microsoft/terminal/discussions/14076
+printf '\e[?1007h'
