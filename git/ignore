@@ -2,8 +2,6 @@
 .vscode
 
 .clangd
-# clangd index
-.cache
 .xmake
 .direnv
 .envrc
@@ -12,4 +10,6 @@ build
 cmake-build-*
 bazel-*
 compile_commands.json
-CMakeUserPresets.json
+
+perf.data*
+flamegraph.svg

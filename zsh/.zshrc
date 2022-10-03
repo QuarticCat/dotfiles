@@ -17,8 +17,11 @@ hash -d zdot=$ZDOTDIR
 hash -d OneDrive=~/OneDrive
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
-for p in ~Workspace/*; hash -d ${p:t}=$p
-for p in ~Code/*; hash -d ${p:t}=$p
+
+if [[ -d ~Workspace ]] {
+    for p in ~Workspace/*; hash -d ${p:t}=$p
+    for p in ~Code/*; hash -d ${p:t}=$p
+}
 
 #---------------------#
 # P10k Instant Prompt #
@@ -101,6 +104,16 @@ _galiases() {
 }
 zstyle ':completion:*' sort false
 zstyle ':completion:*' special-dirs false  # exclude `.` and `..`
+
+# time (zsh built-in)
+TIMEFMT="\
+%J   %U  user %S system %P cpu %*E total
+avg shared (code):         %X KB
+avg unshared (data/stack): %D KB
+total (sum):               %K KB
+max memory:                %M KB
+page faults from disk:     %F
+other page faults:         %R"
 
 # my env variables
 MY_PROXY='127.0.0.1:1089'
@@ -200,17 +213,20 @@ open() {
     xdg-open $@ &>/dev/null &!
 }
 
-bench() {
-    case $1 {
-    start)
-        sudo cpupower frequency-set -u 3.6G -d 3.6G
-        sudo sh -c 'echo 0 > /sys/devices/system/cpu/cpufreq/boost'
-        ;;
-    end)
-        sudo cpupower frequency-set -u 10G -d 0.1G
-        sudo sh -c 'echo 1 > /sys/devices/system/cpu/cpufreq/boost'
-        ;;
-    }
+_bench-start() {
+    sudo cpupower frequency-set -u 3.6G -d 3.6G >/dev/null
+    sudo sh -c 'echo 0 > /sys/devices/system/cpu/cpufreq/boost'
+    echo '>>>>> BENCH START' >&2
+}
+_bench-end() {
+    sudo cpupower frequency-set -u 10G -d 0.1G >/dev/null
+    sudo sh -c 'echo 1 > /sys/devices/system/cpu/cpufreq/boost'
+    echo '>>>>> BENCH END' >&2
+}
+with-bench() {
+    _bench-start
+    trap '_bench-end' EXIT INT
+    $@
 }
 
 tolap() {
