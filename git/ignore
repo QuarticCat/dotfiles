@@ -1,15 +1,24 @@
+# editor config dirs
 .idea
 .vscode
 
+# misc config files / cache dirs
 .clangd
 .xmake
 .direnv
 .envrc
 
+# build outputs
 build
 cmake-build-*
 bazel-*
 compile_commands.json
 
-perf.data*
+# valgrind outputs (<tool>.out.<pid>)
+dhat.out.*
+massif.out.*
+
+# cargo-flamegraph outputs
+perf.data
+perf.data.old
 flamegraph.svg

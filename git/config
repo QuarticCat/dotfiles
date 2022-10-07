@@ -27,20 +27,11 @@ helper = cache --timeout=604800
 [rerere]
 enabled = true
 
-[diff]
-tool = difftastic
-
-[difftool]
-prompt = false
-
-[difftool "difftastic"]
-cmd = difft "$LOCAL" "$REMOTE"
-
 [pager]
 difftool = true
 
 [alias]
-difft = ! GIT_EXTERNAL_DIFF=difft git diff
+difft = difftool --extcmd=difft --no-prompt
 rollback = reset --hard
 uncommit = reset --soft HEAD@{1}
 update-submodules = submodule update --rebase --remote
@@ -48,7 +39,7 @@ graph = log \
     --graph \
     --abbrev-commit \
     --decorate \
-    --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+    --format='format:%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
 set-date = ! \
     GIT_COMMITTER_DATE=\"$1\" git commit --amend --no-edit --date=\"$1\" \
     :
@@ -66,10 +57,6 @@ quick-update-amend = "! \
     fi && \
     git push --force origin && \
     :"
-delete-branch = ! \
-    git branch -d \"$1\" && \
-    git push --delete origin \"$1\" && \
-    :
 checkout-pr = ! \
     git fetch origin \"pull/$1/head:pr-$1\" && \
     git checkout \"pr-$1\" && \

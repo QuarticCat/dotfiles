@@ -18,6 +18,7 @@ hash -d OneDrive=~/OneDrive
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
 
+# TODO: flatten ~Workspace
 if [[ -d ~Workspace ]] {
     for p in ~Workspace/*; hash -d ${p:t}=$p
     for p in ~Code/*; hash -d ${p:t}=$p
@@ -111,7 +112,7 @@ TIMEFMT="\
 avg shared (code):         %X KB
 avg unshared (data/stack): %D KB
 total (sum):               %K KB
-max memory:                %M KB
+max memory:                %M MB
 page faults from disk:     %F
 other page faults:         %R"
 
@@ -211,22 +212,6 @@ f() {
 
 open() {
     xdg-open $@ &>/dev/null &!
-}
-
-_bench-start() {
-    sudo cpupower frequency-set -u 3.6G -d 3.6G >/dev/null
-    sudo sh -c 'echo 0 > /sys/devices/system/cpu/cpufreq/boost'
-    echo '>>>>> BENCH START' >&2
-}
-_bench-end() {
-    sudo cpupower frequency-set -u 10G -d 0.1G >/dev/null
-    sudo sh -c 'echo 1 > /sys/devices/system/cpu/cpufreq/boost'
-    echo '>>>>> BENCH END' >&2
-}
-with-bench() {
-    _bench-start
-    trap '_bench-end' EXIT INT
-    $@
 }
 
 tolap() {
