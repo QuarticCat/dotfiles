@@ -5,21 +5,23 @@ include() {
         [[ -f $1 ]] && source $1
         ;;
     -c)
+        # Ref: https://github.com/QuarticCat/zsh-smartcache
         (( $+commands[$1] )) || return
-        local cache=/tmp/zsh-cmdcache-$(md5sum <<< $@)
+        local hashval=$(md5sum <<< $@)
+        local cache=/tmp/zsh-cmdcache-${hashval:0:32}
         if [[ ! -f $cache ]] {
             local output=$($@)
             eval $output
             echo $output > $cache &!
         } else {
             source $cache
-            (
+            {
                 local output=$($@)
                 if [[ $output != $(<$cache) ]] {
                     echo $output > $cache
                     echo "Cache updated: '$@' (will be applied next time)"
                 }
-            ) &!
+            } &!
         }
         ;;
     *)

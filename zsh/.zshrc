@@ -17,12 +17,7 @@ hash -d zdot=$ZDOTDIR
 hash -d OneDrive=~/OneDrive
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
-
-# TODO: flatten ~Workspace
-if [[ -d ~Workspace ]] {
-    for p in ~Workspace/*; hash -d ${p:t}=$p
-    for p in ~Code/*; hash -d ${p:t}=$p
-}
+[[ -d ~Workspace ]] && for p in ~Workspace/*; hash -d ${p:t}=$p
 
 #---------------------#
 # P10k Instant Prompt #
@@ -98,8 +93,8 @@ SAVEHIST=1000000  # number of commands that are stored
 compdef _galiases -first-
 _galiases() {
     if [[ $PREFIX == :* ]] {
-        local des
-        for k v ("${(@kv)galiases}") des+=("${k//:/\\:}:alias -g '$v'")
+        local des=()
+        for k v in "${(@kv)galiases}"; des+=("\\:${k:1}:galias: '$v'")
         _describe 'alias' des
     }
 }
@@ -149,10 +144,6 @@ export BAT_THEME='OneHalfDark'
 export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
 
-# rustup
-export RUSTUP_DIST_SERVER='https://rsproxy.cn'
-export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'
-
 # npm
 export NPM_CONFIG_PREFIX=~/.local
 export NPM_CONFIG_CACHE=~cache/npm
@@ -180,8 +171,7 @@ alias with-proxy=' \
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
 
 alias -g :n='/dev/null'
-alias -g :bg='&>/dev/null &'
-alias -g :bg!='&>/dev/null &!'  # &!: background + disown
+alias -g :bg='&>/dev/null &!'  # &!: background + disown
 
 #-----------#
 # Functions #
@@ -194,28 +184,32 @@ f() {
         local selected=$(
             fd --base-directory=$base --type=file | fzf
         )
-        if [[ $selected != '' ]]; then
+        if [[ $selected != '' ]] {
             okular $base/$selected &>/dev/null &!
-        fi
+        }
         ;;
     hw)
         local base=~Homework
         local selected=$(
             fd --base-directory=$base --type=directory --max-depth=2 | fzf
         )
-        if [[ $selected != '' ]]; then
+        if [[ $selected != '' ]] {
             dolphin $base/$selected &>/dev/null &!
-        fi
+        }
         ;;
     }
 }
 
-open() {
-    xdg-open $@ &>/dev/null &!
+# TODO: complete it
+rgc() {
+    rg --color=always --line-number "$@" |
+    fzf --delimiter=: \
+        --preview='bat --color=always {1} --highlight-line={2}' \
+        --preview-window='~3,+{2}+3/4'
 }
 
-tolap() {
-    scp $@ laptop:Downloads/SCP
+open() {
+    xdg-open $@ &>/dev/null &!
 }
 
 update-all() {
@@ -247,7 +241,7 @@ bindkey '^Y' redo         # [Ctrl-Y]
 bindkey '^Q' push-line    # [Ctrl-Q]
 bindkey ' '  magic-space  # [Space] Do history expansion
 
-# Widgets are from zsh-history-substring-search
+# Bind widgets from zsh-history-substring-search
 bindkey '^[[A' history-substring-search-up    # [UpArrow]
 bindkey '^[[B' history-substring-search-down  # [DownArrow]
 
@@ -258,7 +252,7 @@ bracketed-paste() {
 }
 zle -N bracketed-paste
 
-# [Ctrl+L] clear screen while maintaining scrollback
+# [Ctrl+L] Clear screen while maintaining scrollback
 fixed-clear-screen() {
     # Ref: https://superuser.com/questions/1389834
     # FIXME: goes wrong in tmux
@@ -297,7 +291,6 @@ bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
 # }
 # zle -N xplr-navigate
 # bindkey '^N' xplr-navigate
-
 
 #---------#
 # Scripts #
