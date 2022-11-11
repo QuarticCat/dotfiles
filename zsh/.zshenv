@@ -46,7 +46,7 @@ export VISUAL='vim'
 
 ZDOTDIR=$XDG_CONFIG_HOME/zsh
 
-typeset -U path  # set unique (fpath has been set unique)
+typeset -U path  # set unique (fpath has already been set unique)
 path=(
     $ZDOTDIR/scripts
     ~/.local/bin

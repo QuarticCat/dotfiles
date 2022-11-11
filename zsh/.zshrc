@@ -171,7 +171,7 @@ alias with-proxy=' \
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
 
 alias -g :n='/dev/null'
-alias -g :bg='&>/dev/null &!'  # &!: background + disown
+alias -g :bg='&>/dev/null &!'
 
 #-----------#
 # Functions #
@@ -185,7 +185,7 @@ f() {
             fd --base-directory=$base --type=file | fzf
         )
         if [[ $selected != '' ]] {
-            okular $base/$selected &>/dev/null &!
+            okular $base/$selected :bg
         }
         ;;
     hw)
@@ -194,7 +194,7 @@ f() {
             fd --base-directory=$base --type=directory --max-depth=2 | fzf
         )
         if [[ $selected != '' ]] {
-            dolphin $base/$selected &>/dev/null &!
+            dolphin $base/$selected :bg
         }
         ;;
     }
@@ -209,7 +209,7 @@ rgc() {
 }
 
 open() {
-    xdg-open $@ &>/dev/null &!
+    xdg-open $@ :bg
 }
 
 update-all() {
@@ -227,7 +227,7 @@ update-all() {
 
 restart-plasma() {
     # Ref: https://askubuntu.com/questions/481329
-    kquitapp5 plasmashell || killall plasmashell && kstart5 plasmashell &>/dev/null &!
+    kquitapp5 plasmashell || killall plasmashell && kstart5 plasmashell :bg
 }
 
 #--------------#
