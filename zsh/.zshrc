@@ -161,6 +161,7 @@ alias clp='clippaste'
 alias clco='tee >(clipcopy)'  # clipcopy + stdout
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
+alias edge='microsoft-edge-stable'
 alias sudo='sudo '
 alias pc='proxychains -q '
 alias with-proxy=' \
@@ -185,7 +186,7 @@ f() {
             fd --base-directory=$base --type=file | fzf
         )
         if [[ $selected != '' ]] {
-            okular $base/$selected :bg
+            okular $base/$selected &>/dev/null &!
         }
         ;;
     hw)
@@ -194,7 +195,7 @@ f() {
             fd --base-directory=$base --type=directory --max-depth=2 | fzf
         )
         if [[ $selected != '' ]] {
-            dolphin $base/$selected :bg
+            dolphin $base/$selected &>/dev/null &!
         }
         ;;
     }
@@ -209,11 +210,11 @@ rgc() {
 }
 
 open() {
-    xdg-open $@ :bg
+    xdg-open $@ &>/dev/null &!
 }
 
 update-all() {
-    paru -Syu
+    paru -Syu --noconfirm
     rustup update
     cargo install-update --all  # depends on cargo-update
 }
@@ -227,7 +228,7 @@ update-all() {
 
 restart-plasma() {
     # Ref: https://askubuntu.com/questions/481329
-    kquitapp5 plasmashell || killall plasmashell && kstart5 plasmashell :bg
+    kquitapp5 plasmashell || killall plasmashell && kstart5 plasmashell &>/dev/null &!
 }
 
 #--------------#
@@ -253,7 +254,7 @@ bracketed-paste() {
 zle -N bracketed-paste
 
 # [Ctrl+L] Clear screen while maintaining scrollback
-fixed-clear-screen() {
+clear-screen() {
     # Ref: https://superuser.com/questions/1389834
     # FIXME: goes wrong in tmux
     local prompt_height=$(echo -n ${(%%)PS1} | wc -l)
@@ -262,8 +263,8 @@ fixed-clear-screen() {
     printf "$terminfo[cuu1]%.0s" {1..$lines}  # cursor up
     zle reset-prompt
 }
-zle -N fixed-clear-screen
-bindkey '^L' fixed-clear-screen
+zle -N clear-screen
+bindkey '^L' clear-screen
 
 # [Ctrl-R] Search history by fzf-tab
 fzf-history-search() {
