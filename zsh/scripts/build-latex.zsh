@@ -1,6 +1,6 @@
-#!/bin/zsh
+#!/bin/zsh -e
 
-set -e
+# TODO: use latexmk instead
 
 # -------------------------------- Config Begin --------------------------------
 

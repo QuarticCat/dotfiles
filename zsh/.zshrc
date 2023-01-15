@@ -14,6 +14,7 @@ hash -d cache=$XDG_CACHE_HOME
 hash -d data=$XDG_DATA_HOME
 hash -d zdot=$ZDOTDIR
 
+hash -d Trash=~/.local/share/Trash/files
 hash -d OneDrive=~/OneDrive
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
@@ -43,7 +44,7 @@ if ! zgenom saved; then
 
     zgenom ohmyzsh plugins/sudo
     zgenom ohmyzsh plugins/extract
-    zgenom ohmyzsh plugins/pip
+    zgenom ohmyzsh plugins/gpg-agent
 
     zgenom ohmyzsh --completion plugins/rust
     zgenom ohmyzsh --completion plugins/docker-compose
@@ -54,7 +55,7 @@ if ! zgenom saved; then
     zgenom load zdharma-continuum/fast-syntax-highlighting
     zgenom load zsh-users/zsh-autosuggestions
     zgenom load zsh-users/zsh-history-substring-search
-    zgenom load marlonrichert/zsh-edit  # TODO: remove it but keep the subword widget
+    zgenom load marlonrichert/zsh-edit  # TODO: only keep the subword widget
     zgenom load QuarticCat/zsh-autopair
 
     zgenom clean
@@ -62,9 +63,9 @@ if ! zgenom saved; then
     zgenom compile ~zdot
 fi
 
-#----------------#
-# Configurations #
-#----------------#
+#---------#
+# Configs #
+#---------#
 
 # zsh misc
 setopt auto_cd               # simply type dir name to cd
@@ -155,6 +156,7 @@ export NPM_CONFIG_CACHE=~cache/npm
 
 alias l='exa -lah --group-directories-first --git --time-style=long-iso'
 alias lt='l -TI .git'
+alias tm='trash-put'
 alias cp='cp --reflink=auto --sparse=always'
 alias clc='clipcopy'
 alias clp='clippaste'
@@ -164,7 +166,7 @@ alias scu='systemctl --user'
 alias edge='microsoft-edge-stable'
 alias sudo='sudo '
 alias pc='proxychains -q '
-alias with-proxy=' \
+alias env-proxy=' \
     http_proxy=$MY_PROXY \
     HTTP_PROXY=$MY_PROXY \
     https_proxy=$MY_PROXY \
@@ -202,12 +204,12 @@ f() {
 }
 
 # TODO: complete it
-rgc() {
-    rg --color=always --line-number "$@" |
-    fzf --delimiter=: \
-        --preview='bat --color=always {1} --highlight-line={2}' \
-        --preview-window='~3,+{2}+3/4'
-}
+# rgc() {
+#     rg --color=always --line-number "$@" |
+#     fzf --delimiter=: \
+#         --preview='bat --color=always {1} --highlight-line={2}' \
+#         --preview-window='~3,+{2}+3/4'
+# }
 
 open() {
     xdg-open $@ &>/dev/null &!
@@ -219,7 +221,7 @@ update-all() {
     cargo install-update --all  # depends on cargo-update
 }
 
-# Disabled until I know how to fix the 'sparse file not allowed' error
+# FIXME: 'sparse file not allowed' error
 # reboot-to-windows() {
 #     # Ref: https:// unix.stackexchange.com/questions/43196
 #     windows_title=$(sudo rg -i windows /boot/grub/grub.cfg | cut -d "'" -f 2)
@@ -283,6 +285,7 @@ bindkey '^R' fzf-history-search
 
 # [Ctrl-N] Navigate by xplr
 bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
+# FIXME: see fzf-cd-widget in https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zsh
 # xplr-navigate() {
 #     local dir=$(xplr)
 #     if [[ $dir != '' ]] {
