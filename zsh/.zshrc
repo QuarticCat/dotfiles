@@ -44,7 +44,6 @@ if ! zgenom saved; then
 
     zgenom ohmyzsh plugins/sudo
     zgenom ohmyzsh plugins/extract
-    zgenom ohmyzsh plugins/gpg-agent
 
     zgenom ohmyzsh --completion plugins/rust
     zgenom ohmyzsh --completion plugins/docker-compose
@@ -134,6 +133,9 @@ ZSH_AUTOSUGGEST_MANUAL_REBIND='1'
 
 # zsh-history-substring-search
 HISTORY_SUBSTRING_SEARCH_FUZZY='1'
+
+# gpg
+export GPG_TTY=$TTY
 
 # less
 export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'

@@ -3,6 +3,7 @@
 .vscode
 
 # misc config files / cache dirs
+.cache
 .clangd
 .xmake
 .direnv

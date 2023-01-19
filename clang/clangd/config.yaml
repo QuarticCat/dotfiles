@@ -2,7 +2,7 @@
 
 CompileFlags:
   Compiler: clang++
-  Add: [-std=c++20, -Wall, -Wextra, -march=native]
+  Add: [-Wall, -Wextra, -march=native]
 
 Diagnostics:
   ClangTidy:

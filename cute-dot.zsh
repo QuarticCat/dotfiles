@@ -75,6 +75,9 @@ zsh.pf \
 systemd.pf \
     ~/.config 'user-tmpfiles.d/*'
 
+gpg.pf \
+    ~/.gnupg 'gpg-agent.conf'
+
 ssh.pf \
     ~/.ssh 'config'
 
