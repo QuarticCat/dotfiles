@@ -223,9 +223,16 @@ update-all() {
     cargo install-update --all  # depends on cargo-update
 }
 
+code-lldb() {
+    # Ref: https://github.com/vadimcn/vscode-lldb/blob/master/MANUAL.md#debugging-externally-launched-code
+    local exe=\'${1:a}\'      # get real path of the executable and wrap it with quotes
+    local args=(\'${^@:2}\')  # wrap arguments with quotes
+    code --open-url "vscode://vadimcn.vscode-lldb/launch/command?$exe $args"
+}
+
 # FIXME: 'sparse file not allowed' error
 # reboot-to-windows() {
-#     # Ref: https:// unix.stackexchange.com/questions/43196
+#     # Ref: https://unix.stackexchange.com/questions/43196
 #     windows_title=$(sudo rg -i windows /boot/grub/grub.cfg | cut -d "'" -f 2)
 #     sudo grub-reboot $windows_title && sudo reboot
 # }
@@ -257,7 +264,7 @@ bracketed-paste() {
 }
 zle -N bracketed-paste
 
-# [Ctrl+L] Clear screen while maintaining scrollback
+# [Ctrl-L] Clear screen while maintaining scrollback
 clear-screen() {
     # Ref: https://superuser.com/questions/1389834
     # FIXME: goes wrong in tmux
