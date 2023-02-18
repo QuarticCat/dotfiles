@@ -78,6 +78,7 @@ setopt extended_glob         # extended globbing
 setopt no_bare_glob_qual     # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
 setopt glob_dots             # match hidden files (affect completion)
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'  # remove '/'
+# autoload -U colors && colors  # provide color variables (see `which colors`)
 
 # zsh history
 setopt hist_ignore_all_dups  # no duplicates
@@ -100,6 +101,11 @@ _galiases() {
 }
 zstyle ':completion:*' sort false
 zstyle ':completion:*' special-dirs false  # exclude `.` and `..`
+
+# zsh prompt
+setopt transient_rprompt  # remove rprompt after accept line
+PS2='%(?.%F{76}.%F{196})| %f'  # continuation prompt
+RPS2='%F{8}%_%f'               # continuation right prompt
 
 # time (zsh built-in)
 TIMEFMT="\
@@ -159,13 +165,13 @@ export NPM_CONFIG_CACHE=~cache/npm
 alias l='exa -lah --group-directories-first --git --time-style=long-iso'
 alias lt='l -TI .git'
 alias tm='trash-put'
-alias cp='cp --reflink=auto --sparse=always'
 alias clc='clipcopy'
 alias clp='clippaste'
 alias clco='tee >(clipcopy)'  # clipcopy + stdout
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
 alias edge='microsoft-edge-stable'
+alias nvvp='nvvp -vm /usr/lib/jvm/java-8-openjdk/jre/bin/java'
 alias sudo='sudo '
 alias pc='proxychains -q '
 alias env-proxy=' \
@@ -175,7 +181,9 @@ alias env-proxy=' \
     HTTPS_PROXY=$MY_PROXY '
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
 
-alias -g :n='/dev/null'
+# Ref: https://unix.stackexchange.com/questions/70963
+alias -g :n='>/dev/null'
+alias -g :nn='&>/dev/null'
 alias -g :bg='&>/dev/null &!'
 
 #-----------#
@@ -205,7 +213,7 @@ f() {
     }
 }
 
-# TODO: complete it
+# TODO: Complete it
 # rgc() {
 #     rg --color=always --line-number "$@" |
 #     fzf --delimiter=: \
@@ -223,51 +231,89 @@ update-all() {
     cargo install-update --all  # depends on cargo-update
 }
 
+# Ref: https://github.com/vadimcn/vscode-lldb/blob/master/MANUAL.md#debugging-externally-launched-code
 code-lldb() {
-    # Ref: https://github.com/vadimcn/vscode-lldb/blob/master/MANUAL.md#debugging-externally-launched-code
-    local exe=\'${1:a}\'      # get real path of the executable and wrap it with quotes
-    local args=(\'${^@:2}\')  # wrap arguments with quotes
+    local exe="'${1:a}'"      # get real path of the executable and wrap it with quotes
+    local args=("'${^@:2}'")  # wrap arguments with quotes
     code --open-url "vscode://vadimcn.vscode-lldb/launch/command?$exe $args"
 }
 
-# FIXME: 'sparse file not allowed' error
-# reboot-to-windows() {
-#     # Ref: https://unix.stackexchange.com/questions/43196
-#     windows_title=$(sudo rg -i windows /boot/grub/grub.cfg | cut -d "'" -f 2)
-#     sudo grub-reboot $windows_title && sudo reboot
-# }
-
-restart-plasma() {
-    # Ref: https://askubuntu.com/questions/481329
-    kquitapp5 plasmashell || killall plasmashell && kstart5 plasmashell &>/dev/null &!
+# Ref: https://unix.stackexchange.com/questions/43196
+reboot-to-windows() {
+    windows_title=$(sudo rg -i windows /boot/grub/grub.cfg | cut -d "'" -f 2)
+    sudo grub-reboot $windows_title && sudo reboot
 }
 
 #--------------#
 # Key Bindings #
 #--------------#
 
-bindkey -r '^['  # [Esc] (Default: vi-cmd-mode)
+bindkey -r '^['  # Unbind [Esc] (default: vi-cmd-mode)
 
-bindkey '^Z' undo         # [Ctrl-Z]
-bindkey '^Y' redo         # [Ctrl-Y]
-bindkey '^Q' push-line    # [Ctrl-Q]
-bindkey ' '  magic-space  # [Space] Do history expansion
+bindkey '^[[C' forward-char        # [Right]     (default: vi-forward-char)
+bindkey '^[[D' backward-char       # [Left]      (default: vi-backward-char)
+bindkey ' '    magic-space         # [Space]     Trigger history expansion
+bindkey '^[^M' self-insert-unmeta  # [Alt-Enter] Insert newline
+bindkey '^Z'   undo                # [Ctrl-Z]
+bindkey '^Y'   redo                # [Ctrl-Y]
+bindkey '^Q'   push-line-or-edit   # [Ctrl-Q]    Push line in single line or edit in multi line
 
-# Bind widgets from zsh-history-substring-search
-bindkey '^[[A' history-substring-search-up    # [UpArrow]
-bindkey '^[[B' history-substring-search-down  # [DownArrow]
+# [Up] Combine up-line-or-beginning-search and history-substring-search-up
+# Ref: https://github.com/zsh-users/zsh/blob/master/Functions/Zle/up-line-or-beginning-search
+up-line-or-substring-search() {
+    typeset -g __searching
+    if [[ $LBUFFER == *$'\n'* ]] {
+        __searching=''
+        zle up-line-or-history
+    } elif [[ $PREBUFFER != '' ]] {
+        zle push-line-or-edit
+    } else {
+        __searching=$WIDGET
+        zle history-substring-search-up
+    }
+}
+zle -N up-line-or-substring-search
+bindkey '^[[A' up-line-or-substring-search
+
+# [Down] Combine down-line-or-beginning-search and history-substring-search-down
+# Ref: https://github.com/zsh-users/zsh/blob/master/Functions/Zle/down-line-or-beginning-search
+down-line-or-substring-search() {
+    typeset -g __searching
+    if [[ $LASTWIDGET == $__searching || $RBUFFER != *$'\n'* ]] {
+        __searching=$WIDGET
+        zle history-substring-search-down && return
+        [[ $RBUFFER != *$'\n'* ]] && return
+    }
+    __searching=''
+    zle down-line-or-history
+}
+zle -N down-line-or-substring-search
+bindkey '^[[B' down-line-or-substring-search
 
 # Trim trailing newline from pasted text
+# Ref: https://unix.stackexchange.com/questions/693118
 bracketed-paste() {
-    # Ref: https://unix.stackexchange.com/questions/693118
-    zle .$WIDGET && LBUFFER=${LBUFFER%$'\n'}
+    zle .$WIDGET
+    LBUFFER=${LBUFFER%$'\n'}
 }
 zle -N bracketed-paste
 
+# Change '...' to '../..'
+# Ref: https://grml.org/zsh/zsh-lovers.html#_completion
+rationalize-dot() {
+    if [[ $LBUFFER == *.. ]] {
+        LBUFFER+='/..'
+    } else {
+        LBUFFER+='.'
+    }
+}
+zle -N rationalize-dot
+bindkey '.' rationalize-dot
+
 # [Ctrl-L] Clear screen while maintaining scrollback
+# Ref: https://superuser.com/questions/1389834
+# FIXME: Goes wrong in tmux
 clear-screen() {
-    # Ref: https://superuser.com/questions/1389834
-    # FIXME: goes wrong in tmux
     local prompt_height=$(echo -n ${(%%)PS1} | wc -l)
     local lines=$((LINES - prompt_height))
     printf "$terminfo[cud1]%.0s" {1..$lines}  # cursor down
@@ -278,8 +324,8 @@ zle -N clear-screen
 bindkey '^L' clear-screen
 
 # [Ctrl-R] Search history by fzf-tab
+# Ref: https://github.com/Aloxaf/dotfiles/blob/0619025cb2/zsh/.config/zsh/snippets/key-bindings.zsh#L80-L102
 fzf-history-search() {
-    # Ref: https://github.com/Aloxaf/dotfiles/blob/0619025cb2/zsh/.config/zsh/snippets/key-bindings.zsh#L80-L102
     local selected=$(
         fc -rl 1 |
         ftb-tmux-popup -n '2..' --tiebreak=index --prompt='cmd> ' ${BUFFER:+-q$BUFFER}
@@ -293,17 +339,9 @@ zle -N fzf-history-search
 bindkey '^R' fzf-history-search
 
 # [Ctrl-N] Navigate by xplr
+# This is not a widget since properly resetting prompt is hard
+# See https://github.com/romkatv/powerlevel10k/issues/72
 bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
-# FIXME: see fzf-cd-widget in https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zsh
-# xplr-navigate() {
-#     local dir=$(xplr)
-#     if [[ $dir != '' ]] {
-#         cd -- $dir
-#     }
-#     zle reset-prompt
-# }
-# zle -N xplr-navigate
-# bindkey '^N' xplr-navigate
 
 #---------#
 # Scripts #
