@@ -23,3 +23,7 @@ massif.out.*
 perf.data
 perf.data.old
 flamegraph.svg
+
+# my personal ignore suffix
+*.ignore
+*.ignore.*

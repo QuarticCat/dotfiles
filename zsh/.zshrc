@@ -48,14 +48,14 @@ if ! zgenom saved; then
     zgenom ohmyzsh --completion plugins/rust
     zgenom ohmyzsh --completion plugins/docker-compose
     zgenom load --completion spwhitt/nix-zsh-completions
+    zgenom load zsh-users/zsh-completions
 
     zgenom load Aloxaf/fzf-tab  # TODO: move `compinit` to the top of it?
     zgenom load chisui/zsh-nix-shell
     zgenom load zdharma-continuum/fast-syntax-highlighting
     zgenom load zsh-users/zsh-autosuggestions
     zgenom load zsh-users/zsh-history-substring-search
-    zgenom load marlonrichert/zsh-edit  # TODO: only keep the subword widget
-    zgenom load QuarticCat/zsh-autopair
+    zgenom load hlissner/zsh-autopair
 
     zgenom clean
     zgenom save
@@ -77,7 +77,7 @@ setopt ksh_option_print      # make setopt output all options
 setopt extended_glob         # extended globbing
 setopt no_bare_glob_qual     # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
 setopt glob_dots             # match hidden files (affect completion)
-WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'  # remove '/'
+WORDCHARS='*?_-.[]~&;!#$%^(){}<>'  # remove '/='
 # autoload -U colors && colors  # provide color variables (see `which colors`)
 
 # zsh history
@@ -89,6 +89,7 @@ setopt share_history         # share history between sessions
 HISTFILE=~zdot/.zsh_history
 HISTSIZE=1000000  # number of commands that are loaded into memory
 SAVEHIST=1000000  # number of commands that are stored
+# TODO: switch to atuin
 
 # zsh completion
 compdef _galiases -first-
@@ -126,7 +127,7 @@ export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept
 # fzf-tab
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
-zstyle ':fzf-tab:*' switch-group ',' '.'
+# zstyle ':fzf-tab:*' switch-group ',' '.'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
 zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
@@ -190,6 +191,9 @@ alias -g :bg='&>/dev/null &!'
 # Functions #
 #-----------#
 
+fpath+=(~zdot/functions)
+autoload -Uz ~zdot/functions/*(#q:t)
+
 f() {
     case $1 {
     doc)
@@ -213,7 +217,7 @@ f() {
     }
 }
 
-# TODO: Complete it
+# TODO: complete it
 # rgc() {
 #     rg --color=always --line-number "$@" |
 #     fzf --delimiter=: \
@@ -225,12 +229,6 @@ open() {
     xdg-open $@ &>/dev/null &!
 }
 
-update-all() {
-    paru -Syu --noconfirm
-    rustup update
-    cargo install-update --all  # depends on cargo-update
-}
-
 # Ref: https://github.com/vadimcn/vscode-lldb/blob/master/MANUAL.md#debugging-externally-launched-code
 code-lldb() {
     local exe="'${1:a}'"      # get real path of the executable and wrap it with quotes
@@ -238,25 +236,33 @@ code-lldb() {
     code --open-url "vscode://vadimcn.vscode-lldb/launch/command?$exe $args"
 }
 
-# Ref: https://unix.stackexchange.com/questions/43196
-reboot-to-windows() {
-    windows_title=$(sudo rg -i windows /boot/grub/grub.cfg | cut -d "'" -f 2)
-    sudo grub-reboot $windows_title && sudo reboot
-}
-
 #--------------#
 # Key Bindings #
 #--------------#
 
+for widget in {back,for}ward-{,kill-}{sub,shell}word; {
+    zle -N $widget _qc_subword
+}
+
 bindkey -r '^['  # Unbind [Esc] (default: vi-cmd-mode)
 
-bindkey '^[[C' forward-char        # [Right]     (default: vi-forward-char)
-bindkey '^[[D' backward-char       # [Left]      (default: vi-backward-char)
-bindkey ' '    magic-space         # [Space]     Trigger history expansion
-bindkey '^[^M' self-insert-unmeta  # [Alt-Enter] Insert newline
-bindkey '^Z'   undo                # [Ctrl-Z]
-bindkey '^Y'   redo                # [Ctrl-Y]
-bindkey '^Q'   push-line-or-edit   # [Ctrl-Q]    Push line in single line or edit in multi line
+bindkey '^[[D'    backward-char           # [Left]           (default: vi-backward-char)
+bindkey '^[[C'    forward-char            # [Right]          (default: vi-forward-char)
+bindkey '^[[1;5D' backward-subword        # [Ctrl-Left]
+bindkey '^[[1;5C' forward-subword         # [Ctrl-Right]
+bindkey '^[[1;3D' backward-shellword      # [Alt-Left]
+bindkey '^[[1;3C' forward-shellword       # [Alt-Right]
+bindkey '^H'      backward-kill-subword   # [Ctrl-Backspace]
+bindkey '^[[3;5~' forward-kill-subword    # [Ctrl-Delete]
+bindkey '^[^?'    backward-kill-shellword # [Alt-Backspace]
+bindkey '^[[3;3~' forward-kill-shellword  # [Alt-Delete]
+bindkey '^A'      beginning-of-line       # [Ctrl-A]
+bindkey '^E'      end-of-line             # [Ctrl-E]
+bindkey '^Z'      undo                    # [Ctrl-Z]
+bindkey '^Y'      redo                    # [Ctrl-Y]
+bindkey ' '       magic-space             # [Space]          Trigger history expansion
+bindkey '^[^M'    self-insert-unmeta      # [Alt-Enter]      Insert newline
+bindkey '^Q'      push-line-or-edit       # [Ctrl-Q]         Push line in single line or edit in multi line
 
 # [Up] Combine up-line-or-beginning-search and history-substring-search-up
 # Ref: https://github.com/zsh-users/zsh/blob/master/Functions/Zle/up-line-or-beginning-search
