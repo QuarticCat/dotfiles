@@ -92,6 +92,7 @@ SAVEHIST=1000000  # number of commands that are stored
 # TODO: switch to atuin
 
 # zsh completion
+autoload -Uz compdef
 compdef _galiases -first-
 _galiases() {
     if [[ $PREFIX == :* ]] {
@@ -191,9 +192,6 @@ alias -g :bg='&>/dev/null &!'
 # Functions #
 #-----------#
 
-fpath+=(~zdot/functions)
-autoload -Uz ~zdot/functions/*(#q:t)
-
 f() {
     case $1 {
     doc)
@@ -240,109 +238,136 @@ code-lldb() {
 # Key Bindings #
 #--------------#
 
-for widget in {back,for}ward-{,kill-}{sub,shell}word; {
-    zle -N $widget _qc_subword
-}
-
 bindkey -r '^['  # Unbind [Esc] (default: vi-cmd-mode)
 
-bindkey '^[[D'    backward-char           # [Left]           (default: vi-backward-char)
-bindkey '^[[C'    forward-char            # [Right]          (default: vi-forward-char)
-bindkey '^[[1;5D' backward-subword        # [Ctrl-Left]
-bindkey '^[[1;5C' forward-subword         # [Ctrl-Right]
-bindkey '^[[1;3D' backward-shellword      # [Alt-Left]
-bindkey '^[[1;3C' forward-shellword       # [Alt-Right]
-bindkey '^H'      backward-kill-subword   # [Ctrl-Backspace]
-bindkey '^[[3;5~' forward-kill-subword    # [Ctrl-Delete]
-bindkey '^[^?'    backward-kill-shellword # [Alt-Backspace]
-bindkey '^[[3;3~' forward-kill-shellword  # [Alt-Delete]
-bindkey '^A'      beginning-of-line       # [Ctrl-A]
-bindkey '^E'      end-of-line             # [Ctrl-E]
-bindkey '^Z'      undo                    # [Ctrl-Z]
-bindkey '^Y'      redo                    # [Ctrl-Y]
-bindkey ' '       magic-space             # [Space]          Trigger history expansion
-bindkey '^[^M'    self-insert-unmeta      # [Alt-Enter]      Insert newline
-bindkey '^Q'      push-line-or-edit       # [Ctrl-Q]         Push line in single line or edit in multi line
+bindkey '^[[D' backward-char       # [Left]      (default: vi-backward-char)
+bindkey '^[[C' forward-char        # [Right]     (default: vi-forward-char)
+bindkey '^A'   beginning-of-line   # [Ctrl-A]
+bindkey '^E'   end-of-line         # [Ctrl-E]
+bindkey '^Z'   undo                # [Ctrl-Z]
+bindkey '^Y'   redo                # [Ctrl-Y]
+bindkey ' '    magic-space         # [Space]     Trigger history expansion
+bindkey '^[^M' self-insert-unmeta  # [Alt-Enter] Insert newline
+bindkey '^Q'   push-line-or-edit   # [Ctrl-Q]    Push line in single line or edit in multi line
+
+# Ref: https://github.com/marlonrichert/zsh-edit
+_qc.word-widgets() {
+    local -i move=0
+    if [[ $WIDGET == *-shellword ]] {
+        local words=(${(Z:n:)BUFFER}) lwords=(${(Z:n:)LBUFFER})
+        if [[ $WIDGET == backward-* ]] {
+            local tail=$lwords[-1]
+            move=-${(M)#LBUFFER%$tail*}
+        } else {
+            local head=${${words[$#lwords]#$lwords[-1]}:-$words[$#lwords+1]}
+            move=+${(M)#RBUFFER#*$head}
+        }
+    } else {
+        local subword='([[:WORD:]]##~*[^[:upper:]]*[[:upper:]]*~*[[:alnum:]]*[^[:alnum:]]*)'
+        local word="(${subword}|[^[:WORD:][:space:]]##|[[:space:]]##)"
+        if [[ $WIDGET == backward-* ]] {
+            move=-${(M)#LBUFFER%%${~word}(?|)}
+        } else {
+            move=+${(M)#RBUFFER##(?|)${~word}}
+        }
+    }
+    if [[ $WIDGET == *kill-* ]] {
+        (( MARK = CURSOR + move ))
+        zle .kill-region
+        zle -f kill
+    } else {
+        (( CURSOR += move ))
+    }
+}
+for w in {back,for}ward-{,kill-}{sub,shell}word; zle -N $w _qc.word-widgets
+bindkey '^[[1;5D' backward-subword         # [Ctrl-Left]
+bindkey '^[[1;5C' forward-subword          # [Ctrl-Right]
+bindkey '^[[1;3D' backward-shellword       # [Alt-Left]
+bindkey '^[[1;3C' forward-shellword        # [Alt-Right]
+bindkey '^H'      backward-kill-subword    # [Ctrl-Backspace]
+bindkey '^[[3;5~' forward-kill-subword     # [Ctrl-Delete]
+bindkey '^[^?'    backward-kill-shellword  # [Alt-Backspace]
+bindkey '^[[3;3~' forward-kill-shellword   # [Alt-Delete]
 
 # [Up] Combine up-line-or-beginning-search and history-substring-search-up
 # Ref: https://github.com/zsh-users/zsh/blob/master/Functions/Zle/up-line-or-beginning-search
-up-line-or-substring-search() {
-    typeset -g __searching
+_qc.up-line-or-substr-search() {
+    typeset -g __qc_searching
     if [[ $LBUFFER == *$'\n'* ]] {
-        __searching=''
-        zle up-line-or-history
+        __qc_searching=''
+        zle .up-line-or-history
     } elif [[ $PREBUFFER != '' ]] {
-        zle push-line-or-edit
+        zle .push-line-or-edit
     } else {
-        __searching=$WIDGET
+        __qc_searching=$WIDGET
         zle history-substring-search-up
     }
 }
-zle -N up-line-or-substring-search
-bindkey '^[[A' up-line-or-substring-search
+zle -N _qc.up-line-or-substr-search
+bindkey '^[[A' _qc.up-line-or-substr-search
 
 # [Down] Combine down-line-or-beginning-search and history-substring-search-down
 # Ref: https://github.com/zsh-users/zsh/blob/master/Functions/Zle/down-line-or-beginning-search
-down-line-or-substring-search() {
-    typeset -g __searching
-    if [[ $LASTWIDGET == $__searching || $RBUFFER != *$'\n'* ]] {
-        __searching=$WIDGET
+_qc.down-line-or-substr-search() {
+    typeset -g __qc_searching
+    if [[ $LASTWIDGET == $__qc_searching || $RBUFFER != *$'\n'* ]] {
+        __qc_searching=$WIDGET
         zle history-substring-search-down && return
         [[ $RBUFFER != *$'\n'* ]] && return
     }
-    __searching=''
-    zle down-line-or-history
+    __qc_searching=''
+    zle .down-line-or-history
 }
-zle -N down-line-or-substring-search
-bindkey '^[[B' down-line-or-substring-search
+zle -N _qc.down-line-or-substr-search
+bindkey '^[[B' _qc.down-line-or-substr-search
 
-# Trim trailing newline from pasted text
+# Trim trailing whitespace from pasted text
 # Ref: https://unix.stackexchange.com/questions/693118
-bracketed-paste() {
-    zle .$WIDGET
-    LBUFFER=${LBUFFER%$'\n'}
+_qc.trim-paste() {
+    zle .bracketed-paste
+    LBUFFER=${LBUFFER%%[[:space:]]##}
 }
-zle -N bracketed-paste
+zle -N bracketed-paste _qc.trim-paste
 
 # Change '...' to '../..'
 # Ref: https://grml.org/zsh/zsh-lovers.html#_completion
-rationalize-dot() {
+_qc.rationalize-dot() {
     if [[ $LBUFFER == *.. ]] {
         LBUFFER+='/..'
     } else {
         LBUFFER+='.'
     }
 }
-zle -N rationalize-dot
-bindkey '.' rationalize-dot
+zle -N _qc.rationalize-dot
+bindkey '.' _qc.rationalize-dot
 
 # [Ctrl-L] Clear screen while maintaining scrollback
 # Ref: https://superuser.com/questions/1389834
 # FIXME: Goes wrong in tmux
-clear-screen() {
+_qc.clear-screen() {
     local prompt_height=$(echo -n ${(%%)PS1} | wc -l)
     local lines=$((LINES - prompt_height))
     printf "$terminfo[cud1]%.0s" {1..$lines}  # cursor down
     printf "$terminfo[cuu1]%.0s" {1..$lines}  # cursor up
-    zle reset-prompt
+    zle .reset-prompt
 }
-zle -N clear-screen
-bindkey '^L' clear-screen
+zle -N _qc.clear-screen
+bindkey '^L' _qc.clear-screen
 
 # [Ctrl-R] Search history by fzf-tab
 # Ref: https://github.com/Aloxaf/dotfiles/blob/0619025cb2/zsh/.config/zsh/snippets/key-bindings.zsh#L80-L102
-fzf-history-search() {
+_qc.fzf-history-search() {
     local selected=$(
         fc -rl 1 |
         ftb-tmux-popup -n '2..' --tiebreak=index --prompt='cmd> ' ${BUFFER:+-q$BUFFER}
     )
     if [[ $selected != '' ]] {
-        zle vi-fetch-history -n $selected
+        zle .vi-fetch-history -n $selected
     }
-    zle reset-prompt
+    zle .reset-prompt
 }
-zle -N fzf-history-search
-bindkey '^R' fzf-history-search
+zle -N _qc.fzf-history-search
+bindkey '^R' _qc.fzf-history-search
 
 # [Ctrl-N] Navigate by xplr
 # This is not a widget since properly resetting prompt is hard
