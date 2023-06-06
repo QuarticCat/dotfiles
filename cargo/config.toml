@@ -11,21 +11,25 @@ split-debuginfo = "unpacked"
 # package."*".opt-level = 3    # override dependencies
 build-override.opt-level = 3 # override build scripts and proc-macros
 
-# Applied through `cargo build --profile release-debug`
-[profile.release-debug]
+# Applied through `cargo build --profile=profile`
+[profile.profile]
 inherits = "release"
 debuginfo = true
 
-# Applied through `cargo build --profile release-product`
-[profile.release-product]
+# Applied through `cargo build --profile=product`
+[profile.product]
 inherits = "release"
-lto = "thin"
 strip = true
+lto = "thin"
+# codegen-units = 1
 
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
-rustflags = ["-Clink-arg=-fuse-ld=lld", "-Clink-arg=-Wl,--no-rosegment"]
-# TODO: shared generics
+rustflags = [
+    "-Clink-arg=-fuse-ld=lld",
+    "-Clink-arg=-Wl,--no-rosegment",
+    # "-Zshare-generics=y",
+]
 
 [http]
 proxy = "socks5h://127.0.0.1:1089"

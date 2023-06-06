@@ -1,13 +1,13 @@
-#-----------#
+#===========#
 # Open Tmux #
-#-----------#
+#===========#
 
 # # if (not in tmux) and (interactive env) and (not embedded terminal)
 # [[ -z $TMUX && $- == *i* && ! $(</proc/$PPID/cmdline) =~ "dolphin|vim|emacs|code" ]] && tmux
 
-#---------------------#
+#=====================#
 # Directory Shortcuts #
-#---------------------#
+#=====================#
 
 hash -d config=$XDG_CONFIG_HOME
 hash -d cache=$XDG_CACHE_HOME
@@ -18,53 +18,265 @@ hash -d Trash=~/.local/share/Trash/files
 hash -d OneDrive=~/OneDrive
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
-[[ -d ~Workspace ]] && for p in ~Workspace/*; hash -d ${p:t}=$p
+for p in ~Workspace/*(N); hash -d ${p:t}=$p
 
-#---------------------#
+#=====================#
 # P10k Instant Prompt #
-#---------------------#
+#=====================#
 
 include -f ~cache/p10k-instant-prompt-${(%):-%n}.zsh
 
-#---------#
-# Plugins #
-#---------#
+#==================#
+# Plugins (Part I) #
+#==================#
 
-[[ -d ~zdot/.zgenom ]] || git clone https://github.com/jandamm/zgenom ~zdot/.zgenom
+[[ -d ~zdot/.zcomet ]] ||
+git clone https://github.com/agkozak/zcomet ~zdot/.zcomet/bin
 
-source ~zdot/.zgenom/zgenom.zsh
+source ~zdot/.zcomet/bin/zcomet.zsh
 
-zgenom autoupdate  # every 7 days
+zcomet load ohmyzsh lib {completion,clipboard}.zsh
 
-if ! zgenom saved; then
-    zgenom load romkatv/powerlevel10k powerlevel10k
+zcomet fpath ohmyzsh plugins/rust
+zcomet fpath ohmyzsh plugins/docker-compose
+zcomet fpath spwhitt/nix-zsh-completions
+zcomet fpath zsh-users/zsh-completions src
+zcomet load tj/git-extras etc git-extras-completion.zsh
 
-    zgenom ohmyzsh lib/completion.zsh
-    zgenom ohmyzsh lib/clipboard.zsh
+zcomet load chisui/zsh-nix-shell
 
-    zgenom ohmyzsh plugins/sudo
-    zgenom ohmyzsh plugins/extract
+zcomet load zsh-users/zsh-history-substring-search
+HISTORY_SUBSTRING_SEARCH_FUZZY=true
 
-    zgenom ohmyzsh --completion plugins/rust
-    zgenom ohmyzsh --completion plugins/docker-compose
-    zgenom load --completion spwhitt/nix-zsh-completions
-    zgenom load zsh-users/zsh-completions
+zcomet load hlissner/zsh-autopair
+AUTOPAIR_BKSPC_WIDGET='backward-delete-char'
 
-    zgenom load Aloxaf/fzf-tab  # TODO: move `compinit` to the top of it?
-    zgenom load chisui/zsh-nix-shell
-    zgenom load zdharma-continuum/fast-syntax-highlighting
-    zgenom load zsh-users/zsh-autosuggestions
-    zgenom load zsh-users/zsh-history-substring-search
-    zgenom load hlissner/zsh-autopair
+#=============#
+# Completions #
+#=============#
 
-    zgenom clean
-    zgenom save
-    zgenom compile ~zdot
-fi
+# general
+zstyle ':completion:*' sort false
+zstyle ':completion:*' special-dirs false  # exclude `.` and `..` (enabled by OMZL::completion.zsh)
 
-#---------#
+# docker
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
+
+# galiases
+compdef _galiases -first-
+_galiases() {
+    if [[ $PREFIX == :* ]] {
+        local des=()
+        for k v in "${(@kv)galiases}"; des+=("\\:${k:1}:galias: '$v'")
+        _describe 'alias' des
+    }
+}
+
+#===========#
+# Functions #
+#===========#
+
+open() {
+    xdg-open $@ &>/dev/null &!
+}
+
+f() {
+    case $1 {
+    doc)
+        local base=~OneDrive/Documents
+        local result=$(fd --base-directory=$base --type=file | fzf)
+        [[ $result != '' ]] && open $base/$result
+        ;;
+    hw)
+        local base=~Homework
+        local result=$(fd --base-directory=$base --type=directory --max-depth=2 | fzf)
+        [[ $result != '' ]] && open $base/$result
+        ;;
+    }
+}
+
+# Ref: https://github.com/vadimcn/vscode-lldb/blob/master/MANUAL.md#debugging-externally-launched-code
+code-lldb() {
+    local exe="'${1:a}'"      # get real path of the executable and wrap it with quotes
+    local args=("'${^@:2}'")  # wrap arguments with quotes
+    code --open-url "vscode://vadimcn.vscode-lldb/launch/command?$exe $args"
+}
+
+#==============#
+# Key Bindings #
+#==============#
+
+bindkey -r '^['  # Unbind [Esc]    (default: vi-cmd-mode)
+
+bindkey '^[[D' backward-char       # [Left]      (default: vi-backward-char)
+bindkey '^[[C' forward-char        # [Right]     (default: vi-forward-char)
+bindkey '^A'   beginning-of-line   # [Ctrl-A]
+bindkey '^E'   end-of-line         # [Ctrl-E]
+bindkey '^Z'   undo                # [Ctrl-Z]
+bindkey '^Y'   redo                # [Ctrl-Y]
+bindkey ' '    magic-space         # [Space]     Trigger history expansion
+bindkey '^[^M' self-insert-unmeta  # [Alt-Enter] Insert newline
+bindkey '^Q'   push-line-or-edit   # [Ctrl-Q]    Push line in single-line or edit in multi-line
+
+# Ref: https://github.com/marlonrichert/zsh-edit
+qc-word-widgets() {
+    local -i move=0
+    if [[ $WIDGET == *-shellword ]] {
+        local words=(${(Z:n:)BUFFER}) lwords=(${(Z:n:)LBUFFER})
+        if [[ $WIDGET == *-backward-* ]] {
+            local tail=$lwords[-1]
+            move=-${(M)#LBUFFER%$tail*}
+        } else {
+            local head=${${words[$#lwords]#$lwords[-1]}:-$words[$#lwords+1]}
+            move=+${(M)#RBUFFER#*$head}
+        }
+    } else {
+        local subword='([[:WORD:]]##~*[^[:upper:]]*[[:upper:]]*~*[[:alnum:]]*[^[:alnum:]]*)'
+        local word="(${subword}|[^[:WORD:][:space:]]##|[[:space:]]##)"
+        if [[ $WIDGET == *-backward-* ]] {
+            move=-${(M)#LBUFFER%%${~word}(?|)}
+        } else {
+            move=+${(M)#RBUFFER##(?|)${~word}}
+        }
+    }
+    if [[ $WIDGET == *-kill-* ]] {
+        (( MARK = CURSOR + move ))
+        zle .kill-region
+        zle -f kill
+    } else {
+        (( CURSOR += move ))
+    }
+}
+for w in qc-{back,for}ward-{,kill-}{sub,shell}word; zle -N $w qc-word-widgets
+bindkey '^[[1;5D' qc-backward-subword         # [Ctrl-Left]
+bindkey '^[[1;5C' qc-forward-subword          # [Ctrl-Right]
+bindkey '^[[1;3D' qc-backward-shellword       # [Alt-Left]
+bindkey '^[[1;3C' qc-forward-shellword        # [Alt-Right]
+bindkey '^H'      qc-backward-kill-subword    # [Ctrl-Backspace]
+bindkey '^W'      qc-backward-kill-subword    # [Ctrl-Backspace] (in VSCode)
+bindkey '^[[3;5~' qc-forward-kill-subword     # [Ctrl-Delete]
+bindkey '^[^?'    qc-backward-kill-shellword  # [Alt-Backspace]
+bindkey '^[[3;3~' qc-forward-kill-shellword   # [Alt-Delete]
+
+# [Up] Combine up-line-or-beginning-search and history-substring-search-up
+qc-up-line-or-search() {
+    if [[ $LBUFFER == *$'\n'* ]] {
+        zle .up-line
+    } else {
+        zle history-substring-search-up
+    }
+}
+zle -N qc-up-line-or-search
+bindkey '^[[A' qc-up-line-or-search
+
+# [Down] Combine down-line-or-beginning-search and history-substring-search-down
+qc-down-line-or-search() {
+    if [[ $RBUFFER == *$'\n'* ]] {
+        zle .down-line
+    } else {
+        zle history-substring-search-down
+    }
+}
+zle -N qc-down-line-or-search
+bindkey '^[[B' qc-down-line-or-search
+
+# [Enter] Insert `\n` when accept-line would result in a parse error or PS2.
+# Ref: https://github.com/romkatv/zsh4humans/blob/v5/fn/z4h-accept-line
+qc-accept-line() {
+    if [[ $(functions[-qc-test]=$BUFFER 2>&1) == '' ]] {
+        zle .accept-line
+    } else {
+        LBUFFER+=$'\n'
+    }
+}
+zle -N qc-accept-line
+bindkey '^M' qc-accept-line
+
+# Trim trailing whitespace from pasted text
+# Ref: https://unix.stackexchange.com/questions/693118
+qc-trim-paste() {
+    zle .bracketed-paste
+    LBUFFER=${LBUFFER%%[[:space:]]##}
+}
+zle -N bracketed-paste qc-trim-paste
+
+# Change '...' to '../..'
+# Ref: https://grml.org/zsh/zsh-lovers.html#_completion
+qc-rationalize-dot() {
+    if [[ $LBUFFER == *.. ]] {
+        LBUFFER+='/..'
+    } else {
+        LBUFFER+='.'
+    }
+}
+zle -N qc-rationalize-dot
+bindkey '.' qc-rationalize-dot
+bindkey '^[.' self-insert-unmeta  # [Alt-.] Insert dot
+
+# [Ctrl-L] Clear screen but keep scrollback
+# Ref: https://superuser.com/questions/1389834
+# FIXME: buggy in tmux
+qc-clear-screen() {
+    local prompt_height=$(echo -n ${(%%)PS1} | wc -l)
+    local lines=$((LINES - prompt_height))
+    printf "$terminfo[cud1]%.0s" {1..$lines}  # cursor down
+    printf "$terminfo[cuu1]%.0s" {1..$lines}  # cursor up
+    zle .reset-prompt
+}
+zle -N qc-clear-screen
+bindkey '^L' qc-clear-screen
+
+# [Ctrl-R] Search history by fzf-tab
+# Ref: https://github.com/Aloxaf/dotfiles/blob/0619025cb2/zsh/.config/zsh/snippets/key-bindings.zsh#L80-L102
+qc-search-history() {
+    local result=$(fc -rl 1 | ftb-tmux-popup -n '2..' --scheme=history --query=$BUFFER)
+    [[ $result != '' ]] && zle .vi-fetch-history -n $result
+    zle .reset-prompt
+}
+zle -N qc-search-history
+bindkey '^R' qc-search-history
+
+# [Ctrl-N] Navigate by xplr
+# This is not a widget since properly resetting prompt is hard
+# See https://github.com/romkatv/powerlevel10k/issues/72
+bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
+
+#===================#
+# Plugins (Part II) #
+#===================#
+
+zcomet compinit
+
+zcomet load Aloxaf/fzf-tab
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
+# zstyle ':fzf-tab:*' switch-group ',' '.'
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
+zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
+
+# FIXME: highlight for partial accept is incorrect
+zcomet load zsh-users/zsh-autosuggestions
+ZSH_AUTOSUGGEST_MANUAL_REBIND=true
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(
+    qc-up-line-or-search
+    qc-down-line-or-search
+    qc-accept-line
+)
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(
+    qc-forward-subword
+    qc-forward-shellword
+)
+
+zcomet load zdharma-continuum/fast-syntax-highlighting
+unset 'FAST_HIGHLIGHT[chroma-man]'  # chroma-man will stuck history browsing
+
+zcomet load romkatv/powerlevel10k
+
+#=========#
 # Configs #
-#---------#
+#=========#
 
 # zsh misc
 setopt auto_cd               # simply type dir name to cd
@@ -75,10 +287,11 @@ setopt interactive_comments  # comments in interactive shells
 setopt multios               # multiple redirections
 setopt ksh_option_print      # make setopt output all options
 setopt extended_glob         # extended globbing
-setopt no_bare_glob_qual     # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
-setopt glob_dots             # match hidden files (affect completion)
-WORDCHARS='*?_-.[]~&;!#$%^(){}<>'  # remove '/='
-# autoload -U colors && colors  # provide color variables (see `which colors`)
+setopt glob_dots             # match hidden files like `PATTERN(D)`, also affect completion
+# setopt no_bare_glob_qual     # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
+unsetopt short_loops         # disallow for loops without a sublist
+WORDCHARS='*?_-.[]~&;!#$%^(){}<>'  # without `/=`
+autoload -Uz colors && colors  # provide color variables (see `which colors`)
 
 # zsh history
 setopt hist_ignore_all_dups  # no duplicates
@@ -87,25 +300,11 @@ setopt hist_ignore_space     # no commands starting with space
 setopt hist_reduce_blanks    # remove all unneccesary spaces
 setopt share_history         # share history between sessions
 HISTFILE=~zdot/.zsh_history
-HISTSIZE=1000000  # number of commands that are loaded into memory
+HISTSIZE=1000000  # number of commands that are loaded
 SAVEHIST=1000000  # number of commands that are stored
-# TODO: switch to atuin
-
-# zsh completion
-autoload -Uz compdef
-compdef _galiases -first-
-_galiases() {
-    if [[ $PREFIX == :* ]] {
-        local des=()
-        for k v in "${(@kv)galiases}"; des+=("\\:${k:1}:galias: '$v'")
-        _describe 'alias' des
-    }
-}
-zstyle ':completion:*' sort false
-zstyle ':completion:*' special-dirs false  # exclude `.` and `..`
 
 # zsh prompt
-setopt transient_rprompt  # remove rprompt after accept line
+setopt transient_rprompt       # remove rprompt after accept line
 PS2='%(?.%F{76}.%F{196})| %f'  # continuation prompt
 RPS2='%F{8}%_%f'               # continuation right prompt
 
@@ -125,23 +324,6 @@ MY_PROXY='127.0.0.1:1089'
 # fzf
 export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'
 
-# fzf-tab
-zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
-# zstyle ':fzf-tab:*' switch-group ',' '.'
-zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
-zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
-zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
-
-# fast-syntax-highlighting
-unset 'FAST_HIGHLIGHT[chroma-man]'  # chroma-man will stuck history browsing
-
-# zsh-autosuggestions
-ZSH_AUTOSUGGEST_MANUAL_REBIND='1'
-
-# zsh-history-substring-search
-HISTORY_SUBSTRING_SEARCH_FUZZY='1'
-
 # gpg
 export GPG_TTY=$TTY
 
@@ -151,7 +333,7 @@ export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'
 # bat
 export BAT_THEME='OneHalfDark'
 
-# man-pages
+# man
 export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
 
@@ -160,9 +342,9 @@ export NPM_CONFIG_PREFIX=~/.local
 export NPM_CONFIG_CACHE=~cache/npm
 # export NPM_CONFIG_PROXY=$MY_PROXY
 
-#---------#
+#=========#
 # Aliases #
-#---------#
+#=========#
 
 alias l='exa -lah --group-directories-first --git --time-style=long-iso'
 alias lt='l -TI .git'
@@ -188,195 +370,13 @@ alias -g :n='>/dev/null'
 alias -g :nn='&>/dev/null'
 alias -g :bg='&>/dev/null &!'
 
-#-----------#
-# Functions #
-#-----------#
+alias -g :color='--color=always'
+# TODO: find a better way to specify file extension (use TMPSUFFIX for now)
+alias -g :input='=(echo $fg[magenta]">>>>> Input:"$reset_color >&2; cat)'
 
-f() {
-    case $1 {
-    doc)
-        local base=~OneDrive/Documents
-        local selected=$(
-            fd --base-directory=$base --type=file | fzf
-        )
-        if [[ $selected != '' ]] {
-            okular $base/$selected &>/dev/null &!
-        }
-        ;;
-    hw)
-        local base=~Homework
-        local selected=$(
-            fd --base-directory=$base --type=directory --max-depth=2 | fzf
-        )
-        if [[ $selected != '' ]] {
-            dolphin $base/$selected &>/dev/null &!
-        }
-        ;;
-    }
-}
-
-# TODO: complete it
-# rgc() {
-#     rg --color=always --line-number "$@" |
-#     fzf --delimiter=: \
-#         --preview='bat --color=always {1} --highlight-line={2}' \
-#         --preview-window='~3,+{2}+3/4'
-# }
-
-open() {
-    xdg-open $@ &>/dev/null &!
-}
-
-# Ref: https://github.com/vadimcn/vscode-lldb/blob/master/MANUAL.md#debugging-externally-launched-code
-code-lldb() {
-    local exe="'${1:a}'"      # get real path of the executable and wrap it with quotes
-    local args=("'${^@:2}'")  # wrap arguments with quotes
-    code --open-url "vscode://vadimcn.vscode-lldb/launch/command?$exe $args"
-}
-
-#--------------#
-# Key Bindings #
-#--------------#
-
-bindkey -r '^['  # Unbind [Esc] (default: vi-cmd-mode)
-
-bindkey '^[[D' backward-char       # [Left]      (default: vi-backward-char)
-bindkey '^[[C' forward-char        # [Right]     (default: vi-forward-char)
-bindkey '^A'   beginning-of-line   # [Ctrl-A]
-bindkey '^E'   end-of-line         # [Ctrl-E]
-bindkey '^Z'   undo                # [Ctrl-Z]
-bindkey '^Y'   redo                # [Ctrl-Y]
-bindkey ' '    magic-space         # [Space]     Trigger history expansion
-bindkey '^[^M' self-insert-unmeta  # [Alt-Enter] Insert newline
-bindkey '^Q'   push-line-or-edit   # [Ctrl-Q]    Push line in single line or edit in multi line
-
-# Ref: https://github.com/marlonrichert/zsh-edit
-_qc.word-widgets() {
-    local -i move=0
-    if [[ $WIDGET == *-shellword ]] {
-        local words=(${(Z:n:)BUFFER}) lwords=(${(Z:n:)LBUFFER})
-        if [[ $WIDGET == backward-* ]] {
-            local tail=$lwords[-1]
-            move=-${(M)#LBUFFER%$tail*}
-        } else {
-            local head=${${words[$#lwords]#$lwords[-1]}:-$words[$#lwords+1]}
-            move=+${(M)#RBUFFER#*$head}
-        }
-    } else {
-        local subword='([[:WORD:]]##~*[^[:upper:]]*[[:upper:]]*~*[[:alnum:]]*[^[:alnum:]]*)'
-        local word="(${subword}|[^[:WORD:][:space:]]##|[[:space:]]##)"
-        if [[ $WIDGET == backward-* ]] {
-            move=-${(M)#LBUFFER%%${~word}(?|)}
-        } else {
-            move=+${(M)#RBUFFER##(?|)${~word}}
-        }
-    }
-    if [[ $WIDGET == *kill-* ]] {
-        (( MARK = CURSOR + move ))
-        zle .kill-region
-        zle -f kill
-    } else {
-        (( CURSOR += move ))
-    }
-}
-for w in {back,for}ward-{,kill-}{sub,shell}word; zle -N $w _qc.word-widgets
-bindkey '^[[1;5D' backward-subword         # [Ctrl-Left]
-bindkey '^[[1;5C' forward-subword          # [Ctrl-Right]
-bindkey '^[[1;3D' backward-shellword       # [Alt-Left]
-bindkey '^[[1;3C' forward-shellword        # [Alt-Right]
-bindkey '^H'      backward-kill-subword    # [Ctrl-Backspace]
-bindkey '^[[3;5~' forward-kill-subword     # [Ctrl-Delete]
-bindkey '^[^?'    backward-kill-shellword  # [Alt-Backspace]
-bindkey '^[[3;3~' forward-kill-shellword   # [Alt-Delete]
-
-# [Up] Combine up-line-or-beginning-search and history-substring-search-up
-# Ref: https://github.com/zsh-users/zsh/blob/master/Functions/Zle/up-line-or-beginning-search
-_qc.up-line-or-substr-search() {
-    typeset -g __qc_searching
-    if [[ $LBUFFER == *$'\n'* ]] {
-        __qc_searching=''
-        zle .up-line-or-history
-    } elif [[ $PREBUFFER != '' ]] {
-        zle .push-line-or-edit
-    } else {
-        __qc_searching=$WIDGET
-        zle history-substring-search-up
-    }
-}
-zle -N _qc.up-line-or-substr-search
-bindkey '^[[A' _qc.up-line-or-substr-search
-
-# [Down] Combine down-line-or-beginning-search and history-substring-search-down
-# Ref: https://github.com/zsh-users/zsh/blob/master/Functions/Zle/down-line-or-beginning-search
-_qc.down-line-or-substr-search() {
-    typeset -g __qc_searching
-    if [[ $LASTWIDGET == $__qc_searching || $RBUFFER != *$'\n'* ]] {
-        __qc_searching=$WIDGET
-        zle history-substring-search-down && return
-        [[ $RBUFFER != *$'\n'* ]] && return
-    }
-    __qc_searching=''
-    zle .down-line-or-history
-}
-zle -N _qc.down-line-or-substr-search
-bindkey '^[[B' _qc.down-line-or-substr-search
-
-# Trim trailing whitespace from pasted text
-# Ref: https://unix.stackexchange.com/questions/693118
-_qc.trim-paste() {
-    zle .bracketed-paste
-    LBUFFER=${LBUFFER%%[[:space:]]##}
-}
-zle -N bracketed-paste _qc.trim-paste
-
-# Change '...' to '../..'
-# Ref: https://grml.org/zsh/zsh-lovers.html#_completion
-_qc.rationalize-dot() {
-    if [[ $LBUFFER == *.. ]] {
-        LBUFFER+='/..'
-    } else {
-        LBUFFER+='.'
-    }
-}
-zle -N _qc.rationalize-dot
-bindkey '.' _qc.rationalize-dot
-
-# [Ctrl-L] Clear screen while maintaining scrollback
-# Ref: https://superuser.com/questions/1389834
-# FIXME: Goes wrong in tmux
-_qc.clear-screen() {
-    local prompt_height=$(echo -n ${(%%)PS1} | wc -l)
-    local lines=$((LINES - prompt_height))
-    printf "$terminfo[cud1]%.0s" {1..$lines}  # cursor down
-    printf "$terminfo[cuu1]%.0s" {1..$lines}  # cursor up
-    zle .reset-prompt
-}
-zle -N _qc.clear-screen
-bindkey '^L' _qc.clear-screen
-
-# [Ctrl-R] Search history by fzf-tab
-# Ref: https://github.com/Aloxaf/dotfiles/blob/0619025cb2/zsh/.config/zsh/snippets/key-bindings.zsh#L80-L102
-_qc.fzf-history-search() {
-    local selected=$(
-        fc -rl 1 |
-        ftb-tmux-popup -n '2..' --tiebreak=index --prompt='cmd> ' ${BUFFER:+-q$BUFFER}
-    )
-    if [[ $selected != '' ]] {
-        zle .vi-fetch-history -n $selected
-    }
-    zle .reset-prompt
-}
-zle -N _qc.fzf-history-search
-bindkey '^R' _qc.fzf-history-search
-
-# [Ctrl-N] Navigate by xplr
-# This is not a widget since properly resetting prompt is hard
-# See https://github.com/romkatv/powerlevel10k/issues/72
-bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
-
-#---------#
+#=========#
 # Scripts #
-#---------#
+#=========#
 
 include -c thefuck --alias
 include -c direnv hook zsh
