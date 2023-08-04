@@ -121,7 +121,7 @@ clang/clang-format.pf \
 clang/clangd.pf \
     ~/.config/clangd '*'
 
-# TODO: consider a better way to manage dotfiles outside $HOME
+# TODO: find a better way to manage dotfiles outside $HOME
 
 # pacman.pf \
 #     /etc 'pacman.conf'

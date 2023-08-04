@@ -9,4 +9,4 @@ Diagnostics:
     Add: [bugprone-*, performance-*] # TODO: add more
 
 Hover:
-  ShowAKA: Yes
+  ShowAKA: true

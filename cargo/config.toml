@@ -7,9 +7,9 @@ email = "<QuarticCat@pm.me>"
 
 [profile.dev]
 split-debuginfo = "unpacked"
-# opt-level = 1
+opt-level = 1
 # package."*".opt-level = 3    # override dependencies
-build-override.opt-level = 3 # override build scripts and proc-macros
+# build-override.opt-level = 3 # override build scripts and proc-macros
 
 # Applied through `cargo build --profile=profile`
 [profile.profile]
@@ -33,6 +33,9 @@ rustflags = [
 
 [http]
 proxy = "socks5h://127.0.0.1:1089"
+
+[doc]
+# browser = "microsoft-edge-stable"
 
 [source]
 # crates-io = { replace-with = "tuna" }

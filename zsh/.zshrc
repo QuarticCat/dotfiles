@@ -36,6 +36,8 @@ git clone https://github.com/agkozak/zcomet ~zdot/.zcomet/bin
 source ~zdot/.zcomet/bin/zcomet.zsh
 
 zcomet load ohmyzsh lib {completion,clipboard}.zsh
+zcomet load ohmyzsh plugins/sudo
+zcomet load ohmyzsh plugins/extract
 
 zcomet fpath ohmyzsh plugins/rust
 zcomet fpath ohmyzsh plugins/docker-compose
@@ -44,9 +46,6 @@ zcomet fpath zsh-users/zsh-completions src
 zcomet load tj/git-extras etc git-extras-completion.zsh
 
 zcomet load chisui/zsh-nix-shell
-
-zcomet load zsh-users/zsh-history-substring-search
-HISTORY_SUBSTRING_SEARCH_FUZZY=true
 
 zcomet load hlissner/zsh-autopair
 AUTOPAIR_BKSPC_WIDGET='backward-delete-char'
@@ -142,8 +141,8 @@ qc-word-widgets() {
     }
     if [[ $WIDGET == *-kill-* ]] {
         (( MARK = CURSOR + move ))
-        zle .kill-region
         zle -f kill
+        zle .kill-region
     } else {
         (( CURSOR += move ))
     }
@@ -159,7 +158,7 @@ bindkey '^[[3;5~' qc-forward-kill-subword     # [Ctrl-Delete]
 bindkey '^[^?'    qc-backward-kill-shellword  # [Alt-Backspace]
 bindkey '^[[3;3~' qc-forward-kill-shellword   # [Alt-Delete]
 
-# [Up] Combine up-line-or-beginning-search and history-substring-search-up
+# [Up] ipython-style up-line + history-substring-search-up
 qc-up-line-or-search() {
     if [[ $LBUFFER == *$'\n'* ]] {
         zle .up-line
@@ -170,7 +169,7 @@ qc-up-line-or-search() {
 zle -N qc-up-line-or-search
 bindkey '^[[A' qc-up-line-or-search
 
-# [Down] Combine down-line-or-beginning-search and history-substring-search-down
+# [Down] ipython-style down-line + history-substring-search-down
 qc-down-line-or-search() {
     if [[ $RBUFFER == *$'\n'* ]] {
         zle .down-line
@@ -248,6 +247,7 @@ bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
 
 zcomet compinit
 
+# NOTE: should be loaded after `compinit` but before `zsh-autosuggestions` / `fast-syntax-highlighting`
 zcomet load Aloxaf/fzf-tab
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
@@ -256,7 +256,6 @@ zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
 zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
 
-# FIXME: highlight for partial accept is incorrect
 zcomet load zsh-users/zsh-autosuggestions
 ZSH_AUTOSUGGEST_MANUAL_REBIND=true
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(
@@ -272,6 +271,10 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(
 zcomet load zdharma-continuum/fast-syntax-highlighting
 unset 'FAST_HIGHLIGHT[chroma-man]'  # chroma-man will stuck history browsing
 
+# NOTE: should be loaded after `fast-syntax-highlighting`
+zcomet load zsh-users/zsh-history-substring-search
+HISTORY_SUBSTRING_SEARCH_FUZZY=true
+
 zcomet load romkatv/powerlevel10k
 
 #=========#
@@ -279,17 +282,17 @@ zcomet load romkatv/powerlevel10k
 #=========#
 
 # zsh misc
-setopt auto_cd               # simply type dir name to cd
-setopt auto_pushd            # make cd behave like pushd
+setopt auto_cd               # simply type dir name to `cd`
+setopt auto_pushd            # make `cd` behave like pushd
 setopt pushd_ignore_dups     # don't pushd duplicates
 setopt pushd_minus           # exchange the meanings of `+` and `-` in pushd
 setopt interactive_comments  # comments in interactive shells
 setopt multios               # multiple redirections
-setopt ksh_option_print      # make setopt output all options
+setopt ksh_option_print      # make `setopt` output all options
 setopt extended_glob         # extended globbing
 setopt glob_dots             # match hidden files like `PATTERN(D)`, also affect completion
-# setopt no_bare_glob_qual     # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
-unsetopt short_loops         # disallow for loops without a sublist
+# setopt no_bare_glob_qual   # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
+unsetopt short_loops         # disable for-loops without a sublist
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'  # without `/=`
 autoload -Uz colors && colors  # provide color variables (see `which colors`)
 
@@ -303,10 +306,10 @@ HISTFILE=~zdot/.zsh_history
 HISTSIZE=1000000  # number of commands that are loaded
 SAVEHIST=1000000  # number of commands that are stored
 
-# zsh prompt
-setopt transient_rprompt       # remove rprompt after accept line
-PS2='%(?.%F{76}.%F{196})| %f'  # continuation prompt
-RPS2='%F{8}%_%f'               # continuation right prompt
+# # zsh prompt
+# setopt transient_rprompt       # remove rprompt after accept line
+# PS2='%(?.%F{76}.%F{196})| %f'  # continuation prompt
+# RPS2='%F{8}%_%f'               # continuation right prompt
 
 # time (zsh built-in)
 TIMEFMT="\
@@ -319,7 +322,7 @@ page faults from disk:     %F
 other page faults:         %R"
 
 # my env variables
-MY_PROXY='127.0.0.1:1089'
+MY_PROXY='socks5h://127.0.0.1:1089'
 
 # fzf
 export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'
@@ -337,10 +340,10 @@ export BAT_THEME='OneHalfDark'
 export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
 
+# TODO: move this to a separate config file
 # npm
 export NPM_CONFIG_PREFIX=~/.local
 export NPM_CONFIG_CACHE=~cache/npm
-# export NPM_CONFIG_PROXY=$MY_PROXY
 
 #=========#
 # Aliases #
@@ -355,13 +358,12 @@ alias clco='tee >(clipcopy)'  # clipcopy + stdout
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
 alias edge='microsoft-edge-stable'
-alias nvvp='nvvp -vm /usr/lib/jvm/java-8-openjdk/jre/bin/java'
 alias sudo='sudo '
 alias pc='proxychains -q '
 alias env-proxy=' \
     http_proxy=$MY_PROXY \
-    HTTP_PROXY=$MY_PROXY \
     https_proxy=$MY_PROXY \
+    HTTP_PROXY=$MY_PROXY \
     HTTPS_PROXY=$MY_PROXY '
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
 
