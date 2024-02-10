@@ -46,7 +46,7 @@ export VISUAL='vim'
 
 ZDOTDIR=$XDG_CONFIG_HOME/zsh
 
-typeset -U path  # set unique (fpath has already been set unique)
+typeset -U path  # set unique (fpath is already unique)
 path=(
     $ZDOTDIR/scripts
     ~/.local/bin
@@ -55,6 +55,3 @@ path=(
     ~/go/bin
     $path
 )
-
-include -f ~/.nix-profile/etc/profile.d/nix.sh
-include -f ~/.opam/opam-init/init.zsh

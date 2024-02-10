@@ -1,10 +1,3 @@
-#===========#
-# Open Tmux #
-#===========#
-
-# # if (not in tmux) and (interactive env) and (not embedded terminal)
-# [[ -z $TMUX && $- == *i* && ! $(</proc/$PPID/cmdline) =~ "dolphin|vim|emacs|code" ]] && tmux
-
 #=====================#
 # Directory Shortcuts #
 #=====================#
@@ -12,9 +5,10 @@
 hash -d config=$XDG_CONFIG_HOME
 hash -d cache=$XDG_CACHE_HOME
 hash -d data=$XDG_DATA_HOME
-hash -d zdot=$ZDOTDIR
 
-hash -d Trash=~/.local/share/Trash/files
+hash -d zdot=$ZDOTDIR
+hash -d git-exclude=.git/info/exclude
+
 hash -d OneDrive=~/OneDrive
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
@@ -39,10 +33,8 @@ zcomet load ohmyzsh lib {completion,clipboard}.zsh
 zcomet load ohmyzsh plugins/sudo
 zcomet load ohmyzsh plugins/extract
 
-zcomet fpath ohmyzsh plugins/rust
+zcomet fpath ohmyzsh plugins/rust  # completions for rustc
 zcomet fpath ohmyzsh plugins/docker-compose
-zcomet fpath spwhitt/nix-zsh-completions
-zcomet fpath zsh-users/zsh-completions src
 zcomet load tj/git-extras etc git-extras-completion.zsh
 
 zcomet load chisui/zsh-nix-shell
@@ -158,29 +150,7 @@ bindkey '^[[3;5~' qc-forward-kill-subword     # [Ctrl-Delete]
 bindkey '^[^?'    qc-backward-kill-shellword  # [Alt-Backspace]
 bindkey '^[[3;3~' qc-forward-kill-shellword   # [Alt-Delete]
 
-# [Up] ipython-style up-line + history-substring-search-up
-qc-up-line-or-search() {
-    if [[ $LBUFFER == *$'\n'* ]] {
-        zle .up-line
-    } else {
-        zle history-substring-search-up
-    }
-}
-zle -N qc-up-line-or-search
-bindkey '^[[A' qc-up-line-or-search
-
-# [Down] ipython-style down-line + history-substring-search-down
-qc-down-line-or-search() {
-    if [[ $RBUFFER == *$'\n'* ]] {
-        zle .down-line
-    } else {
-        zle history-substring-search-down
-    }
-}
-zle -N qc-down-line-or-search
-bindkey '^[[B' qc-down-line-or-search
-
-# [Enter] Insert `\n` when accept-line would result in a parse error or PS2.
+# [Enter] Insert `\n` when accept-line would result in a parse error or PS2
 # Ref: https://github.com/romkatv/zsh4humans/blob/v5/fn/z4h-accept-line
 qc-accept-line() {
     if [[ $(functions[-qc-test]=$BUFFER 2>&1) == '' ]] {
@@ -200,7 +170,7 @@ qc-trim-paste() {
 }
 zle -N bracketed-paste qc-trim-paste
 
-# Change '...' to '../..'
+# Change `...` to `../..`
 # Ref: https://grml.org/zsh/zsh-lovers.html#_completion
 qc-rationalize-dot() {
     if [[ $LBUFFER == *.. ]] {
@@ -215,7 +185,6 @@ bindkey '^[.' self-insert-unmeta  # [Alt-.] Insert dot
 
 # [Ctrl-L] Clear screen but keep scrollback
 # Ref: https://superuser.com/questions/1389834
-# FIXME: buggy in tmux
 qc-clear-screen() {
     local prompt_height=$(echo -n ${(%%)PS1} | wc -l)
     local lines=$((LINES - prompt_height))
@@ -226,20 +195,12 @@ qc-clear-screen() {
 zle -N qc-clear-screen
 bindkey '^L' qc-clear-screen
 
-# [Ctrl-R] Search history by fzf-tab
-# Ref: https://github.com/Aloxaf/dotfiles/blob/0619025cb2/zsh/.config/zsh/snippets/key-bindings.zsh#L80-L102
-qc-search-history() {
-    local result=$(fc -rl 1 | ftb-tmux-popup -n '2..' --scheme=history --query=$BUFFER)
-    [[ $result != '' ]] && zle .vi-fetch-history -n $result
-    zle .reset-prompt
-}
-zle -N qc-search-history
-bindkey '^R' qc-search-history
-
 # [Ctrl-N] Navigate by xplr
 # This is not a widget since properly resetting prompt is hard
 # See https://github.com/romkatv/powerlevel10k/issues/72
 bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
+
+# TODO: [Shift-Del] Remove last history entry
 
 #===================#
 # Plugins (Part II) #
@@ -247,11 +208,10 @@ bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
 
 zcomet compinit
 
-# NOTE: should be loaded after `compinit` but before `zsh-autosuggestions` / `fast-syntax-highlighting`
+# ORDER: after `compinit` & before zsh-autosuggestions, fast-syntax-highlighting
 zcomet load Aloxaf/fzf-tab
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
-# zstyle ':fzf-tab:*' switch-group ',' '.'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
 zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
@@ -259,8 +219,6 @@ zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
 zcomet load zsh-users/zsh-autosuggestions
 ZSH_AUTOSUGGEST_MANUAL_REBIND=true
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(
-    qc-up-line-or-search
-    qc-down-line-or-search
     qc-accept-line
 )
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(
@@ -270,10 +228,6 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(
 
 zcomet load zdharma-continuum/fast-syntax-highlighting
 unset 'FAST_HIGHLIGHT[chroma-man]'  # chroma-man will stuck history browsing
-
-# NOTE: should be loaded after `fast-syntax-highlighting`
-zcomet load zsh-users/zsh-history-substring-search
-HISTORY_SUBSTRING_SEARCH_FUZZY=true
 
 zcomet load romkatv/powerlevel10k
 
@@ -291,7 +245,6 @@ setopt multios               # multiple redirections
 setopt ksh_option_print      # make `setopt` output all options
 setopt extended_glob         # extended globbing
 setopt glob_dots             # match hidden files like `PATTERN(D)`, also affect completion
-# setopt no_bare_glob_qual   # disable `PATTERN(QUALIFIERS)`, extended_glob has `PATTERN(#qQUALIFIERS)`
 unsetopt short_loops         # disable for-loops without a sublist
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'  # without `/=`
 autoload -Uz colors && colors  # provide color variables (see `which colors`)
@@ -305,11 +258,6 @@ setopt share_history         # share history between sessions
 HISTFILE=~zdot/.zsh_history
 HISTSIZE=1000000  # number of commands that are loaded
 SAVEHIST=1000000  # number of commands that are stored
-
-# # zsh prompt
-# setopt transient_rprompt       # remove rprompt after accept line
-# PS2='%(?.%F{76}.%F{196})| %f'  # continuation prompt
-# RPS2='%F{8}%_%f'               # continuation right prompt
 
 # time (zsh built-in)
 TIMEFMT="\
@@ -327,8 +275,10 @@ MY_PROXY='socks5h://127.0.0.1:1089'
 # fzf
 export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'
 
-# gpg
+# gpg-agent
 export GPG_TTY=$TTY
+export SSH_AGENT_PID=
+export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh
 
 # less
 export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'
@@ -340,16 +290,11 @@ export BAT_THEME='OneHalfDark'
 export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
 
-# TODO: move this to a separate config file
-# npm
-export NPM_CONFIG_PREFIX=~/.local
-export NPM_CONFIG_CACHE=~cache/npm
-
 #=========#
 # Aliases #
 #=========#
 
-alias l='exa -lah --group-directories-first --git --time-style=long-iso'
+alias l='eza -lah --group-directories-first --git --time-style=long-iso'
 alias lt='l -TI .git'
 alias tm='trash-put'
 alias clc='clipcopy'
@@ -360,10 +305,10 @@ alias scu='systemctl --user'
 alias edge='microsoft-edge-stable'
 alias sudo='sudo '
 alias pc='proxychains -q '
-alias env-proxy=' \
-    http_proxy=$MY_PROXY \
+alias env-proxy='         \
+    http_proxy=$MY_PROXY  \
+    HTTP_PROXY=$MY_PROXY  \
     https_proxy=$MY_PROXY \
-    HTTP_PROXY=$MY_PROXY \
     HTTPS_PROXY=$MY_PROXY '
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
 
@@ -372,19 +317,11 @@ alias -g :n='>/dev/null'
 alias -g :nn='&>/dev/null'
 alias -g :bg='&>/dev/null &!'
 
-alias -g :color='--color=always'
-# TODO: find a better way to specify file extension (use TMPSUFFIX for now)
-alias -g :input='=(echo $fg[magenta]">>>>> Input:"$reset_color >&2; cat)'
-
 #=========#
 # Scripts #
 #=========#
 
+include -c atuin init zsh --disable-up-arrow
 include -c thefuck --alias
 include -c direnv hook zsh
 include -f ~zdot/p10k.zsh
-# include -f /opt/intel/oneapi/setvars.sh
-
-# Enable alternate-scroll-mode
-# Ref: https://github.com/microsoft/terminal/discussions/14076
-printf '\e[?1007h'

@@ -1,5 +1,5 @@
 [build]
-target-dir = ".cargo/target"
+target-dir = ".cache/cargo-build"
 
 [cargo-new]
 name = "QuarticCat"
@@ -8,8 +8,6 @@ email = "<QuarticCat@pm.me>"
 [profile.dev]
 split-debuginfo = "unpacked"
 opt-level = 1
-# package."*".opt-level = 3    # override dependencies
-# build-override.opt-level = 3 # override build scripts and proc-macros
 
 # Applied through `cargo build --profile=profile`
 [profile.profile]
@@ -34,20 +32,17 @@ rustflags = [
 [http]
 proxy = "socks5h://127.0.0.1:1089"
 
-[doc]
-# browser = "microsoft-edge-stable"
-
-[source]
+# [source]
 # crates-io = { replace-with = "tuna" }
-tuna = { registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
-ustc = { registry = "git://mirrors.ustc.edu.cn/crates.io-index" }
-sjtu = { registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index" }
-rustcc = { registry = "git://crates.rustcc.cn/crates.io-index" }
+# tuna = { registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
+# ustc = { registry = "git://mirrors.ustc.edu.cn/crates.io-index" }
+# sjtu = { registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index" }
+# rustcc = { registry = "git://crates.rustcc.cn/crates.io-index" }
 
-# Required by cargo-update
-# Ref: https://github.com/nabijaczleweli/cargo-update#source-replacement-vs-custom-registries
-[registries]
-tuna = { index = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
-ustc = { index = "git://mirrors.ustc.edu.cn/crates.io-index" }
-sjtu = { index = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index" }
-rustcc = { index = "git://crates.rustcc.cn/crates.io-index" }
+# # Required by cargo-update
+# # Ref: https://github.com/nabijaczleweli/cargo-update#source-replacement-vs-custom-registries
+# [registries]
+# tuna = { index = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
+# ustc = { index = "git://mirrors.ustc.edu.cn/crates.io-index" }
+# sjtu = { index = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index" }
+# rustcc = { index = "git://crates.rustcc.cn/crates.io-index" }

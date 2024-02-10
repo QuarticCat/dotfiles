@@ -109,6 +109,12 @@ ipython.pf \
 direnv.pf \
     ~/.config/direnv '*'
 
+atuin.pf \
+    ~/.config/atuin '*'
+
+zellij.pf \
+    ~/.config/zellij '*'
+
 fontconfig.pf \
     ~/.config/fontconfig '*'
 
@@ -120,6 +126,9 @@ clang/clang-format.pf \
 
 clang/clangd.pf \
     ~/.config/clangd '*'
+
+npm.pf \
+    ~/ '.npmrc'
 
 # TODO: find a better way to manage dotfiles outside $HOME
 
