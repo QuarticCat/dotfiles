@@ -79,8 +79,8 @@ zsh.pf \
     ~ '.zshenv' \
     ~/.config/zsh '.zshrc *.zsh */^*.zwc'
 
-systemd.pf \
-    ~/.config 'user-tmpfiles.d/*'
+podman.pf \
+    ~/.config/containers '*'
 
 gpg.pf \
     ~/.gnupg 'gpg-agent.conf'
@@ -112,6 +112,9 @@ direnv.pf \
 atuin.pf \
     ~/.config/atuin '*'
 
+tealdeer.pf \
+    ~/.config/tealdeer '*'
+
 zellij.pf \
     ~/.config/zellij '*'
 
@@ -130,13 +133,11 @@ clang/clangd.pf \
 npm.pf \
     ~/ '.npmrc'
 
-# TODO: find a better way to manage dotfiles outside $HOME
+mpv.pf \
+    ~/.config/mpv '*'
 
-# pacman.pf \
-#     /etc 'pacman.conf'
-
-# docker.pf \
-#     /etc/docker 'daemon.json'
+wayland.pf \
+    ~/.config '(code|microsoft-edge-stable)-flags.conf'
 
 # ================================ Config End ================================ #
 

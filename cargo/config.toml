@@ -26,7 +26,6 @@ linker = "clang"
 rustflags = [
     "-Clink-arg=-fuse-ld=lld",
     "-Clink-arg=-Wl,--no-rosegment",
-    # "-Zshare-generics=y",
 ]
 
 [http]

@@ -1,10 +1,9 @@
 include() {
     local opt=$1; shift
     case $opt {
-    -f)
-        [[ -f $1 ]] && source $1
-        ;;
-    -c)
+    (-f)
+        [[ -f $1 ]] && source $1 ;;
+    (-c)
         # Ref: https://github.com/QuarticCat/zsh-smartcache
         (( $+commands[$1] )) || return
         local hashval=$(md5sum <<< $@)
@@ -12,22 +11,17 @@ include() {
         if [[ ! -f $cache ]] {
             local output=$($@)
             eval $output
-            echo $output > $cache &!
+            printf '%s' $output > $cache &!
         } else {
             source $cache
             {
                 local output=$($@)
                 if [[ $output != $(<$cache) ]] {
-                    echo $output > $cache
+                    printf '%s' $output > $cache
                     echo "Cache updated: '$@' (will be applied next time)"
                 }
             } &!
-        }
-        ;;
-    *)
-        echo 'Unknown argument!' >&2
-        return 1
-        ;;
+        } ;;
     }
 }
 

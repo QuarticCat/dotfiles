@@ -9,10 +9,10 @@ hash -d data=$XDG_DATA_HOME
 hash -d zdot=$ZDOTDIR
 hash -d git-exclude=.git/info/exclude
 
-hash -d OneDrive=~/OneDrive
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
-for p in ~Workspace/*(N); hash -d ${p:t}=$p
+hash -d OneDrive=~/OneDrive
+for p in ~Workspace/*(N) ~OneDrive/*(N); hash -d ${p:t}=$p
 
 #=====================#
 # P10k Instant Prompt #
@@ -21,7 +21,7 @@ for p in ~Workspace/*(N); hash -d ${p:t}=$p
 include -f ~cache/p10k-instant-prompt-${(%):-%n}.zsh
 
 #==================#
-# Plugins (Part I) #
+# Plugins (Part 1) #
 #==================#
 
 [[ -d ~zdot/.zcomet ]] ||
@@ -33,8 +33,6 @@ zcomet load ohmyzsh lib {completion,clipboard}.zsh
 zcomet load ohmyzsh plugins/sudo
 zcomet load ohmyzsh plugins/extract
 
-zcomet fpath ohmyzsh plugins/rust  # completions for rustc
-zcomet fpath ohmyzsh plugins/docker-compose
 zcomet load tj/git-extras etc git-extras-completion.zsh
 
 zcomet load chisui/zsh-nix-shell
@@ -49,10 +47,6 @@ AUTOPAIR_BKSPC_WIDGET='backward-delete-char'
 # general
 zstyle ':completion:*' sort false
 zstyle ':completion:*' special-dirs false  # exclude `.` and `..` (enabled by OMZL::completion.zsh)
-
-# docker
-zstyle ':completion:*:*:docker:*' option-stacking yes
-zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 # galiases
 compdef _galiases -first-
@@ -74,16 +68,14 @@ open() {
 
 f() {
     case $1 {
-    doc)
-        local base=~OneDrive/Documents
+    (bk)
+        local base=~Books
         local result=$(fd --base-directory=$base --type=file | fzf)
-        [[ $result != '' ]] && open $base/$result
-        ;;
-    hw)
+        [[ $result != '' ]] && open $base/$result ;;
+    (hw)
         local base=~Homework
         local result=$(fd --base-directory=$base --type=directory --max-depth=2 | fzf)
-        [[ $result != '' ]] && open $base/$result
-        ;;
+        [[ $result != '' ]] && open $base/$result ;;
     }
 }
 
@@ -144,7 +136,7 @@ bindkey '^[[1;5D' qc-backward-subword         # [Ctrl-Left]
 bindkey '^[[1;5C' qc-forward-subword          # [Ctrl-Right]
 bindkey '^[[1;3D' qc-backward-shellword       # [Alt-Left]
 bindkey '^[[1;3C' qc-forward-shellword        # [Alt-Right]
-bindkey '^H'      qc-backward-kill-subword    # [Ctrl-Backspace]
+bindkey '^H'      qc-backward-kill-subword    # [Ctrl-Backspace] (in Konsole)
 bindkey '^W'      qc-backward-kill-subword    # [Ctrl-Backspace] (in VSCode)
 bindkey '^[[3;5~' qc-forward-kill-subword     # [Ctrl-Delete]
 bindkey '^[^?'    qc-backward-kill-shellword  # [Alt-Backspace]
@@ -195,22 +187,16 @@ qc-clear-screen() {
 zle -N qc-clear-screen
 bindkey '^L' qc-clear-screen
 
-# [Ctrl-N] Navigate by xplr
-# This is not a widget since properly resetting prompt is hard
-# See https://github.com/romkatv/powerlevel10k/issues/72
-bindkey -s '^N' '^Q cd -- ${$(xplr):-.} \n'
-
 # TODO: [Shift-Del] Remove last history entry
 
-#===================#
-# Plugins (Part II) #
-#===================#
+#==================#
+# Plugins (Part 2) #
+#==================#
 
 zcomet compinit
 
 # ORDER: after `compinit` & before zsh-autosuggestions, fast-syntax-highlighting
 zcomet load Aloxaf/fzf-tab
-zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
@@ -290,6 +276,11 @@ export BAT_THEME='OneHalfDark'
 export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
 
+# miniserve
+export MINISERVE_HIDDEN=true
+export MINISERVE_QRCODE=true
+export MINISERVE_DIRS_FIRST=true
+
 #=========#
 # Aliases #
 #=========#
@@ -297,12 +288,11 @@ export MANROFFOPT='-c'
 alias l='eza -lah --group-directories-first --git --time-style=long-iso'
 alias lt='l -TI .git'
 alias tm='trash-put'
-alias clc='clipcopy'
-alias clp='clippaste'
-alias clco='tee >(clipcopy)'  # clipcopy + stdout
+alias ms='miniserve'
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
 alias edge='microsoft-edge-stable'
+alias pb='curl -F "c=@-" "http://fars.ee/?u=1"'
 alias sudo='sudo '
 alias pc='proxychains -q '
 alias env-proxy='         \

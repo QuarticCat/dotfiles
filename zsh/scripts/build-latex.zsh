@@ -1,18 +1,15 @@
 #!/bin/zsh -e
 
-# TODO: use latexmk instead
+# =============================== Config Begin =============================== #
 
-# -------------------------------- Config Begin --------------------------------
+CACHE_DIR=/tmp/latex-build
 
-# parent directory of temporary directories
-CACHE_DIR=${XDG_CACHE_HOME:-$HOME/.cache}/latex-build
-
-# --------------------------------- Config End ---------------------------------
+# ================================ Config End ================================ #
 
 tex_cmd=$1
 job_name=$2
 doc_dir=$PWD
-cache_dir=$CACHE_DIR/${PWD//\//@}  # replace all '/' with '@'
+cache_dir=$CACHE_DIR/${PWD//\//@}  # replace all `/` with `@`
 
 mkdir -p $cache_dir
 cp -rlf $doc_dir/* $cache_dir
