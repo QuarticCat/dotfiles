@@ -22,7 +22,7 @@ bench-end() {
     echo '>>>>> BENCH END' >&2
 }
 
-# ------------------------------- Config Begin ------------------------------- #
+# =============================== Config Begin =============================== #
 
 # ASLR
 set-file /proc/sys/kernel/randomize_va_space '0' '1'
@@ -41,7 +41,7 @@ for i in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; {
 
 # TODO: consider disabling SMT
 
-# -------------------------------- Config End -------------------------------- #
+# ================================ Config End ================================ #
 
 bench-start
 trap 'bench-end' EXIT INT

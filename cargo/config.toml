@@ -1,5 +1,6 @@
 [build]
 target-dir = ".cache/cargo-build"
+rustflags = ["-Zthreads=16"]
 
 [cargo-new]
 name = "QuarticCat"
@@ -23,10 +24,7 @@ lto = "thin"
 
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
-rustflags = [
-    "-Clink-arg=-fuse-ld=lld",
-    "-Clink-arg=-Wl,--no-rosegment",
-]
+rustflags = ["-Clink-arg=-fuse-ld=lld", "-Clink-arg=-Wl,--no-rosegment"]
 
 [http]
 proxy = "socks5h://127.0.0.1:1089"
