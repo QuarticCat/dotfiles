@@ -83,20 +83,14 @@ ssh.pf \
 git.pf \
     ~/.config/git '*'
 
-proxychains.pf \
-    ~/.proxychains 'proxychains.conf'
-
 cargo.pf \
     ~/.cargo 'config.toml'
 
 ghc.pf \
     ~/.ghc 'ghci.conf'
 
-pip.pf \
-    ~/.config/pip '*'
-
 ipython.pf \
-    ~/.ipython/profile_default 'ipython_config.py'
+    ~/.ipython/profile_qc 'ipython_config.py'
 
 thefuck.pf \
     ~/.config/thefuck '^__pycache__'

@@ -2,10 +2,6 @@
 target-dir = ".cache/cargo-build"
 rustflags = ["-Zthreads=16"]
 
-[cargo-new]
-name = "QuarticCat"
-email = "<QuarticCat@pm.me>"
-
 [profile.dev]
 split-debuginfo = "unpacked"
 opt-level = 1
@@ -20,7 +16,7 @@ debuginfo = true
 inherits = "release"
 strip = true
 lto = "thin"
-# codegen-units = 1
+codegen-units = 1
 
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
@@ -28,18 +24,3 @@ rustflags = ["-Clink-arg=-fuse-ld=lld", "-Clink-arg=-Wl,--no-rosegment"]
 
 [http]
 proxy = "socks5h://127.0.0.1:1089"
-
-# [source]
-# crates-io = { replace-with = "tuna" }
-# tuna = { registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
-# ustc = { registry = "git://mirrors.ustc.edu.cn/crates.io-index" }
-# sjtu = { registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index" }
-# rustcc = { registry = "git://crates.rustcc.cn/crates.io-index" }
-
-# # Required by cargo-update
-# # Ref: https://github.com/nabijaczleweli/cargo-update#source-replacement-vs-custom-registries
-# [registries]
-# tuna = { index = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git" }
-# ustc = { index = "git://mirrors.ustc.edu.cn/crates.io-index" }
-# sjtu = { index = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index" }
-# rustcc = { index = "git://crates.rustcc.cn/crates.io-index" }

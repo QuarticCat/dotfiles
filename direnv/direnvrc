@@ -1,25 +1,22 @@
-source $HOME/.nix-profile/share/nix-direnv/direnvrc
-
-layout_python-venv() {
-    local python_exe=$(which ${1:-python3})
-    local env_dir=$PWD/${2:-venv}
-    local python_ver=$($python_exe --version)
-
-    if [[ ! -d $env_dir ]]; then
-        log_status "no venv found; creating $env_dir"
-        $python_exe -m venv "$env_dir"
+# Ref: https://github.com/direnv/direnv/wiki/Python#rye
+layout_rye() {
+    PYPROJECT_TOML="${PYPROJECT_TOML:-pyproject.toml}"
+    if [[ ! -f "$PYPROJECT_TOML" ]]; then
+        log_status "No pyproject.toml found. Executing \`rye init\` to create a \`$PYPROJECT_TOML\` first."
+        rye init
     fi
 
-    # activate venv
-    unset PYTHONHOME
-    export VIRTUAL_ENV="$env_dir"
-    PATH_add "$env_dir/bin"
-
-    local local_ver=$(python --version)
-    log_status "activating $(user_rel_path $env_dir) ($local_ver)"
-
-    if [[ $local_ver != $python_ver ]]; then
-        log_status "upgrading venv to $python_ver"
-        $python_exe -m venv --upgrade "$env_dir"
+    if [[ -d ".venv" ]]; then
+        VIRTUAL_ENV="$(pwd)/.venv"
     fi
+
+    if [[ -z $VIRTUAL_ENV || ! -d $VIRTUAL_ENV ]]; then
+        log_status "No virtual environment exists. Executing \`rye sync\` to create one."
+        rye sync
+        VIRTUAL_ENV="$(pwd)/.venv"
+    fi
+
+    PATH_add "$VIRTUAL_ENV/bin"
+    export VENV_ACTIVE=1
+    export VIRTUAL_ENV
 }
