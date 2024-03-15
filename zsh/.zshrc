@@ -73,7 +73,6 @@ alias sc='sudo systemctl'
 alias scu='systemctl --user'
 alias edge='microsoft-edge-stable'
 alias sudo='sudo '
-alias gg='gg --node socks5://127.0.0.1:1089 '
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
 
 alias -g :n='>/dev/null'
@@ -88,19 +87,19 @@ alias -g -- --help='--help 2>&1 | bat -pl help'
 
 setopt menu_complete  # list choices when ambiguous
 
-zstyle ':completion:*' use-cache true
+zstyle ':completion:*' sort         false                          # preserve inherent orders
+zstyle ':completion:*' list-colors  ${(s.:.)LS_COLORS}             # colorize files & folders
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'l:|=* r:|=*'  # auto-cap, substr
+
+zstyle ':completion:*' use-cache    true
 zstyle ':completion:*' cache-policy _qc-cache-policy
 _qc-cache-policy() { local f=("$1"(Nm-7)); [[ -z $f ]] }  # TTL = 7 days
 
-zstyle ':completion:*' sort false  # sorting will mess up inherent orders (e.g. commit time)
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'  # auto-capitalize, partial-word, substring
-
-zstyle ':completion:*:descriptions' format '[%d]'  # also enable group support in fzf-tab
+zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*:messages'     format '%F{yellow}-- %d --%f'
 zstyle ':completion:*:warnings'     format '%F{red}-- no matches found --%f'
 
-zstyle ':completion:*:-tilde-:*' tag-order named-directories directory-stack  # remove users
+zstyle ':completion:*:-tilde-:*' tag-order !users  # no `~user`
 
 zstyle ':completion:*:manuals'   separate-sections true  # group candidates by sections
 zstyle ':completion:*:manuals.*' insert-sections   true  # `man strstr` -> `man 3 strstr`
@@ -291,6 +290,9 @@ max memory:                %M MB
 page faults from disk:     %F
 other page faults:         %R"
 
+export EDITOR='nvim'
+export VISUAL='nvim'
+
 export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'
 
 export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'
@@ -306,6 +308,12 @@ export MANROFFOPT='-c'
 export GPG_TTY=$TTY
 export SSH_AGENT_PID=
 export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh
+
+export CMAKE_GENERATOR='Ninja'
+export CMAKE_COLOR_DIAGNOSTICS=ON
+export CMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+export MOLD_JOBS=1
 
 #=========#
 # Scripts #

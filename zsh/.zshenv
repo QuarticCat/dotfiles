@@ -2,14 +2,10 @@ export XDG_CONFIG_HOME=~/.config
 export XDG_CACHE_HOME=~/.cache
 export XDG_DATA_HOME=~/.local/share
 
-export GTK_IM_MODULE='fcitx'
-export QT_IM_MODULE='fcitx'
+# NOTE: https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland#KDE_Plasma
 export XMODIFIERS='@im=fcitx'
-
-export MOLD_JOBS=1
-
-export EDITOR='nvim'
-export VISUAL='nvim'
+# export GTK_IM_MODULE='fcitx'
+# export QT_IM_MODULE='fcitx'
 
 ZDOTDIR=$XDG_CONFIG_HOME/zsh
 

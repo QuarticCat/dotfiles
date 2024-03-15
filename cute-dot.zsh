@@ -6,127 +6,65 @@ pf_loc=()  # profile locations
 pf_pat=()  # profile patterns
 declare -A pf_map  # <pf-name> : <idxes>
 
-_add-pf() {  # <pf-name> {<pf-loc> <pf-pat>}...
-    local name=${1%.pf}
-    for loc pat in ${@:2}; {
-        pf_loc+=($loc)
-        pf_pat+=($pat)
-        pf_map[$name]+="$#pf_loc "
-    }
+_add-pf() {  # <pf-name>.pf <pf-loc> <pf-pat>
+    pf_loc+=($2)
+    pf_pat+=($3)
+    pf_map[${1%.pf}]+="$#pf_loc "
 }
-alias -s pf='_add-pf'
+alias -s pf=_add-pf
 
-_rsync-pat() {  # <src> <dst> <pat>
-    cd $1 && rsync $rsync_opt --relative $~=3 $2/
-}
-
-_sync() {  # <pf-name>
-    for i in $=pf_map[$1]; {
-        local changes=$(_rsync-pat $pf_loc[i] $DOT_DIR/$1 $pf_pat[i])
-        [[ $changes == '' ]] && continue
-        echo $fg[cyan]"$1 <- ${(D)pf_loc[i]}"$reset_color
-        echo $changes$'\n'
+_rsync-pf() {  # [← | →] <pf-name>
+    setopt extended_glob
+    for i in $=pf_map[$2]; case $1 {
+        (←) rsync $rsync_opts -R $pf_loc[i]/./$~pf_pat[i] $DOT_DIR/$2/ ;;
+        (→) rsync $rsync_opts -R $DOT_DIR/$2/./$~pf_pat[i] $pf_loc[i]/ ;;
     }
 }
 
-_apply() {  # <pf-name>
-    for i in $=pf_map[$1]; {
-        local changes=$(_rsync-pat $DOT_DIR/$1 $pf_loc[i] $pf_pat[i])
-        [[ $changes == '' ]] && continue
-        echo $fg[cyan]"$1 -> ${(D)pf_loc[i]}"$reset_color
-        echo $changes$'\n'
-    }
+_rsync-each-pf() {  # [← | →] [--all | <pf-name>...]
+    [[ $2 == --all ]] && set -- $1 ${(k)pf_map}
+    source env_parallel.zsh
+    env_parallel --ctag "_rsync-pf $1" ::: ${@:2}
 }
 
-source $(which env_parallel.zsh)
-
-_init() {
-    setopt null_glob extended_glob
-    autoload -Uz colors && colors
-}
-
-_for-each-pf() {  # <func> [--all | <pf-name>...]
-    if [[ $2 == --all ]] {
-        env_parallel "_init; $1" ::: ${(k)pf_map}
-    } else {
-        env_parallel "_init; $1" ::: ${(u)@:2}
-    }
-}
-
-cute-dot-list()  { printf '%s\n' ${(ko)pf_map} }
-cute-dot-sync()  { _for-each-pf _sync $@ }
-cute-dot-apply() { _for-each-pf _apply $@ }
+cute-dot-sync()  { _rsync-each-pf ← $@ }
+cute-dot-apply() { _rsync-each-pf → $@ }
 
 # =============================== Config Begin =============================== #
 
-rsync_opt=(
-    # '--dry-run'
-    '--recursive'
-    '--mkpath'
-    '--checksum'
-    '--itemize-changes'
+rsync_opts=(
+    # --dry-run
+    --recursive
+    --mkpath
+    --checksum
+    --itemize-changes
 )
 
-zsh.pf \
-    ~ '.zshenv' \
-    ~/.config/zsh '.zshrc *.zsh */^*.zwc'
+zsh.pf ~             '.zshenv'
+zsh.pf ~/.config/zsh '(.zshrc|^*.zwc)'
 
-podman.pf \
-    ~/.config/containers '*'
+clang-format.pf ~ '.clang-format'
+npm.pf          ~ '.npmrc'
 
-gpg.pf \
-    ~/.gnupg 'gpg-agent.conf'
+cargo.pf   ~/.cargo              'config.toml'
+gpg.pf     ~/.gnupg              'gpg-agent.conf'
+ipython.pf ~/.ipython/profile_qc 'ipython_config.py'
+ssh.pf     ~/.ssh                'config'
 
-ssh.pf \
-    ~/.ssh 'config'
+atuin.pf      ~/.config/atuin      '*'
+clangd.pf     ~/.config/clangd     '*'
+containers.pf ~/.config/containers '*'
+direnv.pf     ~/.config/direnv     '*'
+fontconfig.pf ~/.config/fontconfig '*'
+ghc.pf        ~/.config/ghc        'ghci.conf'
+git.pf        ~/.config/git        '*'
+mpv.pf        ~/.config/mpv        '*'
+paru.pf       ~/.config/paru       '*'
+tealdeer.pf   ~/.config/tealdeer   '*'
+thefuck.pf    ~/.config/thefuck    '^__pycache__'
+zellij.pf     ~/.config/zellij     '*'
 
-git.pf \
-    ~/.config/git '*'
-
-cargo.pf \
-    ~/.cargo 'config.toml'
-
-ghc.pf \
-    ~/.ghc 'ghci.conf'
-
-ipython.pf \
-    ~/.ipython/profile_qc 'ipython_config.py'
-
-thefuck.pf \
-    ~/.config/thefuck '^__pycache__'
-
-direnv.pf \
-    ~/.config/direnv '*'
-
-atuin.pf \
-    ~/.config/atuin '*'
-
-tealdeer.pf \
-    ~/.config/tealdeer '*'
-
-zellij.pf \
-    ~/.config/zellij '*'
-
-fontconfig.pf \
-    ~/.config/fontconfig '*'
-
-paru.pf \
-    ~/.config/paru '*'
-
-clang/clang-format.pf \
-    ~ '.clang-format'
-
-clang/clangd.pf \
-    ~/.config/clangd '*'
-
-npm.pf \
-    ~ '.npmrc'
-
-mpv.pf \
-    ~/.config/mpv '*'
-
-wayland.pf \
-    ~/.config '(code|microsoft-edge-stable)-flags.conf'
+wayland.pf ~/.config '(code|microsoft-edge-*)-flags.conf'
 
 # ================================ Config End ================================ #
 
