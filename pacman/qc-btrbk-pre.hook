@@ -1,0 +1,13 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Operation = Install
+Operation = Upgrade
+Target = *
+
+[Action]
+Description = Performing btrbk pre-pacman snapshots...
+When = PreTransaction
+Exec = /usr/bin/btrbk snapshot
+NeedsTargets
+AbortOnFail

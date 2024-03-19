@@ -1,29 +1,26 @@
 #!/bin/zsh
 
-DOT_DIR=${0:a:h}  # the directory of this script
+DOT=${0:a:h}  # the directory of this script
 
-pf_loc=()  # profile locations
-pf_pat=()  # profile patterns
-declare -A pf_map  # <pf-name> : <idxes>
+declare -A pf_map
 
-_add-pf() {  # <pf-name>.pf <pf-loc> <pf-pat>
-    pf_loc+=($2)
-    pf_pat+=($3)
-    pf_map[${1%.pf}]+="$#pf_loc "
-}
-alias -s pf=_add-pf
+_add-pf() { pf_map[${2%.*}]+="$1 $3 $4 " }
+alias -s pf="_add-pf $USER"
+alias -s rpf="_add-pf root"
 
-_rsync-pf() {  # [← | →] <pf-name>
+_rsync-pf() {  # ←|→ <pf-name>
     setopt extended_glob
-    for i in $=pf_map[$2]; case $1 {
-        (←) rsync $rsync_opts -R $pf_loc[i]/./$~pf_pat[i] $DOT_DIR/$2/ ;;
-        (→) rsync $rsync_opts -R $DOT_DIR/$2/./$~pf_pat[i] $pf_loc[i]/ ;;
+    for own loc pat in $=pf_map[$2]; case $1@$own {
+        (←@*)          rsync $rsync_opts -R $loc/./$~pat $DOT/$2/ ;;
+        (→@$USER)      rsync $rsync_opts -R $DOT/$2/./$~pat $loc/ ;;
+        (→@root)  sudo rsync $rsync_opts -R $DOT/$2/./$~pat $loc/ ;;
     }
 }
 
-_rsync-each-pf() {  # [← | →] [--all | <pf-name>...]
+_rsync-each-pf() {  # ←|→ [--all|<pf-name>...]
     [[ $2 == --all ]] && set -- $1 ${(k)pf_map}
     source env_parallel.zsh
+    sudo true  # refresh cache
     env_parallel --ctag "_rsync-pf $1" ::: ${@:2}
 }
 
@@ -65,6 +62,13 @@ thefuck.pf    ~/.config/thefuck    '^__pycache__'
 zellij.pf     ~/.config/zellij     '*'
 
 wayland.pf ~/.config '(code|microsoft-edge-*)-flags.conf'
+
+btrbk.rpf  /etc/btrbk/              'btrbk.conf'
+pacman.rpf /etc                     'pacman.conf'
+pacman.rpf /etc/pacman.d            'mirrorlist'
+pacman.rpf /usr/share/libalpm/hooks 'qc-*.hook'
+sshd.rpf   /etc/ssh                 'sshd_config'
+udev.rpf   /etc/udev/rules.d        '(10-uas-discard|69-canokeys).rules'
 
 # ================================ Config End ================================ #
 
