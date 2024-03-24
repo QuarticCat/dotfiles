@@ -1,0 +1,17 @@
+[Annotations]
+annotationToolType=5
+
+[General]
+launchAction=UseLastUsedCapturemode
+rememberSelectionRect=Never
+
+[GuiConfig]
+captureMode=0
+quitAfterSaveCopyExport=true
+
+[ImageSave]
+imageCompressionQuality=100
+translatedScreenshotsFolder=Screenshots
+
+[VideoSave]
+translatedScreencastsFolder=Screencasts

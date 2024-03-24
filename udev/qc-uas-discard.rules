@@ -3,7 +3,9 @@
 
 # Samsung T7
 ACTION=="add|change", ATTRS{idVendor}=="04e8", ATTRS{idProduct}=="4001", SUBSYSTEM=="scsi_disk", ATTR{provisioning_mode}="unmap"
+
 # Plextor EX1
 ACTION=="add|change", ATTRS{idVendor}=="1f28", ATTRS{idProduct}=="f001", SUBSYSTEM=="scsi_disk", ATTR{provisioning_mode}="unmap"
+
 # JMicron JMS583
 ACTION=="add|change", ATTRS{idVendor}=="152d", ATTRS{idProduct}=="0583", SUBSYSTEM=="scsi_disk", ATTR{provisioning_mode}="unmap"

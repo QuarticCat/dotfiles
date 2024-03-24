@@ -42,7 +42,6 @@ if [[ -z $_qc_last_update ]] {
     zcomet self-update
     zcomet update
     zcomet compile ~zdot/*.zsh  # NOTE: https://github.com/romkatv/zsh-bench#cutting-corners
-    # build-fzf-tab-module
 }
 
 zcomet fpath zsh-users/zsh-completions src
@@ -133,54 +132,35 @@ reboot-to-windows() {
 # Key Bindings #
 #==============#
 
-bindkey '^['   send-break          # [Esc]
-bindkey '^[[D' backward-char       # [Left]      vi-backward-char can't cross lines
-bindkey '^[[C' forward-char        # [Right]     vi-forward-char can't cross lines
-bindkey '^A'   beginning-of-line   # [Ctrl+A]
-bindkey '^E'   end-of-line         # [Ctrl+E]
-bindkey '^Z'   undo                # [Ctrl+Z]
-bindkey '^Y'   redo                # [Ctrl+Y]
-bindkey '^Q'   push-line-or-edit   # [Ctrl+Q]
-bindkey '^[^M' self-insert-unmeta  # [Alt+Enter]
+bindkey '\C-Z' undo
+bindkey '\C-Y' redo
 
 # Ref: https://github.com/marlonrichert/zsh-edit
 qc-word-widgets() {
-    if [[ $WIDGET == *-shellword ]] {
-        local words=(${(Z:n:)BUFFER}) lwords=(${(Z:n:)LBUFFER})
-        if [[ $WIDGET == *-backward-* ]] {
-            local tail=$lwords[-1]
-            local move=-${(N)LBUFFER%$tail*}
-        } else {
-            local head=${${words[$#lwords]#$lwords[-1]}:-$words[$#lwords+1]}
-            local move=+${(N)RBUFFER#*$head}
-        }
-    } else {
-        local subword='([[:WORD:]]##~*[^[:upper:]]*[[:upper:]]*~*[[:alnum:]]*[^[:alnum:]]*)'
-        local word="(${subword}|[^[:WORD:][:space:]]##|[[:space:]]##)"
-        if [[ $WIDGET == *-backward-* ]] {
-            local move=-${(N)LBUFFER%%${~word}(?|)}
-        } else {
-            local move=+${(N)RBUFFER##(?|)${~word}}
-        }
+    local wordpat='[[:WORD:]]##|[[:space:]]##|[^[:WORD:][:space:]]##'
+    local words=(${(Z:n:)BUFFER}) lwords=(${(Z:n:)LBUFFER})
+    case $WIDGET {
+        (*sub-l)   local move=-${(N)LBUFFER%%$~wordpat} ;;
+        (*sub-r)   local move=+${(N)RBUFFER##$~wordpat} ;;
+        (*shell-l) local move=-${(N)LBUFFER%$lwords[-1]*} ;;
+        (*shell-r) local move=+${(N)RBUFFER#*${${words[$#lwords]#$lwords[-1]}:-$words[$#lwords+1]}} ;;
     }
-    if [[ $WIDGET == *-kill-* ]] {
-        (( MARK = CURSOR + move ))
-        zle -f kill
-        zle .kill-region
-    } else {
-        (( CURSOR += move ))
+    case $WIDGET {
+        (*kill*) (( MARK = CURSOR + move )); zle -f kill; zle kill-region ;;
+        (*)      (( CURSOR += move )) ;;
     }
 }
-for w in qc-{back,for}ward-{,kill-}{sub,shell}word; zle -N $w qc-word-widgets
-bindkey '^[[1;5D' qc-backward-subword         # [Ctrl+Left]
-bindkey '^[[1;5C' qc-forward-subword          # [Ctrl+Right]
-bindkey '^[[1;3D' qc-backward-shellword       # [Alt+Left]
-bindkey '^[[1;3C' qc-forward-shellword        # [Alt+Right]
-bindkey '^H'      qc-backward-kill-subword    # [Ctrl+Backspace] (Konsole)
-bindkey '^W'      qc-backward-kill-subword    # [Ctrl+Backspace] (VSCode)
-bindkey '^[[3;5~' qc-forward-kill-subword     # [Ctrl+Delete]
-bindkey '^[^?'    qc-backward-kill-shellword  # [Alt+Backspace]
-bindkey '^[[3;3~' qc-forward-kill-shellword   # [Alt+Delete]
+for w in qc{,-kill}-{sub,shell}-{l,r}; zle -N $w qc-word-widgets
+bindkey '\E[1;5D' qc-sub-l         # [Ctrl+Left]
+bindkey '\E[1;5C' qc-sub-r         # [Ctrl+Right]
+bindkey '\E[1;3D' qc-shell-l       # [Alt+Left]
+bindkey '\E[1;3C' qc-shell-r       # [Alt+Right]
+bindkey '\C-H'    qc-kill-sub-l    # [Ctrl+Backspace] (Konsole)
+bindkey '\C-W'    qc-kill-sub-l    # [Ctrl+Backspace] (VSCode)
+bindkey '\E[3;5~' qc-kill-sub-r    # [Ctrl+Delete]
+bindkey '\E^?'    qc-kill-shell-l  # [Alt+Backspace]
+bindkey '\E[3;3~' qc-kill-shell-r  # [Alt+Delete]
+WORDCHARS='*?[]~&;!#$%^(){}<>'
 
 # Trim trailing whitespace from pasted text
 # Ref: https://unix.stackexchange.com/questions/693118
@@ -200,8 +180,8 @@ qc-rationalize-dot() {
     }
 }
 zle -N qc-rationalize-dot
-bindkey '.' qc-rationalize-dot
-bindkey '^[.' self-insert-unmeta  # [Alt+.] insert dot
+bindkey '.'   qc-rationalize-dot
+bindkey '\E.' self-insert-unmeta  # [Alt+.] insert dot
 
 # [Ctrl+L] Clear screen but keep scrollback
 # Ref: https://superuser.com/questions/1389834
@@ -213,7 +193,7 @@ qc-clear-screen() {
     zle .reset-prompt
 }
 zle -N qc-clear-screen
-bindkey '^L' qc-clear-screen
+bindkey '\C-L' qc-clear-screen
 
 # [Esc Esc] Correct previous command
 # Ref: https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/thefuck
@@ -226,7 +206,7 @@ qc-fuck() {
     }
 }
 zle -C qc-fuck complete-word qc-fuck
-bindkey '\e\e' qc-fuck
+bindkey '\E\E' qc-fuck
 
 #==================#
 # Plugins (Part 2) #
@@ -234,7 +214,7 @@ bindkey '\e\e' qc-fuck
 
 zcomet compinit
 
-zcomet load Aloxaf/fzf-tab
+zcomet load Aloxaf/fzf-tab  # TODO: run `build-fzf-tab-module` after update
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
 zstyle ':fzf-tab:*' switch-group '<' '>'
 zstyle ':fzf-tab:*' prefix ''
@@ -244,8 +224,7 @@ zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
 
 zcomet load zsh-users/zsh-autosuggestions
 ZSH_AUTOSUGGEST_MANUAL_REBIND=true
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(qc-accept-line)
-ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(qc-forward-{sub,shell}word)
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(qc-{sub,shell}-r)
 
 zcomet load zdharma-continuum/fast-syntax-highlighting
 unset 'FAST_HIGHLIGHT[chroma-man]'  # chroma-man will stuck history browsing
@@ -268,15 +247,12 @@ setopt glob_dots             # match hidden files, also affect completion
 setopt rc_quotes             # `''` -> `'` within singly quoted strings
 setopt magic_equal_subst     # perform filename expansion on `any=expr` args
 setopt no_flow_control       # make [Ctrl+S] and [Ctrl+Q] work
-WORDCHARS='*?_-.[]~&;!#$%^(){}<>'  # without `/=`
-autoload -Uz colors && colors  # provide color variables (see `which colors`)
 
 setopt hist_ignore_all_dups  # no duplicates in history list
 setopt hist_save_no_dups     # no duplicates in history file
 setopt hist_ignore_space     # ignore commands starting with a space
 setopt hist_reduce_blanks    # remove all unnecessary spaces
 setopt hist_fcntl_lock       # use fcntl to improve locking performance
-setopt share_history         # share history between sessions
 HISTFILE=~zdot/.zsh_history
 HISTSIZE=1000000  # number of commands that are loaded
 SAVEHIST=1000000  # number of commands that are stored
@@ -312,6 +288,7 @@ export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh
 export CMAKE_GENERATOR='Ninja'
 export CMAKE_COLOR_DIAGNOSTICS=ON
 export CMAKE_EXPORT_COMPILE_COMMANDS=ON
+# TODO: use mold globally
 
 export MOLD_JOBS=1
 

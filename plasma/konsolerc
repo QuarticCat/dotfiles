@@ -1,0 +1,11 @@
+[Desktop Entry]
+DefaultProfile=qc-default.profile
+
+[General]
+ConfigVersion=1
+
+[MainWindow]
+ToolBarsMovable=Disabled
+
+[UiSettings]
+ColorScheme=

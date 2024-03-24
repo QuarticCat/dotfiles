@@ -1,6 +1,5 @@
 [build]
 target-dir = ".cache/cargo-build"
-rustflags = ["-Zthreads=16"]
 
 [profile.dev]
 split-debuginfo = "unpacked"
@@ -14,7 +13,6 @@ debuginfo = true
 # Applied through `cargo build --profile=product`
 [profile.product]
 inherits = "release"
-strip = true
 lto = "thin"
 codegen-units = 1
 

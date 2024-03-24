@@ -38,7 +38,11 @@ rsync_opts=(
 )
 
 zsh.pf ~             '.zshenv'
-zsh.pf ~/.config/zsh '(.zshrc|^*.zwc)'
+zsh.pf ~/.config/zsh '.zshrc|^*.zwc'
+
+plasma.pf ~/.config      'fcitx5|*-flags.conf'
+plasma.pf ~/.config      '(konsole|yakuake|spectacle|powerdevil|ktrash|kio)rc'
+plasma.pf ~/.local/share 'konsole/qc-*.profile'
 
 clang-format.pf ~ '.clang-format'
 npm.pf          ~ '.npmrc'
@@ -56,19 +60,18 @@ fontconfig.pf ~/.config/fontconfig '*'
 ghc.pf        ~/.config/ghc        'ghci.conf'
 git.pf        ~/.config/git        '*'
 mpv.pf        ~/.config/mpv        '*'
+nvim.pf       ~/.config/nvim       '*'
 paru.pf       ~/.config/paru       '*'
 tealdeer.pf   ~/.config/tealdeer   '*'
 thefuck.pf    ~/.config/thefuck    '^__pycache__'
 zellij.pf     ~/.config/zellij     '*'
-
-wayland.pf ~/.config '(code|microsoft-edge-*)-flags.conf'
 
 btrbk.rpf  /etc/btrbk/              'btrbk.conf'
 pacman.rpf /etc                     'pacman.conf'
 pacman.rpf /etc/pacman.d            'mirrorlist'
 pacman.rpf /usr/share/libalpm/hooks 'qc-*.hook'
 sshd.rpf   /etc/ssh                 'sshd_config'
-udev.rpf   /etc/udev/rules.d        '(10-uas-discard|69-canokeys).rules'
+udev.rpf   /etc/udev/rules.d        'qc-*.rules'
 
 # ================================ Config End ================================ #
 
