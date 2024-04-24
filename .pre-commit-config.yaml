@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: detect-secrets
+        name: Detect Secrets
+        entry: trufflehog git file://. --since-commit HEAD --fail
+        language: system
+        pass_filenames: false

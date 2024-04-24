@@ -4,8 +4,8 @@
 
 setopt extended_glob
 
-prog="'${1:P}'"     # expand to `'/path/to/program'`
-args=("'${^@:2}'")  # expand to `'arg1' 'arg2' ...`
+prog="'$commands[$1]'"  # expand to `'/path/to/program'`
+args=("'${^@:2}'")      # expand to `'arg1' 'arg2' ...`
 
 # Ref: https://gist.github.com/lucasad/6474224
 chars=(${(s::):-"$prog $args"})

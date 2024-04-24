@@ -1,0 +1,21 @@
+[Desktop Action new-private-window]
+Exec=/usr/bin/microsoft-edge-stable --inprivate
+Name=New InPrivate Window
+
+[Desktop Action new-window]
+Exec=/usr/bin/microsoft-edge-stable
+Name=New Window
+
+[Desktop Entry]
+Actions=new-window;new-private-window;
+Categories=Network;WebBrowser;
+Comment=Access the Internet
+Exec=/usr/bin/microsoft-edge-stable %U
+GenericName=Web Browser
+Icon=microsoft-edge
+MimeType=application/pdf;application/rdf+xml;application/rss+xml;application/xhtml+xml;application/xhtml_xml;application/xml;image/gif;image/jpeg;image/png;image/webp;text/html;text/xml;x-scheme-handler/http;x-scheme-handler/https;
+Name=Microsoft Edge
+StartupNotify=true
+Terminal=false
+Type=Application
+Version=1.0

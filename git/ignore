@@ -15,13 +15,19 @@ cmake-build-*
 bazel-*
 compile_commands.json
 
+# perf outputs
+perf.data
+perf.data.old
+*.perf
+
+# coz outputs
+profile.coz
+
 # valgrind outputs (<tool>.out.<pid>)
 dhat.out.*
 massif.out.*
 
 # cargo-flamegraph outputs
-perf.data
-perf.data.old
 flamegraph.svg
 
 # my personal ignore suffix

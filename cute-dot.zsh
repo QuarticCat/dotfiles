@@ -20,7 +20,7 @@ _rsync-pf() {  # ←|→ <pf-name>
 _rsync-each-pf() {  # ←|→ [--all|<pf-name>...]
     [[ $2 == --all ]] && set -- $1 ${(k)pf_map}
     source env_parallel.zsh
-    sudo true  # refresh cache
+    [[ $1 == → ]] && sudo true  # refresh cache
     env_parallel --ctag "_rsync-pf $1" ::: ${@:2}
 }
 
@@ -40,12 +40,12 @@ rsync_opts=(
 zsh.pf ~             '.zshenv'
 zsh.pf ~/.config/zsh '.zshrc|^*.zwc'
 
-plasma.pf ~/.config      'fcitx5|*-flags.conf'
-plasma.pf ~/.config      '(konsole|yakuake|spectacle|powerdevil|ktrash|kio)rc'
+plasma.pf ~/.config      'autostart|fcitx5|*-flags.conf'
+plasma.pf ~/.config      '(konsole|yakuake|powerdevil|ktrash|kio)rc'
 plasma.pf ~/.local/share 'konsole/qc-*.profile'
+plasma.pf ~/.local/share 'applications/*.desktop'
 
 clang-format.pf ~ '.clang-format'
-npm.pf          ~ '.npmrc'
 
 cargo.pf   ~/.cargo              'config.toml'
 gpg.pf     ~/.gnupg              'gpg-agent.conf'
@@ -56,6 +56,7 @@ atuin.pf      ~/.config/atuin      '*'
 clangd.pf     ~/.config/clangd     '*'
 containers.pf ~/.config/containers '*'
 direnv.pf     ~/.config/direnv     '*'
+discord.pf    ~/.config/discord    'settings.json'
 fontconfig.pf ~/.config/fontconfig '*'
 ghc.pf        ~/.config/ghc        'ghci.conf'
 git.pf        ~/.config/git        '*'

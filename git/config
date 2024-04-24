@@ -21,6 +21,9 @@ gpgsign = true
 [push]
 autoSetupRemote = true
 
+[http]
+postBuffer = 536870912  # 512 MiB
+
 [rerere]
 enabled = true
 

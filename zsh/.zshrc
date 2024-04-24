@@ -2,6 +2,8 @@
 # Internal #
 #==========#
 
+bindkey -e  # use Emacs keymap
+
 _qc-source() { [[ -r $1 ]] && source $1 }
 _qc-eval()   { (( $+commands[$1] )) && smartcache eval $@ }
 _qc-comp()   { (( $+commands[$1] )) && smartcache comp $@ }
@@ -19,7 +21,7 @@ hash -d zdot=$ZDOTDIR
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
 hash -d OneDrive=~/OneDrive
-for p in ~Workspace/*(N) ~OneDrive/*(N); hash -d ${p:t}=$p
+for p in ~Workspace/*(/N) ~OneDrive/*(/N); hash -d ${p:t}=$p
 
 #=====================#
 # P10k Instant Prompt #
@@ -84,7 +86,7 @@ alias -g -- --help='--help 2>&1 | bat -pl help'
 # Completion #
 #============#
 
-setopt menu_complete  # list choices when ambiguous
+setopt menu_complete     # list choices when ambiguous
 
 zstyle ':completion:*' sort         false                          # preserve inherent orders
 zstyle ':completion:*' list-colors  ${(s.:.)LS_COLORS}             # colorize files & folders
@@ -146,7 +148,7 @@ qc-word-widgets() {
         (*shell-r) local move=+${(N)RBUFFER#*${${words[$#lwords]#$lwords[-1]}:-$words[$#lwords+1]}} ;;
     }
     case $WIDGET {
-        (*kill*) (( MARK = CURSOR + move )); zle -f kill; zle kill-region ;;
+        (*kill*) (( MARK = CURSOR + move )); zle -f kill; zle .kill-region ;;
         (*)      (( CURSOR += move )) ;;
     }
 }
@@ -162,11 +164,10 @@ bindkey '\E^?'    qc-kill-shell-l  # [Alt+Backspace]
 bindkey '\E[3;3~' qc-kill-shell-r  # [Alt+Delete]
 WORDCHARS='*?[]~&;!#$%^(){}<>'
 
-# Trim trailing whitespace from pasted text
+# Trim trailing spaces from pasted text
 # Ref: https://unix.stackexchange.com/questions/693118
 qc-trim-paste() {
-    zle .bracketed-paste
-    LBUFFER=${LBUFFER%%[[:space:]]#}
+    zle .$WIDGET && LBUFFER=${LBUFFER%%[[:space:]]#}
 }
 zle -N bracketed-paste qc-trim-paste
 
@@ -217,10 +218,10 @@ zcomet compinit
 zcomet load Aloxaf/fzf-tab  # TODO: run `build-fzf-tab-module` after update
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
 zstyle ':fzf-tab:*' switch-group '<' '>'
-zstyle ':fzf-tab:*' prefix ''
+zstyle ':fzf-tab:*' prefix       ''
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
-zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags '--preview-window=down:3:wrap'
-zstyle ':fzf-tab:complete:kill:*' popup-pad 0 3
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags   '--preview-window=down:3:wrap'
+zstyle ':fzf-tab:complete:kill:*'             popup-pad   0 3
 
 zcomet load zsh-users/zsh-autosuggestions
 ZSH_AUTOSUGGEST_MANUAL_REBIND=true
@@ -240,13 +241,11 @@ setopt auto_pushd            # make `cd` behave like pushd
 setopt pushd_ignore_dups     # don't pushd duplicates
 setopt pushd_minus           # exchange the meanings of `+` and `-` in pushd
 setopt interactive_comments  # comments in interactive shells
-setopt multios               # multiple redirections
-setopt ksh_option_print      # make `setopt` output all options
 setopt extended_glob         # extended globbing
 setopt glob_dots             # match hidden files, also affect completion
 setopt rc_quotes             # `''` -> `'` within singly quoted strings
 setopt magic_equal_subst     # perform filename expansion on `any=expr` args
-setopt no_flow_control       # make [Ctrl+S] and [Ctrl+Q] work
+setopt no_flow_control       # don't occupy [Ctrl+S] and [Ctrl+Q]
 
 setopt hist_ignore_all_dups  # no duplicates in history list
 setopt hist_save_no_dups     # no duplicates in history file
@@ -288,12 +287,10 @@ export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh
 export CMAKE_GENERATOR='Ninja'
 export CMAKE_COLOR_DIAGNOSTICS=ON
 export CMAKE_EXPORT_COMPILE_COMMANDS=ON
-# TODO: use mold globally
+export CMAKE_{C,CXX}_COMPILER_LAUNCHER='ccache'
+export CMAKE_{C,CXX}_LINKER_LAUNCHER='mold-run.zsh'
 
 export MOLD_JOBS=1
-
-# See https://github.com/nektos/act/issues/303#issuecomment-962403508
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
 
 #=========#
 # Scripts #
