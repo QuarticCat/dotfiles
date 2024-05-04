@@ -72,6 +72,7 @@ alias ipy='ipython --profile=qc'
 alias pb='curl -F "c=@-" "http://fars.ee/?u=1"'
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
+alias open='xdg-open'
 alias edge='microsoft-edge-stable'
 alias sudo='sudo '
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
@@ -86,7 +87,7 @@ alias -g -- --help='--help 2>&1 | bat -pl help'
 # Completion #
 #============#
 
-setopt menu_complete     # list choices when ambiguous
+setopt menu_complete  # list choices when ambiguous
 
 zstyle ':completion:*' sort         false                          # preserve inherent orders
 zstyle ':completion:*' list-colors  ${(s.:.)LS_COLORS}             # colorize files & folders
@@ -105,6 +106,10 @@ zstyle ':completion:*:-tilde-:*' tag-order !users  # no `~user`
 zstyle ':completion:*:manuals'   separate-sections true  # group candidates by sections
 zstyle ':completion:*:manuals.*' insert-sections   true  # `man strstr` -> `man 3 strstr`
 
+zstyle ':completion:*:processes'       command 'ps xwwo pid,user,comm,cmd'  # for kill
+zstyle ':completion:*:processes-names' command 'ps xwwo comm'               # for killall
+zstyle ':completion:*:process-groups'  hidden  all                          # no `0`
+
 compdef _qc-complete-galias -first-
 _qc-complete-galias() {
     [[ $PREFIX != :* ]] && return
@@ -120,9 +125,12 @@ compdef _precommand lldb.zsh
 # Functions #
 #===========#
 
-open() {
-    xdg-open $@ &>/dev/null &!
-}
+_qc_bg_cmds=(
+    xdg-open                             # misc
+    hotspot nsys-ui                      # profilers
+    firefox microsoft-edge-stable brave  # browsers
+)
+for cmd in $_qc_bg_cmds; $cmd() { command $0 $@ &>/dev/null &! }
 
 reboot-to-windows() {
     [[ $(efibootmgr) =~ 'Boot([[:xdigit:]]*)\* Windows' ]] &&
@@ -219,7 +227,7 @@ zcomet load Aloxaf/fzf-tab  # TODO: run `build-fzf-tab-module` after update
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
 zstyle ':fzf-tab:*' switch-group '<' '>'
 zstyle ':fzf-tab:*' prefix       ''
-zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps --pid=$word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps hwwo cmd --pid=$word'
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags   '--preview-window=down:3:wrap'
 zstyle ':fzf-tab:complete:kill:*'             popup-pad   0 3
 

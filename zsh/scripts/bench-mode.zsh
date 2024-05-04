@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/zsh
 
 # Ref: https://llvm.org/docs/Benchmarking.html
 

@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/zsh
 
 # Ref: https://github.com/vadimcn/vscode-lldb/blob/master/MANUAL.md
 

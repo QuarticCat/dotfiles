@@ -1,3 +1,3 @@
-#!/bin/zsh
+#!/usr/bin/zsh
 
 mold -run $@
