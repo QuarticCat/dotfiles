@@ -38,7 +38,7 @@ zsh.pf ~             '.zshenv'
 zsh.pf ~/.config/zsh '.zshrc|^*.zwc'
 
 plasma.pf ~/.config      'fcitx5|*-flags.conf'
-plasma.pf ~/.config      '(konsole|yakuake|powerdevil|ktrash|kio)rc'
+plasma.pf ~/.config      '(konsole|yakuake|ktrash|kio)rc'
 plasma.pf ~/.local/share 'konsole/qc-*.profile'
 plasma.pf ~/.local/share 'applications/*.desktop'
 

@@ -1,6 +1,0 @@
-[AC][Display]
-DisplayBrightness=100
-UseProfileSpecificDisplayBrightness=true
-
-[AC][SuspendAndShutdown]
-AutoSuspendAction=0

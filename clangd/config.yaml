@@ -2,11 +2,20 @@
 
 CompileFlags:
   Compiler: clang++
-  Add: [-Wall, -Wextra, -march=native, -std=c++20]
+  Add:
+    - -Wall
+    - -Wextra
+    - -march=native
+  Remove:
+    - -forward-unknown-to-host-compiler
+    - --generate-code*
 
 Diagnostics:
   ClangTidy:
-    Add: [bugprone-*, performance-*] # TODO: add more
+    Add:
+      # TODO: add more
+      - bugprone-*
+      - performance-*
 
 Hover:
   ShowAKA: true

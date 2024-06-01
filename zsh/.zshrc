@@ -280,6 +280,7 @@ export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'
 
 export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'
 
+export MINISERVE_PORT=58080
 export MINISERVE_HIDDEN=true
 export MINISERVE_QRCODE=true
 export MINISERVE_DIRS_FIRST=true

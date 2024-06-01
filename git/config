@@ -39,11 +39,14 @@ enabled = true
 [pager]
 difftool = true
 
-[feature]
-manyFiles = true
+# Bug: https://github.com/rust-lang/cargo/issues/11857
+# [feature]
+# manyFiles = true
 
 [alias]
 difft = difftool --extcmd=difft --no-prompt
+hide = update-index --assume-unchanged
+unhide = update-index --no-assume-unchanged
 graph = log          \
     --graph          \
     --abbrev-commit  \
@@ -82,3 +85,6 @@ required = true
 clean = git-lfs clean -- %f
 smudge = git-lfs smudge -- %f
 process = git-lfs filter-process
+
+[includeIf "gitdir:~/Workspace/Job/"]
+path = ~/Workspace/Job/.gitconfig
