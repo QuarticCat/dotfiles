@@ -38,7 +38,7 @@ zsh.pf ~             '.zshenv'
 zsh.pf ~/.config/zsh '.zshrc|^*.zwc'
 
 plasma.pf ~/.config      'fcitx5|*-flags.conf'
-plasma.pf ~/.config      '(konsole|yakuake|ktrash|kio)rc'
+plasma.pf ~/.config      '(konsole|yakuake|ktrash|kio|kcminput)rc'
 plasma.pf ~/.local/share 'konsole/qc-*.profile'
 plasma.pf ~/.local/share 'applications/*.desktop'
 
@@ -63,6 +63,7 @@ nvim.pf       ~/.config/nvim       '*'
 paru.pf       ~/.config/paru       '*'
 tealdeer.pf   ~/.config/tealdeer   '*'
 thefuck.pf    ~/.config/thefuck    '^__pycache__'
+yazi.pf       ~/.config/yazi       '*'
 zellij.pf     ~/.config/zellij     '*'
 
 btrbk.rpf  /etc/btrbk/              'btrbk.conf'
