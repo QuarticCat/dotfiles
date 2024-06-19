@@ -1,7 +1,6 @@
 # Based on clangd-14
 
 CompileFlags:
-  Compiler: clang++
   Add:
     - -Wall
     - -Wextra

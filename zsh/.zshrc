@@ -69,6 +69,8 @@ alias lt='l -TI .git'
 alias tm='trash-put'
 alias ms='miniserve'
 alias ipy='ipython --profile=qc'
+alias clc='wl-copy'
+alias clp='wl-paste'
 alias pb='curl -F "c=@-" "http://fars.ee/?u=1"'
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
@@ -80,8 +82,7 @@ alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
 alias -g :n='>/dev/null'
 alias -g :nn='&>/dev/null'
 alias -g :bg='&>/dev/null &!'
-
-alias -g -- --help='--help 2>&1 | bat -pl help'
+alias -g :h='--help 2>&1 | bat -pl help'
 
 #============#
 # Completion #
@@ -126,9 +127,9 @@ compdef _precommand lldb.zsh
 #===========#
 
 _qc_bg_cmds=(
-    xdg-open                             # misc
-    hotspot nsys-ui                      # profilers
-    firefox microsoft-edge-stable brave  # browsers
+    xdg-open                       # misc
+    hotspot nsys-ui                # profilers
+    firefox microsoft-edge-stable  # browsers
 )
 for cmd in $_qc_bg_cmds; $cmd() { command $0 $@ &>/dev/null &! }
 
@@ -284,6 +285,7 @@ export MINISERVE_PORT=58080
 export MINISERVE_HIDDEN=true
 export MINISERVE_QRCODE=true
 export MINISERVE_DIRS_FIRST=true
+export MINISERVE_RANDOM_ROUTE=true
 
 export BAT_THEME='OneHalfDark'
 export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
