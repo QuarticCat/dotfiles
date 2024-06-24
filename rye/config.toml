@@ -1,0 +1,9 @@
+[default]
+license = "MIT"
+
+[behavior]
+use-uv = true
+
+[[sources]]
+name = "default"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"

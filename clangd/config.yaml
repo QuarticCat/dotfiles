@@ -6,6 +6,7 @@ CompileFlags:
     - -Wextra
     - -march=native
   Remove:
+    # Unrecognized nvcc flags
     - -forward-unknown-to-host-compiler
     - --generate-code*
 
@@ -15,6 +16,8 @@ Diagnostics:
       # TODO: add more
       - bugprone-*
       - performance-*
+    Remove:
+      - bugprone-easily-swappable-parameters
 
 Hover:
   ShowAKA: true

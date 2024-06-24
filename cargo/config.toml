@@ -19,3 +19,11 @@ codegen-units = 1
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
 rustflags = ["-Clink-arg=-fuse-ld=/usr/bin/mold"]
+
+# # Ref: https://docs.shipyard.rs/configuration/git-fetch-with-cli.html
+# [net]
+# git-fetch-with-cli = true
+
+[source]
+crates-io = { replace-with = "rsproxy-sparse" }
+rsproxy-sparse = { registry = "sparse+https://rsproxy.cn/index/" }

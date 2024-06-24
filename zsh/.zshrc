@@ -287,7 +287,6 @@ export MINISERVE_QRCODE=true
 export MINISERVE_DIRS_FIRST=true
 export MINISERVE_RANDOM_ROUTE=true
 
-export BAT_THEME='OneHalfDark'
 export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
 
@@ -302,6 +301,11 @@ export CMAKE_{C,CXX}_COMPILER_LAUNCHER='ccache'
 export CMAKE_{C,CXX}_LINKER_LAUNCHER='mold-run.zsh'
 
 export MOLD_JOBS=1
+
+export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive  # see https://nixos.wiki/wiki/Locales
+
+export RUSTUP_DIST_SERVER="https://rsproxy.cn"         # affect `rustup update`
+export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"  # affect `rustup self-update`
 
 #=========#
 # Scripts #

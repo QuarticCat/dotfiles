@@ -45,8 +45,6 @@ difftool = true
 
 [alias]
 difft = difftool --extcmd=difft --no-prompt
-hide = update-index --assume-unchanged
-unhide = update-index --no-assume-unchanged
 graph = log          \
     --graph          \
     --abbrev-commit  \

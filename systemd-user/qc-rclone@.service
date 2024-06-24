@@ -1,0 +1,22 @@
+# Ref: https://gist.github.com/kabili207/2cd2d637e5c7617411a666d8d7e97101
+
+[Unit]
+Description=rclone: Remote FUSE filesystem for cloud storage config %i
+Documentation=man:rclone(1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStartPre=/usr/bin/mkdir -p %h/%i
+ExecStart= \
+  /usr/bin/rclone mount \
+    --vfs-cache-mode full \
+    --vfs-cache-max-size 100M \
+    --log-level INFO \
+    --log-file /tmp/rclone-%i.log \
+    %i: %h/%i
+ExecStop=/bin/fusermount3 -u %h/%i
+
+[Install]
+WantedBy=default.target
