@@ -1,8 +1,8 @@
 [build]
 target-dir = ".cache/cargo-build"
 
-# [profile.dev]
-# split-debuginfo = "unpacked"
+[profile.dev]
+split-debuginfo = "unpacked"
 # opt-level = 1
 
 # Applied through `cargo build --profile=profile`

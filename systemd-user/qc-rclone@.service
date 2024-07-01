@@ -17,6 +17,8 @@ ExecStart= \
     --log-file /tmp/rclone-%i.log \
     %i: %h/%i
 ExecStop=/bin/fusermount3 -u %h/%i
+Restart=on-failure
+RestartSec=60
 
 [Install]
 WantedBy=default.target

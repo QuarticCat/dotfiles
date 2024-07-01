@@ -145,6 +145,7 @@ reboot-to-windows() {
 
 bindkey '\C-Z' undo
 bindkey '\C-Y' redo
+bindkey '\C-U' backward-kill-line
 
 # Ref: https://github.com/marlonrichert/zsh-edit
 qc-word-widgets() {

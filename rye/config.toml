@@ -6,4 +6,4 @@ use-uv = true
 
 [[sources]]
 name = "default"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+url = "https://mirrors.bfsu.edu.cn/pypi/web/simple/"
