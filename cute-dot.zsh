@@ -54,6 +54,7 @@ ssh.pf     ~/.ssh                'config'
 
 atuin.pf      ~/.config/atuin      '*'
 bat.pf        ~/.config/bat        '*'
+ccache.pf     ~/.config/ccache     '*'
 clangd.pf     ~/.config/clangd     '*'
 containers.pf ~/.config/containers '*'
 direnv.pf     ~/.config/direnv     '*'
@@ -71,13 +72,12 @@ thefuck.pf    ~/.config/thefuck    '^__pycache__'
 yazi.pf       ~/.config/yazi       '*'
 zellij.pf     ~/.config/zellij     '*'
 
-btrbk.rpf  /etc/btrbk               'btrbk.conf'
-nix.rpf    /etc/nix                 'nix.conf'
-pacman.rpf /etc                     'pacman.conf'
-pacman.rpf /etc/pacman.d            'mirrorlist'
-pacman.rpf /usr/share/libalpm/hooks 'qc-*.hook'
-sshd.rpf   /etc/ssh/sshd_config.d   'qc-*.conf'
-udev.rpf   /etc/udev/rules.d        'qc-*.rules'
+btrbk.rpf  /etc/btrbk             'btrbk.conf'
+nix.rpf    /etc/nix               'nix.conf'
+pacman.rpf /etc                   'pacman.conf'
+pacman.rpf /etc/pacman.d          'mirrorlist|hooks'
+sshd.rpf   /etc/ssh/sshd_config.d 'qc-*.conf'
+udev.rpf   /etc/udev/rules.d      'qc-*.rules'
 
 # ================================ Config End ================================ #
 

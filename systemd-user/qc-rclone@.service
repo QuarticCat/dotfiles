@@ -3,8 +3,7 @@
 [Unit]
 Description=rclone: Remote FUSE filesystem for cloud storage config %i
 Documentation=man:rclone(1)
-After=network-online.target
-Wants=network-online.target
+Wants=network-online.target daed.service
 
 [Service]
 Type=notify
