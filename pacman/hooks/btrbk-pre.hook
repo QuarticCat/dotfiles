@@ -8,6 +8,6 @@ Target = *
 [Action]
 Description = Performing btrbk pre-pacman snapshots...
 When = PreTransaction
-Exec = /usr/bin/btrbk snapshot @
+Exec = /usr/bin/btrbk --quiet snapshot @
 NeedsTargets
 AbortOnFail

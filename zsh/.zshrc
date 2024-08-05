@@ -15,6 +15,7 @@ _qc-comp()   { (( $+commands[$1] )) && smartcache comp $@ }
 hash -d config=$XDG_CONFIG_HOME
 hash -d cache=$XDG_CACHE_HOME
 hash -d data=$XDG_DATA_HOME
+hash -d state=$XDG_STATE_HOME
 
 hash -d zdot=$ZDOTDIR
 
@@ -67,7 +68,7 @@ zcomet load hlissner/zsh-autopair
 alias l='eza -lah --group-directories-first --git --time-style=long-iso'
 alias lt='l -TI .git'
 alias tm='trash-put'
-alias ms='miniserve'
+alias ms='miniserve -vqHDp 58080 --random-route'
 alias ipy='ipython --profile=qc'
 alias clc='wl-copy'
 alias clp='wl-paste'
@@ -138,6 +139,8 @@ reboot-to-windows() {
     sudo efibootmgr --bootnext $match[1] &&
     reboot
 }
+
+# TODO: https://serverfault.com/questions/528993
 
 #==============#
 # Key Bindings #
@@ -238,7 +241,8 @@ ZSH_AUTOSUGGEST_MANUAL_REBIND=true
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(qc-{sub,shell}-r)
 
 zcomet load zdharma-continuum/fast-syntax-highlighting
-unset 'FAST_HIGHLIGHT[chroma-man]'  # chroma-man will stuck history browsing
+unset 'FAST_HIGHLIGHT[chroma-man]'  # buggy (stuck history browsing)
+unset 'FAST_HIGHLIGHT[chroma-ssh]'  # incorrect
 
 zcomet load romkatv/powerlevel10k
 
@@ -275,18 +279,15 @@ max memory:                %M MB
 page faults from disk:     %F
 other page faults:         %R"
 
-export EDITOR='nvim'
-export VISUAL='nvim'
+if [[ $XDG_SESSION_TYPE != '' || $TERM_PROGRAM == vscode ]] {
+    export EDITOR='code --wait'
+} else {
+    export EDITOR='nvim'
+}
 
 export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'
 
 export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'
-
-export MINISERVE_PORT=58080
-export MINISERVE_HIDDEN=true
-export MINISERVE_QRCODE=true
-export MINISERVE_DIRS_FIRST=true
-export MINISERVE_RANDOM_ROUTE=true
 
 export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
@@ -307,6 +308,8 @@ export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive  # see https://nixos.wiki/w
 
 export RUSTUP_DIST_SERVER="https://rsproxy.cn"         # affect `rustup update`
 export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"  # affect `rustup self-update`
+
+export RUST_BACKTRACE='full'
 
 #=========#
 # Scripts #

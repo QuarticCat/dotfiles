@@ -40,7 +40,7 @@ zsh.pf ~/.config/zsh '.zshrc|^*.zwc'
 plasma.pf ~/.config      'fcitx5|*-flags.conf'
 plasma.pf ~/.config      '(konsole|yakuake|ktrash|kio|kcminput)rc'
 plasma.pf ~/.local/share 'konsole/qc-*.profile'
-plasma.pf ~/.local/share 'applications/*.desktop'
+plasma.pf ~/.local/share 'applications/discord.desktop'
 
 systemd-user.pf ~/.config/systemd/user 'qc-*'
 
