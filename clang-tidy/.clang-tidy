@@ -1,0 +1,10 @@
+# Based on clang-tidy 18
+
+Checks:
+  - bugprone-*
+  - misc-*
+  - modernize-*
+  - performance-*
+  # - readability-*
+  - -performance-no-int-to-ptr
+  - -bugprone-easily-swappable-parameters

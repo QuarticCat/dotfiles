@@ -1,4 +1,4 @@
-# Based on clangd-14
+# Based on clangd 14
 
 CompileFlags:
   Add:
@@ -9,15 +9,6 @@ CompileFlags:
     # Unrecognized nvcc flags
     - -forward-unknown-to-host-compiler
     - --generate-code*
-
-Diagnostics:
-  ClangTidy:
-    Add:
-      # TODO: add more
-      - bugprone-*
-      - performance-*
-    Remove:
-      - bugprone-easily-swappable-parameters
 
 Hover:
   ShowAKA: true

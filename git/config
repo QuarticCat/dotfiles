@@ -5,7 +5,7 @@ signingkey = DEADBEEF
 
 [core]
 pager = less -RS -+FX  # see https://askubuntu.com/questions/803486
-# fsmonitor = true
+fsmonitor = true
 
 [init]
 defaultBranch = main
@@ -26,6 +26,12 @@ writeCommitGraph = true
 
 [branch]
 sort = committerdate
+
+[pack]
+threads = 0  # auto-detect
+
+[checkout]
+workers = 0  # auto-detect
 
 # [submodule]
 # recurse = true

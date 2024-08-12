@@ -4,3 +4,9 @@ ServerAliveInterval 60
 ServerAliveCountMax 120
 
 # StrictHostKeyChecking no
+
+# Ref: https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port
+Host github.com
+    Hostname ssh.github.com
+    Port 443
+    User git

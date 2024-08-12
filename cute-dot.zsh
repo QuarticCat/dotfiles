@@ -1,4 +1,6 @@
-#!/usr/bin/zsh
+#!/bin/env -iS PATH=${PATH} zsh
+# ^^^^^^^^^^^ Clear env vars to make env_parallel work inside Nix shells.
+#             It also boosts the whole program by a little bit.
 
 DOT=${0:a:h}  # the directory of this script
 
@@ -42,8 +44,10 @@ plasma.pf ~/.config      '(konsole|yakuake|ktrash|kio|kcminput)rc'
 plasma.pf ~/.local/share 'konsole/qc-*.profile'
 plasma.pf ~/.local/share 'applications/discord.desktop'
 
-systemd-user.pf ~/.config/systemd/user 'qc-*'
+systemd.rpf /etc/systemd      'resolved.conf'
+systemd.pf  ~/.config/systemd 'user/qc-*'
 
+clang-tidy.pf   ~ '.clang-tidy'
 clang-format.pf ~ '.clang-format'
 
 cargo.pf   ~/.cargo              'config.toml'

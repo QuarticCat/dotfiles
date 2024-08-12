@@ -24,12 +24,6 @@ hash -d Workspace=~/Workspace
 hash -d OneDrive=~/OneDrive
 for p in ~Workspace/*(/N) ~OneDrive/*(/N); hash -d ${p:t}=$p
 
-#=====================#
-# P10k Instant Prompt #
-#=====================#
-
-_qc-source ~cache/p10k-instant-prompt-${(%):-%n}.zsh
-
 #==================#
 # Plugins (Part 1) #
 #==================#
@@ -38,13 +32,17 @@ _qc-source ~cache/p10k-instant-prompt-${(%):-%n}.zsh
 
 source ~zdot/.zcomet/bin/zcomet.zsh
 
-# update every 7 days
+# Update every 7 days
 _qc_last_update=(~zdot/.zcomet/update(Nm-7))
 if [[ -z $_qc_last_update ]] {
     touch ~zdot/.zcomet/update
     zcomet self-update
     zcomet update
     zcomet compile ~zdot/*.zsh  # NOTE: https://github.com/romkatv/zsh-bench#cutting-corners
+} else {
+    # Start p10k instant prompt only when no update
+    # Otherwise update logs might not be displayed
+    _qc-source ~cache/p10k-instant-prompt-${(%):-%n}.zsh
 }
 
 zcomet fpath zsh-users/zsh-completions src
@@ -79,6 +77,8 @@ alias open='xdg-open'
 alias edge='microsoft-edge-stable'
 alias sudo='sudo '
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
+
+alias strace='strace --seccomp-bpf --string-limit=9999'
 
 alias -g :n='>/dev/null'
 alias -g :nn='&>/dev/null'
@@ -241,7 +241,7 @@ ZSH_AUTOSUGGEST_MANUAL_REBIND=true
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(qc-{sub,shell}-r)
 
 zcomet load zdharma-continuum/fast-syntax-highlighting
-unset 'FAST_HIGHLIGHT[chroma-man]'  # buggy (stuck history browsing)
+unset 'FAST_HIGHLIGHT[chroma-man]'  # buggy: stuck history browsing
 unset 'FAST_HIGHLIGHT[chroma-ssh]'  # incorrect
 
 zcomet load romkatv/powerlevel10k
@@ -309,7 +309,7 @@ export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive  # see https://nixos.wiki/w
 export RUSTUP_DIST_SERVER="https://rsproxy.cn"         # affect `rustup update`
 export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"  # affect `rustup self-update`
 
-export RUST_BACKTRACE='full'
+export RUST_BACKTRACE=1
 
 #=========#
 # Scripts #
