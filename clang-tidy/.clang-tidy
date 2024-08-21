@@ -8,3 +8,5 @@ Checks:
   # - readability-*
   - -performance-no-int-to-ptr
   - -bugprone-easily-swappable-parameters
+  - -modernize-use-trailing-return-type
+  - -modernize-avoid-c-arrays

@@ -222,6 +222,19 @@ qc-fuck() {
 zle -C qc-fuck complete-word qc-fuck
 bindkey '\E\E' qc-fuck
 
+#=======#
+# Hooks #
+#=======#
+
+autoload -Uz add-zsh-hook
+
+# Reset the cursor shape before each prompt.
+# Since some programs (like nvim and yazi) will change it.
+qc-set-cursor() {
+    print -n '\e[5 q'  # line cursor
+}
+add-zsh-hook precmd qc-set-cursor
+
 #==================#
 # Plugins (Part 2) #
 #==================#
