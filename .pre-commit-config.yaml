@@ -1,8 +1,5 @@
 repos:
-  - repo: local
+  - repo: https://github.com/sirwart/ripsecrets
+    rev: v0.1.8
     hooks:
-      - id: detect-secrets
-        name: detect secrets
-        entry: trufflehog git file://. --since-commit HEAD --fail
-        language: system
-        pass_filenames: false
+      - id: ripsecrets
