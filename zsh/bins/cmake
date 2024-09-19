@@ -1,0 +1,24 @@
+#!/usr/bin/zsh
+
+# Compile clang-18.1.8 (release, llvm dylib, clang dylib, -j12):
+# - default: 30m 34s
+# - +ninja +mold: 29m 31s
+# - +ninja +mold +mimalloc: 27m 47s
+# - +ninja +mold +mimalloc +clang: 26m 25s
+# - +ninja +mold +mimalloc +clang +cachyos: 17m 54s
+
+extra_args=(
+    -G Ninja
+    -DCMAKE_COLOR_DIAGNOSTICS=ON
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+    -DCMAKE_C_COMPILER=clang
+    -DCMAKE_CXX_COMPILER=clang++
+    -DCMAKE_LINKER_TYPE=MOLD
+    # TODO: enable split-dwarf
+)
+
+if (( $@[(Ie)--build] || $@[(Ie)--install] )) {
+    /usr/bin/cmake "$@"
+} else {
+    /usr/bin/cmake $extra_args "$@"
+}

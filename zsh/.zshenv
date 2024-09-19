@@ -14,6 +14,7 @@ ZDOTDIR=$XDG_CONFIG_HOME/zsh
 
 typeset -U path  # set unique (fpath is already unique)
 path=(
+    $ZDOTDIR/bins
     $ZDOTDIR/scripts
     ~/.cargo/bin
     ~/.ghcup/bin

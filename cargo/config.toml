@@ -1,9 +1,12 @@
 [build]
 target-dir = ".cache/cargo-build"
 
+[env]
+RUST_BACKTRACE = "1"
+
 [profile.dev]
 split-debuginfo = "unpacked"
-# opt-level = 1
+opt-level = 1
 
 # Applied through `cargo build --profile=profile`
 [profile.profile]

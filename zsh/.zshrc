@@ -140,8 +140,6 @@ reboot-to-windows() {
     reboot
 }
 
-# TODO: https://serverfault.com/questions/528993
-
 #==============#
 # Key Bindings #
 #==============#
@@ -210,7 +208,7 @@ zle -N qc-clear-screen
 bindkey '\C-L' qc-clear-screen
 
 # [Esc Esc] Correct previous command
-# Ref: https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/thefuck
+# Ref: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/thefuck
 qc-fuck() {
     local fuck=$(THEFUCK_REQUIRE_CONFIRMATION=false thefuck $(fc -ln -1) 2>/dev/null)
     if [[ $fuck != '' ]] {
@@ -228,12 +226,17 @@ bindkey '\E\E' qc-fuck
 
 autoload -Uz add-zsh-hook
 
-# Reset the cursor shape before each prompt.
-# Since some programs (like nvim and yazi) will change it.
-qc-set-cursor() {
-    print -n '\e[5 q'  # line cursor
+# [PRECMD] Reset cursor shape as some programs (nvim, yazi) will change it
+_qc-reset-cursor() {
+    print -n '\E[5 q'  # line cursor
 }
-add-zsh-hook precmd qc-set-cursor
+add-zsh-hook precmd _qc-reset-cursor
+
+# Inside distrobox, execute commands on host when not found
+# Ref: https://github.com/89luca89/distrobox/blob/main/docs/posts/execute_commands_on_host.md
+if [[ -e /run/.containerenv || -e /.dockerenv ]] {
+    command_not_found_handler() { distrobox-host-exec "$@" }
+}
 
 #==================#
 # Plugins (Part 2) #
@@ -241,7 +244,7 @@ add-zsh-hook precmd qc-set-cursor
 
 zcomet compinit
 
-zcomet load Aloxaf/fzf-tab  # TODO: run `build-fzf-tab-module` after update
+zcomet load Aloxaf/fzf-tab
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
 zstyle ':fzf-tab:*' switch-group '<' '>'
 zstyle ':fzf-tab:*' prefix       ''
@@ -274,8 +277,8 @@ setopt rc_quotes             # `''` -> `'` within singly quoted strings
 setopt magic_equal_subst     # perform filename expansion on `any=expr` args
 setopt no_flow_control       # don't occupy [Ctrl+S] and [Ctrl+Q]
 
-setopt hist_ignore_all_dups  # no duplicates in history list
-setopt hist_save_no_dups     # no duplicates in history file
+setopt hist_ignore_all_dups  # no duplicate in history list
+setopt hist_save_no_dups     # no duplicate in history file
 setopt hist_ignore_space     # ignore commands starting with a space
 setopt hist_reduce_blanks    # remove all unnecessary spaces
 setopt hist_fcntl_lock       # use fcntl to improve locking performance
@@ -292,7 +295,7 @@ max memory:                %M MB
 page faults from disk:     %F
 other page faults:         %R"
 
-if [[ $XDG_SESSION_TYPE != '' || $TERM_PROGRAM == vscode ]] {
+if [[ $DISPLAY != '' || $TERM_PROGRAM == vscode ]] {
     export EDITOR='code --wait'
 } else {
     export EDITOR='nvim'
@@ -309,20 +312,12 @@ export GPG_TTY=$TTY
 export SSH_AGENT_PID=
 export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh
 
-export CMAKE_GENERATOR='Ninja'
-export CMAKE_COLOR_DIAGNOSTICS=ON
-export CMAKE_EXPORT_COMPILE_COMMANDS=ON
-export CMAKE_{C,CXX}_COMPILER_LAUNCHER='ccache'
-export CMAKE_{C,CXX}_LINKER_LAUNCHER='mold-run.zsh'
-
 export MOLD_JOBS=1
 
 export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive  # see https://nixos.wiki/wiki/Locales
 
-export RUSTUP_DIST_SERVER="https://rsproxy.cn"         # affect `rustup update`
-export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"  # affect `rustup self-update`
-
-export RUST_BACKTRACE=1
+export RUSTUP_DIST_SERVER='https://rsproxy.cn'         # affect `rustup update`
+export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'  # affect `rustup self-update`
 
 #=========#
 # Scripts #

@@ -1,0 +1,7 @@
+#!/usr/bin/zsh
+
+if [[ -f /usr/lib/libmimalloc.so ]] {
+    export LD_PRELOAD=/usr/lib/libmimalloc.so
+}
+
+/usr/bin/clang++ "$@"
