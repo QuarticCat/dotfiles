@@ -1,9 +1,0 @@
-[default]
-license = "MIT"
-
-[behavior]
-use-uv = true
-
-[[sources]]
-name = "default"
-url = "https://mirrors.bfsu.edu.cn/pypi/web/simple/"

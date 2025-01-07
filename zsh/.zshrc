@@ -23,6 +23,8 @@ hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
 hash -d OneDrive=~/OneDrive
 for p in ~Workspace/*(/N) ~OneDrive/*(/N); hash -d ${p:t}=$p
+hash -d Memo=~/OneDrive/Apps/Graph/Main
+hash -d WeChat=~/Documents/WeChat_Data/xwechat_files
 
 #==================#
 # Plugins (Part 1) #
@@ -48,7 +50,6 @@ if [[ -z $_qc_last_update ]] {
 zcomet fpath zsh-users/zsh-completions src
 zcomet fpath nix-community/nix-zsh-completions
 
-zcomet load tj/git-extras etc/git-extras-completion.zsh
 zcomet load trapd00r/LS_COLORS lscolors.sh
 zcomet load QuarticCat/zsh-smartcache
 zcomet load chisui/zsh-nix-shell
@@ -88,6 +89,8 @@ alias -g :h='--help 2>&1 | bat -pl help'
 #============#
 # Completion #
 #============#
+
+_qc-source /usr/share/doc/git-extras/git-extras-completion.zsh
 
 setopt menu_complete  # list choices when ambiguous
 

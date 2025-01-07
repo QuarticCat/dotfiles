@@ -6,6 +6,7 @@ software_table=(
     hellzerg/optimizer                     'Optimizer-*.exe'
     clash-verge-rev/clash-verge-rev        'Clash.Verge_*_x64-setup.exe'
     c0re100/qBittorrent-Enhanced-Edition   'qbittorrent_enhanced_*_qt6_x64_setup.exe'
+    peazip/PeaZip                          'peazip-*.WIN64.exe'
 
     tonsky/FiraCode                        'Fira_Code_*.zip'
     microsoft/cascadia-code                'CascadiaCode-*.zip'
