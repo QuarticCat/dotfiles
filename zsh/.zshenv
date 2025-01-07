@@ -18,7 +18,7 @@ path=(
     $ZDOTDIR/scripts
     ~/.cargo/bin
     ~/.ghcup/bin
-    ~/.bun/bin
+    ~/.cache/.bun/bin
     ~/go/bin
     $path
 )

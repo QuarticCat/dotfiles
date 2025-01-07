@@ -39,21 +39,12 @@ rsync_opts=(
 zsh.pf ~             '.zshenv'
 zsh.pf ~/.config/zsh '.zshrc|^*.zwc'
 
-plasma.pf ~/.config      'fcitx5|*-flags.conf'
-plasma.pf ~/.config      '(konsole|yakuake|ktrash|kio|kcminput)rc'
-plasma.pf ~/.local/share 'konsole/qc-*.profile'
-plasma.pf ~/.local/share 'applications/discord.desktop'
-
-systemd.rpf /etc/systemd      'resolved.conf'
-systemd.pf  ~/.config/systemd 'user/qc-*'
-
 clang-tidy.pf   ~ '.clang-tidy'
 clang-format.pf ~ '.clang-format'
 
 cargo.pf   ~/.cargo              'config.toml'
 gpg.pf     ~/.gnupg              'gpg-agent.conf'
 ipython.pf ~/.ipython/profile_qc 'ipython_config.py'
-rye.pf     ~/.rye                'config.toml'
 ssh.pf     ~/.ssh                'config'
 
 atuin.pf      ~/.config/atuin      '*'
@@ -74,15 +65,26 @@ nvim.pf       ~/.config/nvim       '*'
 paru.pf       ~/.config/paru       '*'
 tealdeer.pf   ~/.config/tealdeer   '*'
 thefuck.pf    ~/.config/thefuck    '^__pycache__'
+uv.pf         ~/.config/uv         '*'
 yazi.pf       ~/.config/yazi       '*'
 zellij.pf     ~/.config/zellij     '*'
 
-btrbk.rpf  /etc/btrbk             'btrbk.conf'
-nix.rpf    /etc/nix               'nix.conf'
-pacman.rpf /etc                   'pacman.conf'
-pacman.rpf /etc/pacman.d          'mirrorlist|hooks'
-sshd.rpf   /etc/ssh/sshd_config.d 'qc-*.conf'
-udev.rpf   /etc/udev/rules.d      'qc-*.rules'
+if [[ $(uname) == Linux ]] {
+    plasma.pf ~/.config      'fcitx5|*-flags.conf'
+    plasma.pf ~/.config      '(konsole|yakuake|ktrash|kio|kcminput)rc'
+    plasma.pf ~/.local/share 'konsole/qc-*.profile'
+    plasma.pf ~/.local/share 'applications/discord.desktop'
+
+    systemd.rpf /etc/systemd      'resolved.conf'
+    systemd.pf  ~/.config/systemd 'user/qc-*'
+
+    btrbk.rpf  /etc/btrbk             'btrbk.conf'
+    nix.rpf    /etc/nix               'nix.conf'
+    pacman.rpf /etc                   'pacman.conf'
+    pacman.rpf /etc/pacman.d          'mirrorlist|hooks'
+    sshd.rpf   /etc/ssh/sshd_config.d 'qc-*.conf'
+    udev.rpf   /etc/udev/rules.d      'qc-*.rules'
+}
 
 # ================================ Config End ================================ #
 

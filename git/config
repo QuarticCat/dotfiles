@@ -45,9 +45,8 @@ enabled = true
 [pager]
 difftool = true
 
-# Bug: https://github.com/rust-lang/cargo/issues/11857
-# [feature]
-# manyFiles = true
+[feature]
+manyFiles = true
 
 [alias]
 difft = difftool --extcmd=difft --no-prompt
