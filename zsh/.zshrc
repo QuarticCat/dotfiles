@@ -8,6 +8,12 @@ _qc-source() { [[ -r $1 ]] && source $1 }
 _qc-eval()   { (( $+commands[$1] )) && smartcache eval $@ }
 _qc-comp()   { (( $+commands[$1] )) && smartcache comp $@ }
 
+# Placed ahead to make sure compinit works and config can be overridden
+if [[ $_QC_UNAME == Darwin ]] {
+    # TODO: switch to smartcache
+    eval $(/opt/homebrew/bin/brew shellenv)
+}
+
 #=====================#
 # Directory Shortcuts #
 #=====================#
@@ -50,6 +56,7 @@ if [[ -z $_qc_last_update ]] {
 zcomet fpath zsh-users/zsh-completions src
 zcomet fpath nix-community/nix-zsh-completions
 
+zcomet load tj/git-extras etc/git-extras-completion.zsh
 zcomet load trapd00r/LS_COLORS lscolors.sh
 zcomet load QuarticCat/zsh-smartcache
 zcomet load chisui/zsh-nix-shell
@@ -74,23 +81,25 @@ alias clp='wl-paste'
 alias pb='curl -F "c=@-" "http://fars.ee/?u=1"'
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
-alias open='xdg-open'
 alias edge='microsoft-edge-stable'
 alias sudo='sudo '
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
-
-alias strace='strace --seccomp-bpf --string-limit=9999'
 
 alias -g :n='>/dev/null'
 alias -g :nn='&>/dev/null'
 alias -g :bg='&>/dev/null &!'
 alias -g :h='--help 2>&1 | bat -pl help'
 
+if [[ $_QC_UNAME == Linux ]] {
+    alias open='xdg-open'
+    alias strace='strace --seccomp-bpf --string-limit=9999'
+} else {
+    alias code='open -b com.microsoft.VSCode'  # Ref: https://github.com/microsoft/vscode/issues/60579#issuecomment-925627701
+}
+
 #============#
 # Completion #
 #============#
-
-_qc-source /usr/share/doc/git-extras/git-extras-completion.zsh
 
 setopt menu_complete  # list choices when ambiguous
 
@@ -151,6 +160,7 @@ bindkey '\C-Z' undo
 bindkey '\C-Y' redo
 bindkey '\C-U' backward-kill-line
 
+# TODO: make it work under macOS
 # Ref: https://github.com/marlonrichert/zsh-edit
 qc-word-widgets() {
     local wordpat='[[:WORD:]]##|[[:space:]]##|[^[:WORD:][:space:]]##'
@@ -312,8 +322,10 @@ export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
 
 export GPG_TTY=$TTY
-export SSH_AGENT_PID=
-export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh
+if [[ $_QC_UNAME == Linux ]] {
+    export SSH_AGENT_PID=
+    export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh
+}
 
 export MOLD_JOBS=1
 
