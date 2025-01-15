@@ -1,6 +1,6 @@
-#!/bin/env -iS PATH=${PATH} zsh
-# ^^^^^^^^^^^ Clear env vars to make env_parallel work inside Nix shells.
-#             It also boosts the whole program by a little bit.
+#!/usr/bin/env -iS PATH=${PATH} zsh
+# ^^^^^^^^^^^^^^^ Clear env vars to make env_parallel work inside Nix shells.
+#                 It also boosts the whole program by a little bit.
 
 DOT=${0:a:h}  # the directory of this script
 
@@ -47,27 +47,24 @@ gpg.pf     ~/.gnupg              'gpg-agent.conf'
 ipython.pf ~/.ipython/profile_qc 'ipython_config.py'
 ssh.pf     ~/.ssh                'config'
 
-atuin.pf      ~/.config/atuin      '*'
-bat.pf        ~/.config/bat        '*'
-ccache.pf     ~/.config/ccache     '*'
-clangd.pf     ~/.config/clangd     '*'
-containers.pf ~/.config/containers '*'
-direnv.pf     ~/.config/direnv     '*'
-discord.pf    ~/.config/discord    'settings.json'
-fastfetch.pf  ~/.config/fastfetch  '*'
-fontconfig.pf ~/.config/fontconfig '*'
-ghc.pf        ~/.config/ghc        'ghci.conf'
-git.pf        ~/.config/git        '*'
-htop.pf       ~/.config/htop       '*'
-mpv.pf        ~/.config/mpv        '*'
-nixpkgs.pf    ~/.config/nixpkgs    '*'
-nvim.pf       ~/.config/nvim       '*'
-paru.pf       ~/.config/paru       '*'
-tealdeer.pf   ~/.config/tealdeer   '*'
-thefuck.pf    ~/.config/thefuck    '^__pycache__'
-uv.pf         ~/.config/uv         '*'
-yazi.pf       ~/.config/yazi       '*'
-zellij.pf     ~/.config/zellij     '*'
+atuin.pf     ~/.config/atuin     '*'
+bat.pf       ~/.config/bat       '*'
+ccache.pf    ~/.config/ccache    '*'
+clangd.pf    ~/.config/clangd    '*'
+direnv.pf    ~/.config/direnv    '*'
+discord.pf   ~/.config/discord   'settings.json'
+fastfetch.pf ~/.config/fastfetch '*'
+ghc.pf       ~/.config/ghc       'ghci.conf'
+git.pf       ~/.config/git       '*'
+htop.pf      ~/.config/htop      '*'
+mpv.pf       ~/.config/mpv       '*'
+nixpkgs.pf   ~/.config/nixpkgs   '*'
+nvim.pf      ~/.config/nvim      '*'
+tealdeer.pf  ~/.config/tealdeer  '*'
+thefuck.pf   ~/.config/thefuck   '^__pycache__'
+uv.pf        ~/.config/uv        '*'
+yazi.pf      ~/.config/yazi      '*'
+zellij.pf    ~/.config/zellij    '*'
 
 if [[ $(uname) == Linux ]] {
     plasma.pf ~/.config      'fcitx5|*-flags.conf'
@@ -75,15 +72,19 @@ if [[ $(uname) == Linux ]] {
     plasma.pf ~/.local/share 'konsole/qc-*.profile'
     plasma.pf ~/.local/share 'applications/discord.desktop'
 
-    systemd.rpf /etc/systemd      'resolved.conf'
-    systemd.pf  ~/.config/systemd 'user/qc-*'
+    systemd.pf ~/.config/systemd 'user/qc-*'
 
-    btrbk.rpf  /etc/btrbk             'btrbk.conf'
-    nix.rpf    /etc/nix               'nix.conf'
-    pacman.rpf /etc                   'pacman.conf'
-    pacman.rpf /etc/pacman.d          'mirrorlist|hooks'
-    sshd.rpf   /etc/ssh/sshd_config.d 'qc-*.conf'
-    udev.rpf   /etc/udev/rules.d      'qc-*.rules'
+    containers.pf ~/.config/containers '*'
+    fontconfig.pf ~/.config/fontconfig '*'
+    paru.pf       ~/.config/paru       '*'
+
+    btrbk.rpf          /etc/btrbk                 'btrbk.conf'
+    NetworkManager.rpf /etc/NetworkManager/conf.d '*'
+    nix.rpf            /etc/nix                   'nix.conf'
+    pacman.rpf         /etc                       'pacman.conf'
+    pacman.rpf         /etc/pacman.d              'mirrorlist|hooks'
+    sshd.rpf           /etc/ssh/sshd_config.d     'qc-*.conf'
+    udev.rpf           /etc/udev/rules.d          'qc-*.rules'
 }
 
 # ================================ Config End ================================ #
