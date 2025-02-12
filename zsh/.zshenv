@@ -18,7 +18,8 @@ ZDOTDIR=$XDG_CONFIG_HOME/zsh
 
 typeset -U path  # set unique (fpath is already unique)
 path=(
-    $ZDOTDIR/bins
+    # FIXME: scripts do not work on macOS
+    # $ZDOTDIR/bins
     $ZDOTDIR/scripts
     ~/.cargo/bin
     ~/.ghcup/bin

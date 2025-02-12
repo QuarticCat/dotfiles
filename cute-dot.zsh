@@ -57,8 +57,6 @@ fastfetch.pf ~/.config/fastfetch '*'
 ghc.pf       ~/.config/ghc       'ghci.conf'
 git.pf       ~/.config/git       '*'
 htop.pf      ~/.config/htop      '*'
-mpv.pf       ~/.config/mpv       '*'
-nixpkgs.pf   ~/.config/nixpkgs   '*'
 nvim.pf      ~/.config/nvim      '*'
 tealdeer.pf  ~/.config/tealdeer  '*'
 thefuck.pf   ~/.config/thefuck   '^__pycache__'
@@ -76,6 +74,8 @@ if [[ $(uname) == Linux ]] {
 
     containers.pf ~/.config/containers '*'
     fontconfig.pf ~/.config/fontconfig '*'
+    mpv.pf        ~/.config/mpv        '*'
+    nixpkgs.pf    ~/.config/nixpkgs    '*'
     paru.pf       ~/.config/paru       '*'
 
     btrbk.rpf          /etc/btrbk                 'btrbk.conf'

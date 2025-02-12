@@ -1,37 +1,41 @@
 # macOS
 .DS_Store
 
-# editor config dirs
+# editor config
 .idea
 .vscode
 
-# misc config files / cache dirs
+# misc config / cache
 .cache
 .clangd
 .xmake
 .direnv
 .envrc
 
-# build outputs
+# C/C++ build
 build
 cmake-build-*
 bazel-*
 compile_commands.json
 
-# perf outputs
+# perf
 perf.data
 perf.data.old
 *.perf
 
-# coz outputs
+# coz
 profile.coz
 
-# valgrind outputs (<tool>.out.<pid>)
+# valgrind (<tool>.out.<pid>)
 dhat.out.*
 massif.out.*
 
-# cargo-flamegraph outputs
+# cargo-flamegraph
 flamegraph.svg
+
+# cargo-tarpaulin
+tarpaulin-report.html
+cobertura.xml
 
 # my personal ignore suffix
 *.ignore

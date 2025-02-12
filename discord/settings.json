@@ -8,5 +8,6 @@
     "width": 1280,
     "height": 720
   },
-  "SKIP_HOST_UPDATE": true
+  "SKIP_HOST_UPDATE": true,
+  "BACKGROUND_COLOR": "#2b2d31"
 }

@@ -8,10 +8,11 @@ _qc-source() { [[ -r $1 ]] && source $1 }
 _qc-eval()   { (( $+commands[$1] )) && smartcache eval $@ }
 _qc-comp()   { (( $+commands[$1] )) && smartcache comp $@ }
 
-# Placed ahead to make sure compinit works and config can be overridden
+# Placed ahead since it modifies $path and $fpath
 if [[ $_QC_UNAME == Darwin ]] {
     # TODO: switch to smartcache
     eval $(/opt/homebrew/bin/brew shellenv)
+    gpgconf --launch gpg-agent
 }
 
 #=====================#
@@ -134,6 +135,11 @@ _qc-complete-galias() {
 
 compdef _precommand bench-mode.zsh
 compdef _precommand lldb.zsh
+
+if [[ $_QC_UNAME == Darwin ]] {
+    _qc-comp rustup completions zsh rustup
+    _qc-comp rustup completions zsh cargo
+}
 
 #===========#
 # Functions #
@@ -322,10 +328,8 @@ export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
 
 export GPG_TTY=$TTY
-if [[ $_QC_UNAME == Linux ]] {
-    export SSH_AGENT_PID=
-    export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh
-}
+unset SSH_AGENT_PID
+export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 
 export MOLD_JOBS=1
 

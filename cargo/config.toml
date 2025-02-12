@@ -6,14 +6,15 @@ RUST_BACKTRACE = "1"
 
 [profile.dev]
 split-debuginfo = "unpacked"
-opt-level = 1
+# opt-level = 1  # coverage & backtrace will be inaccurate
 
-[profile.profile]
-inherits = "release"
-debuginfo = true
+[profile.bench]
+debug = true
+split-debuginfo = "unpacked"
 
 [profile.product]
 inherits = "release"
+strip = true
 lto = "thin"
 codegen-units = 1
 
