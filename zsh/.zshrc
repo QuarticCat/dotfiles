@@ -9,7 +9,7 @@ _qc-eval()   { (( $+commands[$1] )) && smartcache eval $@ }
 _qc-comp()   { (( $+commands[$1] )) && smartcache comp $@ }
 
 # Placed ahead since it modifies $path and $fpath
-if [[ $_QC_UNAME == Darwin ]] {
+if [[ $OSTYPE == darwin* ]] {
     # TODO: switch to smartcache
     eval $(/opt/homebrew/bin/brew shellenv)
     gpgconf --launch gpg-agent
@@ -91,7 +91,7 @@ alias -g :nn='&>/dev/null'
 alias -g :bg='&>/dev/null &!'
 alias -g :h='--help 2>&1 | bat -pl help'
 
-if [[ $_QC_UNAME == Linux ]] {
+if [[ $OSTYPE == linux* ]] {
     alias open='xdg-open'
     alias strace='strace --seccomp-bpf --string-limit=9999'
 } else {
@@ -136,7 +136,7 @@ _qc-complete-galias() {
 compdef _precommand bench-mode.zsh
 compdef _precommand lldb.zsh
 
-if [[ $_QC_UNAME == Darwin ]] {
+if [[ $OSTYPE == darwin* ]] {
     _qc-comp rustup completions zsh rustup
     _qc-comp rustup completions zsh cargo
 }

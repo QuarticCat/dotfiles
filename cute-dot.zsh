@@ -64,7 +64,7 @@ uv.pf        ~/.config/uv        '*'
 yazi.pf      ~/.config/yazi      '*'
 zellij.pf    ~/.config/zellij    '*'
 
-if [[ $(uname) == Linux ]] {
+if [[ $OSTYPE == linux* ]] {
     plasma.pf ~/.config      'fcitx5|*-flags.conf'
     plasma.pf ~/.config      '(konsole|yakuake|ktrash|kio|kcminput)rc'
     plasma.pf ~/.local/share 'konsole/qc-*.profile'
