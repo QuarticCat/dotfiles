@@ -63,6 +63,10 @@ zcomet load QuarticCat/zsh-smartcache
 zcomet load chisui/zsh-nix-shell
 zcomet load romkatv/zsh-no-ps2
 
+zcomet load ohmyzsh lib clipboard.zsh
+zcomet load ohmyzsh plugins/sudo
+zcomet load ohmyzsh plugins/gpg-agent
+
 AUTOPAIR_SPC_WIDGET=magic-space
 AUTOPAIR_BKSPC_WIDGET=backward-delete-char
 AUTOPAIR_DELWORD_WIDGET=backward-delete-word
@@ -77,8 +81,8 @@ alias lt='l -TI .git'
 alias tm='trash-put'
 alias ms='miniserve -vqHDp 58080 --random-route'
 alias ipy='ipython --profile=qc'
-alias clc='wl-copy'
-alias clp='wl-paste'
+alias clc='clipcopy'
+alias clp='clippaste'
 alias pb='curl -F "c=@-" "http://fars.ee/?u=1"'
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
@@ -94,8 +98,6 @@ alias -g :h='--help 2>&1 | bat -pl help'
 if [[ $OSTYPE == linux* ]] {
     alias open='xdg-open'
     alias strace='strace --seccomp-bpf --string-limit=9999'
-} else {
-    alias code='open -b com.microsoft.VSCode'  # Ref: https://github.com/microsoft/vscode/issues/60579#issuecomment-925627701
 }
 
 #============#
@@ -166,7 +168,6 @@ bindkey '\C-Z' undo
 bindkey '\C-Y' redo
 bindkey '\C-U' backward-kill-line
 
-# TODO: make it work under macOS
 # Ref: https://github.com/marlonrichert/zsh-edit
 qc-word-widgets() {
     local wordpat='[[:WORD:]]##|[[:space:]]##|[^[:WORD:][:space:]]##'
@@ -226,19 +227,6 @@ qc-clear-screen() {
 zle -N qc-clear-screen
 bindkey '\C-L' qc-clear-screen
 
-# [Esc Esc] Correct previous command
-# Ref: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/thefuck
-qc-fuck() {
-    local fuck=$(THEFUCK_REQUIRE_CONFIRMATION=false thefuck $(fc -ln -1) 2>/dev/null)
-    if [[ $fuck != '' ]] {
-        compadd -Q $fuck
-    } else {
-        compadd -x '%F{red}-- no fucks given --%f'
-    }
-}
-zle -C qc-fuck complete-word qc-fuck
-bindkey '\E\E' qc-fuck
-
 #=======#
 # Hooks #
 #=======#
@@ -277,7 +265,7 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(qc-{sub,shell}-r)
 
 zcomet load zdharma-continuum/fast-syntax-highlighting
 unset 'FAST_HIGHLIGHT[chroma-man]'  # buggy: stuck history browsing
-unset 'FAST_HIGHLIGHT[chroma-ssh]'  # incorrect
+unset 'FAST_HIGHLIGHT[chroma-ssh]'  # buggy: incorrect
 
 zcomet load romkatv/powerlevel10k
 
@@ -317,7 +305,7 @@ other page faults:         %R"
 if [[ $DISPLAY != '' || $TERM_PROGRAM == vscode ]] {
     export EDITOR='code --wait'
 } else {
-    export EDITOR='nvim'
+    export EDITOR='vim'
 }
 
 export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'
@@ -327,16 +315,12 @@ export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept
 export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
 export MANROFFOPT='-c'
 
-export GPG_TTY=$TTY
-unset SSH_AGENT_PID
-export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-
 export MOLD_JOBS=1
 
 export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive  # see https://nixos.wiki/wiki/Locales
 
-export RUSTUP_DIST_SERVER='https://rsproxy.cn'         # affect `rustup update`
-export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'  # affect `rustup self-update`
+export RUSTUP_DIST_SERVER='https://rsproxy.cn'         # mirror for `rustup update`
+export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'  # mirror for `rustup self-update`
 
 #=========#
 # Scripts #
