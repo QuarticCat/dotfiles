@@ -46,7 +46,8 @@ enabled = true
 difftool = true
 
 [feature]
-manyFiles = true
+# FIXME: it breaks libgit2 -> gitstatus -> powerlevel10k
+# manyFiles = true
 
 [alias]
 difft = difftool --extcmd=difft --no-prompt

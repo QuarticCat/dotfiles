@@ -59,7 +59,6 @@ git.pf       ~/.config/git       '*'
 htop.pf      ~/.config/htop      '*'
 nvim.pf      ~/.config/nvim      '*'
 tealdeer.pf  ~/.config/tealdeer  '*'
-thefuck.pf   ~/.config/thefuck   '^__pycache__'
 uv.pf        ~/.config/uv        '*'
 yazi.pf      ~/.config/yazi      '*'
 zellij.pf    ~/.config/zellij    '*'
@@ -78,13 +77,11 @@ if [[ $OSTYPE == linux* ]] {
     nixpkgs.pf    ~/.config/nixpkgs    '*'
     paru.pf       ~/.config/paru       '*'
 
-    btrbk.rpf          /etc/btrbk                 'btrbk.conf'
-    NetworkManager.rpf /etc/NetworkManager/conf.d '*'
-    nix.rpf            /etc/nix                   'nix.conf'
-    pacman.rpf         /etc                       'pacman.conf'
-    pacman.rpf         /etc/pacman.d              'mirrorlist|hooks'
-    sshd.rpf           /etc/ssh/sshd_config.d     'qc-*.conf'
-    udev.rpf           /etc/udev/rules.d          'qc-*.rules'
+    btrbk.rpf  /etc/btrbk             'btrbk.conf'
+    nix.rpf    /etc/nix               'nix.conf'
+    pacman.rpf /etc/pacman.d          'mirrorlist|hooks'
+    sshd.rpf   /etc/ssh/sshd_config.d 'qc-*.conf'
+    udev.rpf   /etc/udev/rules.d      'qc-*.rules'
 }
 
 # ================================ Config End ================================ #
