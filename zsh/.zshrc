@@ -8,11 +8,10 @@ _qc-source() { [[ -r $1 ]] && source $1 }
 _qc-eval()   { (( $+commands[$1] )) && smartcache eval $@ }
 _qc-comp()   { (( $+commands[$1] )) && smartcache comp $@ }
 
-# Placed ahead since it modifies $path and $fpath
+# Placed ahead since it modifies $PATH and $FPATH
 if [[ $OSTYPE == darwin* ]] {
-    # TODO: switch to smartcache
+    # NOTE: it detects $PATH to decide output so smartcache is not feasible
     eval $(/opt/homebrew/bin/brew shellenv)
-    gpgconf --launch gpg-agent
 }
 
 #=====================#
@@ -65,7 +64,6 @@ zcomet load romkatv/zsh-no-ps2
 
 zcomet load ohmyzsh lib clipboard.zsh
 zcomet load ohmyzsh plugins/sudo
-zcomet load ohmyzsh plugins/gpg-agent
 
 AUTOPAIR_SPC_WIDGET=magic-space
 AUTOPAIR_BKSPC_WIDGET=backward-delete-char
@@ -306,6 +304,14 @@ if [[ $DISPLAY != '' || $TERM_PROGRAM == vscode ]] {
     export EDITOR='code --wait'
 } else {
     export EDITOR='vim'
+}
+
+export GPG_TTY=$TTY
+
+# Ref: https://wiki.archlinux.org/title/GnuPG#Set_SSH_AUTH_SOCK
+unset SSH_AGENT_PID
+if [[ ${gnupg_SSH_AUTH_SOCK_by:-0} != $$ ]] {
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 }
 
 export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'

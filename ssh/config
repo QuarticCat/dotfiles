@@ -5,6 +5,9 @@ ServerAliveCountMax 120
 
 # StrictHostKeyChecking no
 
+# Ref: https://wiki.archlinux.org/title/GnuPG#Configure_pinentry_to_use_the_correct_TTY
+Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
+
 # Ref: https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port
 Host github.com
     Hostname ssh.github.com

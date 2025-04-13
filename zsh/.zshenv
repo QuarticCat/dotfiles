@@ -4,7 +4,7 @@ export XDG_DATA_HOME=~/.local/share
 export XDG_STATE_HOME=~/.local/state
 
 if [[ $OSTYPE == linux* ]] {
-    # NOTE: https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland#KDE_Plasma
+    # Ref: https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland#KDE_Plasma
     export XMODIFIERS='@im=fcitx'
     if [[ $XDG_SESSION_TYPE == x11 ]] {
         export GTK_IM_MODULE='fcitx'
@@ -14,7 +14,7 @@ if [[ $OSTYPE == linux* ]] {
 
 ZDOTDIR=$XDG_CONFIG_HOME/zsh
 
-typeset -U path  # set unique (fpath is already unique)
+typeset -U fpath path  # set unique
 path=(
     $ZDOTDIR/scripts
     ~/.cargo/bin
