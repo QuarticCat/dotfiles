@@ -308,10 +308,8 @@ if [[ $DISPLAY != '' || $TERM_PROGRAM == vscode ]] {
 
 export GPG_TTY=$TTY
 
-# Ref: https://wiki.archlinux.org/title/GnuPG#Set_SSH_AUTH_SOCK
-unset SSH_AGENT_PID
-if [[ ${gnupg_SSH_AUTH_SOCK_by:-0} != $$ ]] {
-    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+if [[ $OSTYPE == linux* ]] {
+    export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
 }
 
 export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'

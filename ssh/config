@@ -1,12 +1,10 @@
 Include config-private
 
+# Automatically do `ssh-add -t 1d`
+AddKeysToAgent 1d
+
+# Send heartbeat every 60s when idle to keep alive
 ServerAliveInterval 60
-ServerAliveCountMax 120
-
-# StrictHostKeyChecking no
-
-# Ref: https://wiki.archlinux.org/title/GnuPG#Configure_pinentry_to_use_the_correct_TTY
-Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
 
 # Ref: https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port
 Host github.com
