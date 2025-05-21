@@ -1,0 +1,4 @@
+telemetry = false
+
+[install]
+registry = "https://registry.npmmirror.com"

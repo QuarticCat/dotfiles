@@ -39,6 +39,7 @@ rsync_opts=(
 zsh.pf ~             '.zshenv'
 zsh.pf ~/.config/zsh '.zshrc|^*.zwc'
 
+bun.pf          ~ '.bunfig.toml'
 clang-tidy.pf   ~ '.clang-tidy'
 clang-format.pf ~ '.clang-format'
 
