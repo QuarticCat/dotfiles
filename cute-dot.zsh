@@ -21,9 +21,13 @@ _rsync-pf() {  # sync|apply <pf-name>
 
 _rsync-each-pf() {  # sync|apply [--all|<pf-name>...]
     [[ $2 == --all ]] && set -- $1 ${(k)pf_map}
-    source env_parallel.zsh
-    [[ $1 == apply ]] && sudo true  # refresh cache
-    env_parallel --ctag "_rsync-pf $1" ::: ${@:2}
+    if (( $+commands[env_parallel.zsh] )) {
+        source env_parallel.zsh
+        [[ $1 == apply ]] && sudo true  # refresh cache
+        env_parallel --ctag "_rsync-pf $1" ::: ${@:2}
+    } else {
+        for pf in ${@:2}; _rsync-pf $1 $pf
+    }
 }
 
 # =============================== Config Begin =============================== #
