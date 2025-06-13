@@ -64,7 +64,6 @@ htop.pf      ~/.config/htop      '*'
 tealdeer.pf  ~/.config/tealdeer  '*'
 uv.pf        ~/.config/uv        '*'
 yazi.pf      ~/.config/yazi      '*'
-zellij.pf    ~/.config/zellij    '*'
 
 if [[ $OSTYPE == linux* ]] {
     plasma.pf ~/.config      '*-flags.conf'
