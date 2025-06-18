@@ -61,7 +61,6 @@ fastfetch.pf ~/.config/fastfetch '*'
 ghc.pf       ~/.config/ghc       'ghci.conf'
 git.pf       ~/.config/git       '*'
 htop.pf      ~/.config/htop      '*'
-tealdeer.pf  ~/.config/tealdeer  '*'
 uv.pf        ~/.config/uv        '*'
 yazi.pf      ~/.config/yazi      '*'
 
