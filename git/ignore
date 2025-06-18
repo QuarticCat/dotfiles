@@ -4,6 +4,7 @@
 # editor config
 .idea
 .vscode
+.cursor
 
 # misc config / cache
 .cache
