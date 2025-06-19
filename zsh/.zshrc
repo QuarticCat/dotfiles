@@ -158,6 +158,21 @@ reboot-to-windows() {
     reboot
 }
 
+upgrade-all() {
+    _qc-upd() {
+        if (( $+commands[$1] )) {
+            echo ">>> $@ <<<"
+            $@
+        }
+    }
+    _qc-upd brew upgrade
+    _qc-upd paru -Syu --noconfirm
+    _qc-upd rustup update
+    _qc-upd cargo install-update --all
+    _qc-upd tldr --update
+    _qc-upd nix-env -u '*'
+}
+
 #==============#
 # Key Bindings #
 #==============#
