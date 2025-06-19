@@ -9,14 +9,9 @@
         "uptime",
         "packages",
         "shell",
-        "de",
+	"de",
         "wm",
         "terminal",
-        // {
-        //     "type": "localip",
-        //     "compact": true
-        // },
-        // "publicip",  // slow
         "separator",
         "cpu",
         "gpu",
@@ -27,6 +22,8 @@
         "memory",
         "swap",
         "display",
+	"separator",
+	"version",
         "separator",
         {
             "type": "colors",
