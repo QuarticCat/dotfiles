@@ -338,8 +338,8 @@ export MOLD_JOBS=1
 
 export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive  # see https://nixos.wiki/wiki/Locales
 
-export RUSTUP_DIST_SERVER='https://rsproxy.cn'         # mirror for `rustup update`
-export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'  # mirror for `rustup self update`
+export RUSTUP_DIST_SERVER='https://mirrors.ustc.edu.cn/rust-static'         # affect `rustup update`
+export RUSTUP_UPDATE_ROOT='https://mirrors.ustc.edu.cn/rust-static/rustup'  # affect `rustup self-update`
 
 #=========#
 # Scripts #

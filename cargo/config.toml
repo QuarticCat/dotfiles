@@ -23,9 +23,9 @@ codegen-units = 1
 git-fetch-with-cli = true
 
 [source]
-crates-io = { replace-with = "rsproxy-sparse" }
-rsproxy-sparse = { registry = "sparse+https://rsproxy.cn/index/" }
+crates-io.replace-with = "ustc"
+ustc.registry = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
 
 # Ref: https://github.com/nabijaczleweli/cargo-update#source-replacement-vs-custom-registries
 [registries]
-rsproxy-sparse = { index = "sparse+https://rsproxy.cn/index/" }
+ustc.index = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
