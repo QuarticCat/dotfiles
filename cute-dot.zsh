@@ -1,6 +1,4 @@
-#!/usr/bin/env -iS PATH=${PATH} zsh
-# ^^^^^^^^^^^^^^^ Clear env vars to make env_parallel work inside Nix shells.
-#                 It also boosts the whole program by a little bit.
+#!/bin/zsh
 
 DOT=${0:a:h}  # the directory of this script
 
@@ -21,13 +19,8 @@ _rsync-pf() {  # sync|apply <pf-name>
 
 _rsync-each-pf() {  # sync|apply [--all|<pf-name>...]
     [[ $2 == --all ]] && set -- $1 ${(k)pf_map}
-    if (( $+commands[env_parallel.zsh] )) {
-        source env_parallel.zsh
-        [[ $1 == apply ]] && sudo true  # refresh cache
-        env_parallel --ctag "_rsync-pf $1" ::: ${@:2}
-    } else {
-        for pf in ${@:2}; _rsync-pf $1 $pf
-    }
+    autoload -Uz zargs
+    zargs -P0 -l1 -- ${@:2} -- _rsync-pf $1
 }
 
 # =============================== Config Begin =============================== #
