@@ -316,7 +316,7 @@ page faults from disk:     %F
 other page faults:         %R"
 
 if [[ $DISPLAY != '' || $TERM_PROGRAM == vscode ]] {
-    export EDITOR='code --wait'
+    export EDITOR='cursor --wait'
 } else {
     export EDITOR='vim'
 }
