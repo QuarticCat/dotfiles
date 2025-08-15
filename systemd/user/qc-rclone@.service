@@ -1,3 +1,7 @@
+# After change:
+#   $ systemctl --user daemon-reload
+#   $ systemctl --user restart qc-rclone@OneDrive
+#
 # Ref: https://gist.github.com/kabili207/2cd2d637e5c7617411a666d8d7e97101
 
 [Unit]
@@ -14,6 +18,7 @@ ExecStart= \
     --vfs-cache-max-size 100M \
     --log-level INFO \
     --log-file /tmp/rclone-%i.log \
+    --exclude='/Personal Vault/**' \
     %i: %h/%i
 ExecStop=/bin/fusermount3 -u %h/%i
 Restart=on-failure
