@@ -95,7 +95,6 @@ alias -g :h='--help 2>&1 | bat -pl help'
 
 if [[ $OSTYPE == linux* ]] {
     alias open='xdg-open'
-    alias strace='strace --seccomp-bpf --string-limit=9999'
 }
 
 #============#
@@ -300,20 +299,11 @@ setopt no_flow_control       # don't occupy [Ctrl+S] and [Ctrl+Q]
 setopt hist_ignore_all_dups  # no duplicate in history list
 setopt hist_save_no_dups     # no duplicate in history file
 setopt hist_ignore_space     # ignore commands starting with a space
-setopt hist_reduce_blanks    # remove all unnecessary spaces
+setopt hist_reduce_blanks    # remove unnecessary spaces
 setopt hist_fcntl_lock       # use fcntl to improve locking performance
 HISTFILE=~zdot/.zsh_history
-HISTSIZE=1000000  # number of commands that are loaded
-SAVEHIST=1000000  # number of commands that are stored
-
-TIMEFMT="\
-%J   %U  user %S system %P cpu %*E total
-avg shared (code):         %X KB
-avg unshared (data/stack): %D KB
-total (sum):               %K KB
-max memory:                %M MB
-page faults from disk:     %F
-other page faults:         %R"
+HISTSIZE=1000000  # number of commands loaded
+SAVEHIST=1000000  # number of commands stored
 
 if [[ $DISPLAY != '' || $TERM_PROGRAM == vscode ]] {
     export EDITOR='cursor --wait'
