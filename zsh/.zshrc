@@ -84,7 +84,6 @@ alias clp='clippaste'
 alias pb='curl -F "c=@-" "http://fars.ee/?u=1"'
 alias sc='sudo systemctl'
 alias scu='systemctl --user'
-alias edge='microsoft-edge-stable'
 alias sudo='sudo '
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
 
@@ -145,9 +144,9 @@ if [[ $OSTYPE == darwin* ]] {
 #===========#
 
 _qc_bg_cmds=(
-    xdg-open                       # misc
-    hotspot nsys-ui                # profilers
-    firefox microsoft-edge-stable  # browsers
+    xdg-open         # misc
+    hotspot nsys-ui  # profilers
+    firefox brave    # browsers
 )
 for cmd in $_qc_bg_cmds; $cmd() { command $0 $@ &>/dev/null &! }
 
