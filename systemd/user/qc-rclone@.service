@@ -12,12 +12,15 @@ Wants=network-online.target
 [Service]
 Type=notify
 ExecStartPre=/usr/bin/mkdir -p %h/%i
-ExecStart= \
-  /usr/bin/rclone mount \
-    --vfs-cache-mode full \
-    --vfs-cache-max-size 100M \
-    --log-level INFO \
-    --log-file /tmp/rclone-%i.log \
+ExecStart=/usr/bin/rclone mount \
+    --config="%E/rclone/rclone.conf" \
+    --cache-dir="%C/rclone" \
+    --dir-cache-time=24h \
+    --vfs-cache-mode=full \
+    --vfs-cache-max-age=24h \
+    --vfs-cache-max-size=10G \
+    --log-level=INFO \
+    --log-systemd \
     --exclude='/Personal Vault/**' \
     %i: %h/%i
 ExecStop=/bin/fusermount3 -u %h/%i
