@@ -1,6 +1,3 @@
-[build]
-target-dir = ".cache/cargo-build"
-
 [env]
 RUST_BACKTRACE = "1"
 RUST_LIB_BACKTRACE = "0"
@@ -9,7 +6,7 @@ RUST_LIB_BACKTRACE = "0"
 split-debuginfo = "unpacked"
 
 [profile.bench]
-debug = true
+debug = "line-tables-only"
 split-debuginfo = "unpacked"
 
 [profile.product]
