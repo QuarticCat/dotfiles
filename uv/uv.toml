@@ -1,1 +1,3 @@
-index-url = "https://mirrors.bfsu.edu.cn/pypi/web/simple/"
+[[index]]
+url = "https://mirrors.ustc.edu.cn/pypi/simple"
+default = true
