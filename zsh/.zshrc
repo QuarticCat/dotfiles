@@ -28,8 +28,9 @@ hash -d zdot=$ZDOTDIR
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
 hash -d OneDrive=~/OneDrive
-for p in ~Workspace/*(/N) ~OneDrive/*(/N); hash -d ${p:t}=$p
-hash -d Memo=~/OneDrive/Apps/Graph/Main
+hash -d Dropbox=~/Dropbox
+for p in ~Workspace/*(/N); hash -d ${p:t}=$p
+hash -d Memo=~/Dropbox/Apps/remotely-save/Main
 hash -d WeChat=~/Documents/WeChat_Data/xwechat_files
 
 #==================#
