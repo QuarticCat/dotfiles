@@ -10,8 +10,7 @@ split-debuginfo = "unpacked"
 debug = false
 
 [profile.bench]
-debug = "line-tables-only"
-split-debuginfo = "unpacked"
+debug = "full"
 
 [profile.debug]
 inherits = "dev"
