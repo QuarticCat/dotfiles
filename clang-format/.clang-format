@@ -1,29 +1,41 @@
-# Based on clang-format 10.
+# Based on clang-format 21
 
 Language: Cpp
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
-AlignConsecutiveMacros: true
-AlignConsecutiveAssignments: false
-AlignConsecutiveDeclarations: false
+AlignArrayOfStructures: Right
+AlignConsecutiveAssignments: None
+AlignConsecutiveBitFields: Consecutive
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: Consecutive
+# AlignConsecutiveShortCaseStatements:
+#   Enabled: true
+AlignConsecutiveTableGenBreakingDAGArgColons: Consecutive
+AlignConsecutiveTableGenCondOperatorColons: Consecutive
+AlignConsecutiveTableGenDefinitionColons: None
 AlignEscapedNewlines: Left
 AlignOperands: true
-AlignTrailingComments: false
+AlignTrailingComments: Always
 AllowAllArgumentsOnNextLine: true
 AllowAllConstructorInitializersOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
+AllowBreakBeforeNoexceptSpecifier: OnlyWithParen
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
+AllowShortCompoundRequirementOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: true
+AllowShortNamespacesOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
+BinPackLongBracedList: false
 BinPackParameters: false
+BitFieldColonSpacing: After
 BraceWrapping:
   AfterCaseLabel: false
   AfterClass: false
@@ -41,21 +53,32 @@ BraceWrapping:
   SplitEmptyFunction: false
   SplitEmptyRecord: false
   SplitEmptyNamespace: false
+BreakAdjacentStringLiterals: true
+BreakAfterAttributes: Always
+BreakAfterReturnType: Automatic
+BreakArrays: false
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Attach
+BreakBeforeConceptDeclarations: Always
+BreakBeforeInlineASMColon: Never
+BreakBeforeTemplateCloser: false
 BreakBeforeTernaryOperators: true
+BreakBinaryOperations: Never
 BreakConstructorInitializers: BeforeComma
+BreakFunctionDefinitionParameters: false
 BreakInheritanceList: BeforeComma
 BreakStringLiterals: true
+BreakTemplateDeclarations: Yes
 ColumnLimit: 100
 CompactNamespaces: false
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
-DeriveLineEnding: false
 DerivePointerAlignment: false
 DisableFormat: false
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: Never
+EnumTrailingComma: Leave
 ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: true
 # ForEachMacros:
@@ -73,12 +96,24 @@ IncludeCategories:
   - Regex: '.*'
     Priority: 3
 IncludeIsMainRegex: '([-_](test|unittest))?$'
+IndentAccessModifiers: false
+IndentCaseBlocks: false
 IndentCaseLabels: false
+IndentExportBlock: true
+IndentExternBlock: Indent
 IndentGotoLabels: true
 IndentPPDirectives: BeforeHash
+IndentRequiresClause: false
 IndentWidth: 4
 IndentWrappedFunctionNames: false
-KeepEmptyLinesAtTheStartOfBlocks: false
+InsertBraces: false
+InsertNewlineAtEOF: true
+InsertTrailingCommas: Wrapped
+KeepEmptyLines:
+  AtEndOfFile: false
+  AtStartOfBlock: false
+  AtStartOfFile: false
+LineEnding: DeriveLF
 MacroBlockBegin: ''
 MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 1
@@ -120,13 +155,22 @@ PointerAlignment: Left
 #       - ParseTextProtoOrDie
 #     CanonicalDelimiter: ''
 #     BasedOnStyle: google
+ReferenceAlignment: Pointer
 ReflowComments: true
+RemoveEmptyLinesInUnwrappedLines: true
+RemoveParentheses: Leave
+RemoveSemicolon: false
+RequiresExpressionIndentation: OuterScope
+SeparateDefinitionBlocks: Always
 SortIncludes: true
 SortUsingDeclarations: true
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false
+SpaceAfterOperatorKeyword: false
 SpaceAfterTemplateKeyword: false
+SpaceAroundPointerQualifiers: Default
 SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
 SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: false
 SpaceBeforeInheritanceColon: false
@@ -139,6 +183,10 @@ SpacesInAngles: false
 SpacesInCStyleCastParentheses: false
 SpacesInConditionalStatement: false
 SpacesInContainerLiterals: false
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: -1
+SpacesInParens: Never
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 Standard: Latest
@@ -146,3 +194,4 @@ StatementMacros:
   - QC_UNROLL
 TabWidth: 4
 UseTab: Never
+WrapNamespaceBodyWithEmptyLines: Never
