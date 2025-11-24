@@ -1,4 +1,4 @@
-# Based on clangd 14
+# Based on clangd 21
 
 CompileFlags:
   Add:
@@ -7,8 +7,14 @@ CompileFlags:
     - -march=native
   Remove:
     # Unrecognized nvcc flags
+    - -ccbin=*
+    - -rdc=true
+    - -gencode
+    - --generate-code=*
     - -forward-unknown-to-host-compiler
-    - --generate-code*
+
+Completion:
+  HeaderInsertion: Never
 
 Hover:
   ShowAKA: true
