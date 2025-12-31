@@ -1,12 +1,17 @@
 # macOS
 .DS_Store
 
-# editor config
+# Editors
 .idea
 .vscode
 .cursor
 
-# misc config / cache
+# LLMs
+.claude
+CLAUDE.md
+AGENTS.md
+
+# Configs
 .cache
 .clangd
 .xmake
