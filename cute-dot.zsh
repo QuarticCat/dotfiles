@@ -68,11 +68,9 @@ if [[ $OSTYPE == linux* ]] {
     containers.pf ~/.config/containers '*'
     fontconfig.pf ~/.config/fontconfig '*'
     mpv.pf        ~/.config/mpv        '*'
-    nixpkgs.pf    ~/.config/nixpkgs    '*'
     paru.pf       ~/.config/paru       '*'
 
     btrbk.rpf  /etc/btrbk             'btrbk.conf'
-    nix.rpf    /etc/nix               'nix.conf'
     pacman.rpf /etc/pacman.d          'hooks'
     sshd.rpf   /etc/ssh/sshd_config.d 'qc-*.conf'
     udev.rpf   /etc/udev/rules.d      'qc-*.rules'
