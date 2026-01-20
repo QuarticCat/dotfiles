@@ -306,7 +306,7 @@ HISTSIZE=1000000  # number of commands loaded
 SAVEHIST=1000000  # number of commands stored
 
 if [[ $DISPLAY != '' || $TERM_PROGRAM == vscode ]] {
-    export EDITOR='cursor --wait'
+    export EDITOR='code --wait'
 } else {
     export EDITOR='vim'
 }
@@ -328,8 +328,8 @@ export MOLD_JOBS=1
 
 export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive  # see https://nixos.wiki/wiki/Locales
 
-export RUSTUP_DIST_SERVER='https://mirrors.ustc.edu.cn/rust-static'         # affect `rustup update`
-export RUSTUP_UPDATE_ROOT='https://mirrors.ustc.edu.cn/rust-static/rustup'  # affect `rustup self-update`
+export RUSTUP_DIST_SERVER='https://mirrors.cernet.edu.cn/rustup'         # affect `rustup update`
+export RUSTUP_UPDATE_ROOT='https://mirrors.cernet.edu.cn/rustup/rustup'  # affect `rustup self-update`
 
 #=========#
 # Scripts #
@@ -339,3 +339,5 @@ _qc-eval atuin init zsh --disable-up-arrow
 _qc-eval direnv hook zsh
 
 _qc-source ~zdot/p10k.zsh
+
+[[ -r $ZDOTDIR/.zshrc-private ]] && source $ZDOTDIR/.zshrc-private
