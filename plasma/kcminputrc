@@ -1,5 +1,3 @@
 [Libinput][1133][16487][Logitech G903]
-PointerAccelerationProfile=1
-
-[Libinput][1133][49286][Logitech Logitech G903 Wired/Wireless Gaming Mouse]
+PointerAcceleration=0.200
 PointerAccelerationProfile=1
