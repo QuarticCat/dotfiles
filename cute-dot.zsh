@@ -20,6 +20,7 @@ _rsync-pf() {  # sync|apply <pf-name>
 
 _rsync-each-pf() {  # sync|apply [--all|<pf-name>...]
     [[ $2 == --all ]] && set -- $1 ${(k)pf_map}
+    [[ $1 == apply ]] && sudo -v
     autoload -Uz zargs
     zargs -P0 -l1 -- ${@:2} -- _rsync-pf $1
 }
