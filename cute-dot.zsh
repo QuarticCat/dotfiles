@@ -10,11 +10,12 @@ alias -s rpf="_add-pf root"
 
 _rsync-pf() {  # sync|apply <pf-name>
     setopt extended_glob
-    for own loc pat in $=pf_map[$2]; case $1-$own {
+    local output=$(for own loc pat in $=pf_map[$2]; case $1-$own {
         (sync-*)          rsync $rsync_opts -R $loc/./$~pat $DOT/$2/ ;;
         (apply-self)      rsync $rsync_opts -R $DOT/$2/./$~pat $loc/ ;;
         (apply-root) sudo rsync $rsync_opts -R $DOT/$2/./$~pat $loc/ ;;
-    }
+    })
+    [[ $output != '' ]] && printf "\e[1m\e[33m$2\e[0m\n$output\n"
 }
 
 _rsync-each-pf() {  # sync|apply [--all|<pf-name>...]
