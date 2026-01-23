@@ -1,7 +1,7 @@
 [user]
 name = QuarticCat
 email = QuarticCat@pm.me
-signingkey = DEADBEEF
+signingkey = ~/.ssh/id_sign.pub
 
 [core]
 pager = less -RS -+FX  # see https://askubuntu.com/questions/803486
@@ -9,6 +9,9 @@ fsmonitor = true
 
 [init]
 defaultBranch = main
+
+[gpg]
+format = ssh
 
 [commit]
 gpgsign = true
