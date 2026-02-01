@@ -41,6 +41,7 @@ zsh.pf ~/.config/zsh '.zshrc|^*.zwc'
 bun.pf          ~ '.bunfig.toml'
 clang-tidy.pf   ~ '.clang-tidy'
 clang-format.pf ~ '.clang-format'
+npm.pf          ~ '.npmrc'
 
 cargo.pf   ~/.cargo              'config.toml'
 gpg.pf     ~/.gnupg              'gpg-agent.conf'
