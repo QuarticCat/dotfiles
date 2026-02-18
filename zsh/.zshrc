@@ -8,9 +8,9 @@ _qc-source() { [[ -r $1 ]] && source $1 }
 _qc-eval()   { (( $+commands[$1] )) && smartcache eval $@ }
 _qc-comp()   { (( $+commands[$1] )) && smartcache comp $@ }
 
-# Placed ahead since it modifies $PATH and $FPATH
+# Placed ahead since it modifies $PATH and $FPATH.
 if [[ $OSTYPE == darwin* ]] {
-    # NOTE: it detects $PATH to decide output so smartcache is not feasible
+    # NOTE: It detects $PATH to decide output so smartcache is not applicable.
     eval $(/opt/homebrew/bin/brew shellenv)
 }
 
@@ -41,7 +41,7 @@ hash -d WeChat=~/Documents/WeChat_Data/xwechat_files
 
 source ~zdot/.zcomet/bin/zcomet.zsh
 
-# Update every 7 days
+# Update every 7 days.
 _qc_last_update=(~zdot/.zcomet/update(Nm-7))
 if [[ -z $_qc_last_update ]] {
     touch ~zdot/.zcomet/update
@@ -49,8 +49,7 @@ if [[ -z $_qc_last_update ]] {
     zcomet update
     zcomet compile ~zdot/*.zsh  # NOTE: https://github.com/romkatv/zsh-bench#cutting-corners
 } else {
-    # Start p10k instant prompt only when no update
-    # Otherwise update logs might not be displayed
+    # Instant prompt might hide update output.
     _qc-source ~cache/p10k-instant-prompt-${(%):-%n}.zsh
 }
 
@@ -58,6 +57,7 @@ zcomet fpath zsh-users/zsh-completions src
 zcomet fpath nix-community/nix-zsh-completions
 
 zcomet load tj/git-extras etc/git-extras-completion.zsh
+zcomet load g-plane/pnpm-shell-completion
 zcomet load trapd00r/LS_COLORS lscolors.sh
 zcomet load QuarticCat/zsh-smartcache
 zcomet load chisui/zsh-nix-shell
@@ -157,21 +157,6 @@ reboot-to-windows() {
     reboot
 }
 
-upgrade-all() {
-    _qc-upd() {
-        if (( $+commands[$1] )) {
-            echo ">>> $@ <<<"
-            $@
-        }
-    }
-    _qc-upd brew upgrade
-    _qc-upd paru -Syu --noconfirm
-    _qc-upd rustup update
-    _qc-upd cargo install-update --all
-    _qc-upd tldr --update
-    _qc-upd nix-env -u '*'
-}
-
 #==============#
 # Key Bindings #
 #==============#
@@ -207,14 +192,14 @@ bindkey '\E^?'    qc-kill-shell-l  # [Alt+Backspace]
 bindkey '\E[3;3~' qc-kill-shell-r  # [Alt+Delete]
 WORDCHARS='*?[]~&;!#$%^(){}<>'
 
-# Trim trailing spaces from pasted text
+# Trim trailing spaces from pasted text.
 # Ref: https://unix.stackexchange.com/questions/693118
 qc-trim-paste() {
     zle .$WIDGET && LBUFFER=${LBUFFER%%[[:space:]]#}
 }
 zle -N bracketed-paste qc-trim-paste
 
-# Change `...` to `../..`
+# Change `...` to `../..`.
 # Ref: https://grml.org/zsh/zsh-lovers.html#_completion
 qc-rationalize-dot() {
     if [[ $LBUFFER == *.. ]] {
@@ -227,7 +212,7 @@ zle -N qc-rationalize-dot
 bindkey '.'   qc-rationalize-dot
 bindkey '\E.' self-insert-unmeta  # [Alt+.] insert dot
 
-# [Ctrl+L] Clear screen but keep scrollback
+# [Ctrl+L] Clear screen but keep scrollback.
 # Ref: https://superuser.com/questions/1389834
 qc-clear-screen() {
     local prompt_height=$(print -n ${(%%)PS1} | wc -l)
@@ -245,13 +230,13 @@ bindkey '\C-L' qc-clear-screen
 
 autoload -Uz add-zsh-hook
 
-# [PRECMD] Reset cursor shape as some programs (nvim, yazi) will change it
+# [PRECMD] Reset cursor shape as some programs (nvim, yazi) will change it.
 _qc-reset-cursor() {
     print -n '\E[5 q'  # line cursor
 }
 add-zsh-hook precmd _qc-reset-cursor
 
-# Inside distrobox, execute commands on host when not found
+# Inside distrobox, execute commands on host when not found.
 # Ref: https://github.com/89luca89/distrobox/blob/main/docs/posts/execute_commands_on_host.md
 if [[ -e /run/.containerenv || -e /.dockerenv ]] {
     command_not_found_handler() { distrobox-host-exec "$@" }
@@ -321,15 +306,12 @@ export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --chop-long-lines'
 
 export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept'
 
-export MANPAGER='sh -c "col -bx | bat -pl man --theme=Monokai\ Extended"'
-export MANROFFOPT='-c'
+export MANPAGER='bat -pl man'
 
 export MOLD_JOBS=1
 
-export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive  # see https://nixos.wiki/wiki/Locales
-
-export RUSTUP_DIST_SERVER='https://mirrors.cernet.edu.cn/rustup'         # affect `rustup update`
-export RUSTUP_UPDATE_ROOT='https://mirrors.cernet.edu.cn/rustup/rustup'  # affect `rustup self-update`
+export RUSTUP_DIST_SERVER='https://mirrors.ustc.edu.cn/rust-static'         # affect `rustup update`
+export RUSTUP_UPDATE_ROOT='https://mirrors.ustc.edu.cn/rust-static/rustup'  # affect `rustup self-update`
 
 #=========#
 # Scripts #
