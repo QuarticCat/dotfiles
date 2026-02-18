@@ -4,9 +4,9 @@
 
 bindkey -e  # use Emacs keymap
 
-_qc-source() { [[ -r $1 ]] && source $1 }
-_qc-eval()   { (( $+commands[$1] )) && smartcache eval $@ }
-_qc-comp()   { (( $+commands[$1] )) && smartcache comp $@ }
+_qc-source() { [[ -r $1 ]] && source $1; }
+_qc-eval()   { (( $+commands[$1] )) && smartcache eval $@; }
+_qc-comp()   { (( $+commands[$1] )) && smartcache comp $@; }
 
 # Placed ahead since it modifies $PATH and $FPATH.
 if [[ $OSTYPE == darwin* ]] {
@@ -109,7 +109,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'l:|=* r:|=*'  # auto-cap, s
 
 zstyle ':completion:*' use-cache    true
 zstyle ':completion:*' cache-policy _qc-cache-policy
-_qc-cache-policy() { local f=("$1"(Nm-7)); [[ -z $f ]] }  # TTL = 7 days
+_qc-cache-policy() { local f=("$1"(Nm-7)); [[ -z $f ]]; }  # TTL = 7 days
 
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*:messages'     format '%F{yellow}-- %d --%f'
@@ -149,7 +149,7 @@ _qc_bg_cmds=(
     hotspot nsys-ui  # profilers
     firefox brave    # browsers
 )
-for cmd in $_qc_bg_cmds; $cmd() { command $0 $@ &>/dev/null &! }
+for cmd in $_qc_bg_cmds; $cmd() { command $0 $@ &>/dev/null &!; }
 
 reboot-to-windows() {
     [[ $(efibootmgr) =~ 'Boot([[:xdigit:]]*)\* Windows' ]] &&
@@ -232,14 +232,14 @@ autoload -Uz add-zsh-hook
 
 # [PRECMD] Reset cursor shape as some programs (nvim, yazi) will change it.
 _qc-reset-cursor() {
-    print -n '\E[5 q'  # line cursor
+    print -n '\E[0 q'  # default cursor
 }
 add-zsh-hook precmd _qc-reset-cursor
 
 # Inside distrobox, execute commands on host when not found.
 # Ref: https://github.com/89luca89/distrobox/blob/main/docs/posts/execute_commands_on_host.md
 if [[ -e /run/.containerenv || -e /.dockerenv ]] {
-    command_not_found_handler() { distrobox-host-exec "$@" }
+    command_not_found_handler() { distrobox-host-exec "$@"; }
 }
 
 #==================#

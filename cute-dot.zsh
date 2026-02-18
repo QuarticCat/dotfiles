@@ -4,7 +4,7 @@ DOT=${0:a:h}  # the directory of this script
 
 declare -A pf_map
 
-_add-pf() { pf_map[${2%.*}]+="$1 $3 $4 " }
+_add-pf() { pf_map[${2%.*}]+="$1 $3 $4 "; }
 alias -s pf="_add-pf self"
 alias -s rpf="_add-pf root"
 
