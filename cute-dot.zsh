@@ -75,6 +75,7 @@ if [[ $OSTYPE == linux* ]] {
     btrbk.rpf  /etc/btrbk             'btrbk.conf'
     pacman.rpf /etc/pacman.d          'hooks'
     sshd.rpf   /etc/ssh/sshd_config.d 'qc-*.conf'
+    sysctl.rpf /etc/sysctl.d          'qc-*.conf'
     udev.rpf   /etc/udev/rules.d      'qc-*.rules'
 }
 
