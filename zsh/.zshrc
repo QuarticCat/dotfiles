@@ -38,7 +38,6 @@ hash -d WeChat=~/Documents/WeChat_Data/xwechat_files
 #==================#
 
 [[ -d ~zdot/.zcomet ]] || git clone https://github.com/agkozak/zcomet ~zdot/.zcomet/bin
-
 source ~zdot/.zcomet/bin/zcomet.zsh
 
 # Update every 7 days.
@@ -48,19 +47,16 @@ if [[ -z $_qc_last_update ]] {
     zcomet self-update
     zcomet update
     zcomet compile ~zdot/*.zsh  # NOTE: https://github.com/romkatv/zsh-bench#cutting-corners
-} else {
-    # Instant prompt might hide update output.
-    _qc-source ~cache/p10k-instant-prompt-${(%):-%n}.zsh
 }
 
-zcomet fpath zsh-users/zsh-completions src
-zcomet fpath nix-community/nix-zsh-completions
+_qc-source ~cache/p10k-instant-prompt-${(%):-%n}.zsh
 
+zcomet load zsh-users/zsh-completions
 zcomet load tj/git-extras etc/git-extras-completion.zsh
 zcomet load g-plane/pnpm-shell-completion
+
 zcomet load trapd00r/LS_COLORS lscolors.sh
 zcomet load QuarticCat/zsh-smartcache
-zcomet load chisui/zsh-nix-shell
 zcomet load romkatv/zsh-no-ps2
 
 zcomet load ohmyzsh lib clipboard.zsh
@@ -70,6 +66,8 @@ AUTOPAIR_SPC_WIDGET=magic-space
 AUTOPAIR_BKSPC_WIDGET=backward-delete-char
 AUTOPAIR_DELWORD_WIDGET=backward-delete-word
 zcomet load hlissner/zsh-autopair
+
+zcomet compinit
 
 #=========#
 # Aliases #
@@ -88,11 +86,6 @@ alias scu='systemctl --user'
 alias sudo='sudo '
 alias cute-dot='~QuarticCat/dotfiles/cute-dot.zsh'
 
-alias -g :n='>/dev/null'
-alias -g :nn='&>/dev/null'
-alias -g :bg='&>/dev/null &!'
-alias -g :h='--help 2>&1 | bat -pl help'
-
 if [[ $OSTYPE == linux* ]] {
     alias open='xdg-open'
 }
@@ -101,8 +94,7 @@ if [[ $OSTYPE == linux* ]] {
 # Completion #
 #============#
 
-setopt menu_complete  # list choices when ambiguous
-
+zstyle ':completion:*' menu         yes                            # list menu when there are multiple matches
 zstyle ':completion:*' sort         false                          # preserve inherent orders
 zstyle ':completion:*' list-colors  ${(s.:.)LS_COLORS}             # colorize files & folders
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'l:|=* r:|=*'  # auto-cap, substr
@@ -123,14 +115,6 @@ zstyle ':completion:*:manuals.*' insert-sections   true  # `man strstr` -> `man 
 zstyle ':completion:*:processes'       command 'ps xwwo pid,user,comm,cmd'  # for kill
 zstyle ':completion:*:processes-names' command 'ps xwwo comm'               # for killall
 zstyle ':completion:*:process-groups'  hidden  all                          # no `0`
-
-compdef _qc-complete-galias -first-
-_qc-complete-galias() {
-    [[ $PREFIX != :* ]] && return
-    local des=()
-    printf -v des '\%s:%s' ${(kv)galiases}
-    _describe 'galias' des
-}
 
 compdef _precommand bench-mode.zsh
 compdef _precommand lldb.zsh
@@ -246,8 +230,6 @@ if [[ -e /run/.containerenv || -e /.dockerenv ]] {
 # Plugins (Part 2) #
 #==================#
 
-zcomet compinit
-
 zcomet load Aloxaf/fzf-tab
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
 zstyle ':fzf-tab:*' switch-group '<' '>'
@@ -321,5 +303,3 @@ _qc-eval atuin init zsh --disable-up-arrow
 _qc-eval direnv hook zsh
 
 _qc-source ~zdot/p10k.zsh
-
-[[ -r $ZDOTDIR/.zshrc-private ]] && source $ZDOTDIR/.zshrc-private
