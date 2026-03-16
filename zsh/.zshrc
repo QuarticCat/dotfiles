@@ -29,7 +29,7 @@ hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
 hash -d OneDrive=~/OneDrive
 hash -d Dropbox=~/Dropbox
-for p in ~Workspace/*(/N); hash -d ${p:t}=$p
+for p in ~Workspace/*(N/); hash -d ${p:t}=$p
 hash -d Memo=~/Dropbox/Apps/remotely-save/Main
 hash -d WeChat=~/Documents/WeChat_Data/xwechat_files
 
@@ -37,37 +37,30 @@ hash -d WeChat=~/Documents/WeChat_Data/xwechat_files
 # Plugins (Part 1) #
 #==================#
 
-[[ -d ~zdot/.zcomet ]] || git clone https://github.com/agkozak/zcomet ~zdot/.zcomet/bin
-source ~zdot/.zcomet/bin/zcomet.zsh
+source ~zdot/zq.zsh
 
 # Update every 7 days.
-_qc_last_update=(~zdot/.zcomet/update(Nm-7))
-if [[ -z $_qc_last_update ]] {
-    touch ~zdot/.zcomet/update
-    zcomet self-update
-    zcomet update
-    zcomet compile ~zdot/*.zsh  # NOTE: https://github.com/romkatv/zsh-bench#cutting-corners
+zq outdated 7 && {
+    zq update
+    { for file in ~zdot/{.zshrc,*.zsh}; zcompile $file; } &!
 }
 
 _qc-source ~cache/p10k-instant-prompt-${(%):-%n}.zsh
 
-zcomet load zsh-users/zsh-completions
-zcomet load tj/git-extras etc/git-extras-completion.zsh
-zcomet load g-plane/pnpm-shell-completion
+zq plug zsh-users/zsh-completions
+zq plug tj/git-extras etc/git-extras-completion.zsh
 
-zcomet load trapd00r/LS_COLORS lscolors.sh
-zcomet load QuarticCat/zsh-smartcache
-zcomet load romkatv/zsh-no-ps2
+zq plug trapd00r/LS_COLORS lscolors.sh
+zq plug QuarticCat/zsh-smartcache
+zq plug romkatv/zsh-no-ps2
 
-zcomet load ohmyzsh lib clipboard.zsh
-zcomet load ohmyzsh plugins/sudo
+zq plug ohmyzsh/ohmyzsh lib/clipboard.zsh
+zq plug ohmyzsh/ohmyzsh plugins/sudo
 
 AUTOPAIR_SPC_WIDGET=magic-space
 AUTOPAIR_BKSPC_WIDGET=backward-delete-char
 AUTOPAIR_DELWORD_WIDGET=backward-delete-word
-zcomet load hlissner/zsh-autopair
-
-zcomet compinit
+zq plug hlissner/zsh-autopair
 
 #=========#
 # Aliases #
@@ -116,13 +109,16 @@ zstyle ':completion:*:processes'       command 'ps xwwo pid,user,comm,cmd'  # fo
 zstyle ':completion:*:processes-names' command 'ps xwwo comm'               # for killall
 zstyle ':completion:*:process-groups'  hidden  all                          # no `0`
 
-compdef _precommand bench-mode.zsh
-compdef _precommand lldb.zsh
-
 if [[ $OSTYPE == darwin* ]] {
     _qc-comp rustup completions zsh rustup
     _qc-comp rustup completions zsh cargo
 }
+
+autoload -Uz compinit && compinit
+[[ ~zdot/.zcompdump -nt ~zdot/.zcompdump.zwc ]] && zcompile ~zdot/.zcompdump
+
+compdef _precommand bench-mode.zsh
+compdef _precommand lldb.zsh
 
 #===========#
 # Functions #
@@ -230,7 +226,9 @@ if [[ -e /run/.containerenv || -e /.dockerenv ]] {
 # Plugins (Part 2) #
 #==================#
 
-zcomet load Aloxaf/fzf-tab
+zq plug g-plane/pnpm-shell-completion
+
+zq plug Aloxaf/fzf-tab
 zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
 zstyle ':fzf-tab:*' switch-group '<' '>'
 zstyle ':fzf-tab:*' prefix       ''
@@ -238,15 +236,15 @@ zstyle ':fzf-tab:complete:kill:argument-rest' fzf-preview 'ps hwwo cmd --pid=$wo
 zstyle ':fzf-tab:complete:kill:argument-rest' fzf-flags   '--preview-window=down:3:wrap'
 zstyle ':fzf-tab:complete:kill:*'             popup-pad   0 3
 
-zcomet load zsh-users/zsh-autosuggestions
+zq plug zsh-users/zsh-autosuggestions
 ZSH_AUTOSUGGEST_MANUAL_REBIND=true
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(qc-{sub,shell}-r)
 
-zcomet load zdharma-continuum/fast-syntax-highlighting
+zq plug zdharma-continuum/fast-syntax-highlighting
 unset 'FAST_HIGHLIGHT[chroma-man]'  # buggy: stuck history browsing
 unset 'FAST_HIGHLIGHT[chroma-ssh]'  # buggy: incorrect
 
-zcomet load romkatv/powerlevel10k
+zq plug romkatv/powerlevel10k
 
 #========#
 # Config #
