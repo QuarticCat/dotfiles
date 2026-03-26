@@ -115,7 +115,7 @@ if [[ $OSTYPE == darwin* ]] {
 }
 
 autoload -Uz compinit && compinit
-[[ ~zdot/.zcompdump -nt ~zdot/.zcompdump.zwc ]] && zcompile ~zdot/.zcompdump
+[[ ~zdot/.zcompdump.zwc -nt ~zdot/.zcompdump ]] || zcompile ~zdot/.zcompdump
 
 compdef _precommand bench-mode.zsh
 compdef _precommand lldb.zsh
