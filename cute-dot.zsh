@@ -15,14 +15,15 @@ _rsync-pf() {  # sync|apply <pf-name>
         (apply-self)      rsync $rsync_opts -R $DOT/$2/./$~pat $loc/ ;;
         (apply-root) sudo rsync $rsync_opts -R $DOT/$2/./$~pat $loc/ ;;
     })
-    [[ $output != '' ]] && printf "\e[1m\e[33m$2\e[0m\n$output\n"
+    [[ $output == '' ]] || printf "\e[1m\e[33m$2\e[0m\n$output\n"
 }
 
 _rsync-each-pf() {  # sync|apply [--all|<pf-name>...]
     [[ $2 == --all ]] && set -- $1 ${(k)pf_map}
     [[ $1 == apply ]] && sudo -v
     autoload -Uz zargs
-    zargs -P0 -l1 -- ${@:2} -- _rsync-pf $1
+    # FIXME: Weird 123 return code on macOS, could be a zargs bug.
+    zargs -P0 -l1 -r -- ${@:2} -- _rsync-pf $1
 }
 
 # =============================== Config Begin =============================== #
