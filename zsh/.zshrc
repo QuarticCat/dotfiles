@@ -300,4 +300,9 @@ export RUSTUP_UPDATE_ROOT='https://mirrors.ustc.edu.cn/rust-static/rustup'  # af
 _qc-eval atuin init zsh --disable-up-arrow
 _qc-eval direnv hook zsh
 
+_qc-source ~zdot/.zshrc-local  # machine-specific config
 _qc-source ~zdot/p10k.zsh
+
+if [[ ! -r /tmp/.ssh-add-$UID ]] {
+    ssh-add ~/.ssh/id*~*.pub && touch /tmp/.ssh-add-$UID
+}
