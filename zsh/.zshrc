@@ -304,5 +304,6 @@ _qc-source ~zdot/.zshrc-local  # machine-specific config
 _qc-source ~zdot/p10k.zsh
 
 if [[ ! -r /tmp/.ssh-add-$UID ]] {
-    ssh-add ~/.ssh/id*~*.pub && touch /tmp/.ssh-add-$UID
+    SSH_ASKPASS_REQUIRE=never ssh-add ~/.ssh/id*~*.pub
+    touch /tmp/.ssh-add-$UID
 }
