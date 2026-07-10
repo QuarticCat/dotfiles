@@ -13,7 +13,7 @@
 ZQ_DIR=${ZQ_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/zq}
 
 zq() {
-    emulate -LR zsh -o extended_glob -o err_return
+    emulate -LR zsh -o extended_glob
     _zq-$1 "${@:2}"
 }
 
@@ -36,9 +36,9 @@ _zq-plug() {  # <repo> [<dir>|<file>]
 }
 
 _zq-update() {
+    mkdir -p $ZQ_DIR && touch $ZQ_DIR/update
     autoload -Uz zargs
     zargs -P8 -l1 -r -- $ZQ_DIR/repos/*/*(N/) -- _zq-update-repo
-    mkdir -p $ZQ_DIR && touch $ZQ_DIR/update
 }
 
 _zq-update-repo() {  # <dir>
