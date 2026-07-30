@@ -2,3 +2,7 @@
 sort_by = "natural"
 sort_sensitive = true
 show_hidden = true
+
+[preview]
+max_width = 65535
+max_height = 65535
