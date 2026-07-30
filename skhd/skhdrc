@@ -1,0 +1,2 @@
+# [Option+`] Toggle Kiity's quick access terminal.
+alt - 0x32 : cd "$HOME" && /opt/homebrew/bin/kitten quick-access-terminal

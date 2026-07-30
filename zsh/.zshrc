@@ -210,12 +210,6 @@ bindkey '\C-L' qc-clear-screen
 
 autoload -Uz add-zsh-hook
 
-# [PRECMD] Reset cursor shape as some programs (nvim, yazi) will change it.
-_qc-reset-cursor() {
-    print -n '\E[0 q'  # default cursor
-}
-add-zsh-hook precmd _qc-reset-cursor
-
 # Inside distrobox, execute commands on host when not found.
 # Ref: https://github.com/89luca89/distrobox/blob/main/docs/posts/execute_commands_on_host.md
 if [[ -e /run/.containerenv || -e /.dockerenv ]] {

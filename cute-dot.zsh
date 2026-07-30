@@ -56,13 +56,14 @@ fastfetch.pf ~/.config/fastfetch '*'
 ghc.pf       ~/.config/ghc       'ghci.conf'
 git.pf       ~/.config/git       '*'
 htop.pf      ~/.config/htop      '*'
+kitty.pf     ~/.config/kitty     '*'
 pnpm.pf      ~/.config/pnpm      '*'
 uv.pf        ~/.config/uv        '*'
 yazi.pf      ~/.config/yazi      '*'
 
 if [[ $OSTYPE == linux* ]] {
     plasma.pf ~/.config      '*-flags.conf'
-    plasma.pf ~/.config      '(konsole|yakuake|ktrash|kio|kcminput)rc'
+    plasma.pf ~/.config      '(konsole|ktrash|kio|kcminput)rc'
     plasma.pf ~/.local/share 'konsole/qc-*.profile'
     plasma.pf ~/.local/share 'applications/discord.desktop'
 
@@ -78,6 +79,10 @@ if [[ $OSTYPE == linux* ]] {
     sshd.rpf   /etc/ssh/sshd_config.d 'qc-*.conf'
     sysctl.rpf /etc/sysctl.d          'qc-*.conf'
     udev.rpf   /etc/udev/rules.d      'qc-*.rules'
+}
+
+if [[ $OSTYPE == darwin* ]] {
+    skhd.pf ~/.config/skhd '*'
 }
 
 # ================================ Config End ================================ #
