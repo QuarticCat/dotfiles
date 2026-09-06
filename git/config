@@ -5,7 +5,6 @@ signingkey = ~/.ssh/id_sign.pub
 
 [core]
 pager = less -RS -+FX  # see https://askubuntu.com/questions/803486
-fsmonitor = true
 
 [init]
 defaultBranch = main
@@ -43,15 +42,8 @@ workers = 0  # auto-detect
 # [http]
 # postBuffer = 536870912  # 512 MiB
 
-[rerere]
-enabled = true
-
 [pager]
 difftool = true
-
-[feature]
-# FIXME: it breaks libgit2 -> gitstatus -> powerlevel10k
-# manyFiles = true
 
 [alias]
 difft = difftool --extcmd=difft --no-prompt
