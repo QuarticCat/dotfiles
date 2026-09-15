@@ -68,8 +68,6 @@ if [[ $OSTYPE == linux* ]] {
     plasma.pf ~/.local/share 'konsole/qc-*.profile'
     plasma.pf ~/.local/share 'applications/discord.desktop'
 
-    systemd.pf ~/.config/systemd 'user/qc-*'
-
     containers.pf ~/.config/containers '*'
     fontconfig.pf ~/.config/fontconfig '*'
     mpv.pf        ~/.config/mpv        '*'
