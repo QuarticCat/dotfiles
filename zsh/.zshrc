@@ -28,10 +28,9 @@ hash -d zdot=$ZDOTDIR
 hash -d Downloads=~/Downloads
 hash -d Workspace=~/Workspace
 hash -d OneDrive=~/OneDrive
-hash -d Dropbox=~/Dropbox
 for p in ~Workspace/*(N/); hash -d ${p:t}=$p
-hash -d Memo=~/Dropbox/Apps/remotely-save/Main
-hash -d WeChat=~/Documents/WeChat_Data/xwechat_files
+hash -d Memo=~OneDrive/Memo
+hash -d WeChat=~data/WeChat_Data
 
 #==================#
 # Plugins (Part 1) #
