@@ -1,0 +1,4 @@
+--hidden
+--no-ignore
+--glob=!.git/
+--glob=!node_modules/

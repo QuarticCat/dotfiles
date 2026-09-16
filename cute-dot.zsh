@@ -58,6 +58,7 @@ git.pf       ~/.config/git       '*'
 htop.pf      ~/.config/htop      '*'
 kitty.pf     ~/.config/kitty     '*'
 pnpm.pf      ~/.config/pnpm      '*'
+ripgrep.pf   ~/.config/ripgrep   '*'
 uv.pf        ~/.config/uv        '*'
 yazi.pf      ~/.config/yazi      '*'
 

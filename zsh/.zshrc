@@ -282,10 +282,12 @@ export FZF_DEFAULT_OPTS='--ansi --height=60% --reverse --cycle --bind=tab:accept
 
 export MANPAGER='bat -pl man'
 
+export RIPGREP_CONFIG_PATH=~config/ripgrep/config
+
 export MOLD_JOBS=1
 
-export RUSTUP_DIST_SERVER='https://mirrors.ustc.edu.cn/rust-static'         # affect `rustup update`
-export RUSTUP_UPDATE_ROOT='https://mirrors.ustc.edu.cn/rust-static/rustup'  # affect `rustup self-update`
+export RUSTUP_DIST_SERVER='https://rsproxy.cn'         # affect `rustup update`
+export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'  # affect `rustup self-update`
 
 #=========#
 # Scripts #
