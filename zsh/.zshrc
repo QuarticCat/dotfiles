@@ -293,7 +293,6 @@ export RUSTUP_UPDATE_ROOT='https://rsproxy.cn/rustup'  # affect `rustup self-upd
 #=========#
 
 _qc-eval atuin init zsh --disable-up-arrow
-_qc-eval direnv hook zsh
 
 _qc-source ~zdot/.zshrc-local  # machine-specific config
 _qc-source ~zdot/p10k.zsh
