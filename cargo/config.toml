@@ -27,6 +27,9 @@ codegen-units = 1
 [net]
 git-fetch-with-cli = true
 
+[registry]
+global-min-publish-age = "7 days"
+
 [source]
 crates-io.replace-with = "ustc"
 ustc.registry = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
