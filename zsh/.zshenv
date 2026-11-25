@@ -3,6 +3,9 @@ export XDG_CACHE_HOME=~/.cache
 export XDG_DATA_HOME=~/.local/share
 export XDG_STATE_HOME=~/.local/state
 
+# Ref: https://donottrack.sh/
+export DO_NOT_TRACK=1
+
 if [[ $OSTYPE == linux* ]] {
     # Ref: https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland#KDE_Plasma
     export XMODIFIERS='@im=fcitx'
